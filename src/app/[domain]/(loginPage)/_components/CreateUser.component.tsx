@@ -9,9 +9,29 @@ export default function RegisterUserPopup() {
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('');
 
-    const handleSubmit = () => {
-        console.log({ username, email, role });
+    const handleSubmit = async () => {
+        console.log({ username, email });
         // TODO: Add your submit logic here
+        try {
+            const response = await fetch('/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: username,
+                    email: email
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create user');
+            }
+
+            const data = await response.json();
+            console.log('User created:', data);
+        } catch (err) {
+            console.error('Error:', err);
+        }
+
         setShowPopup(false); // Close popup after submit
     };
 
