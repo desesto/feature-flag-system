@@ -1,8 +1,7 @@
-import CreateUser from "@/app/[domain]/(loginPage)/_components/CreateUser.component";
 import Login from "@/app/[domain]/(loginPage)/_components/Login.component";
+import CreateUser from "@/app/[domain]/(loginPage)/_components/CreateUser.component";
 
 export default async function Page() {
-
     return (
         <div className="flex items-center justify-center">
             <span className="text-center gap-4">
@@ -11,5 +10,5 @@ export default async function Page() {
                 <CreateUser />
             </span>
         </div>
-            )
+    )
 }

@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 export default async function Login() {
 
     return (
@@ -5,6 +6,7 @@ export default async function Login() {
             <div>Vælg bruger</div>
             <div className="flex gap-2">
         <input className="border border-white bg-white text-black rounded-4xl cursor-pointer"></input>
+
             <button>Login</button>
             </div>
         </div>
