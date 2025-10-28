@@ -11,6 +11,6 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     const { name, email } = await req.json();
-    const newUser = await db.insert(usersTable).values({ name, email });
-    return NextResponse.json(newUser);
+    const newUser = await db.insert(usersTable).values({ name, email }).returning();
+    return NextResponse.json(newUser[0]);
 }
