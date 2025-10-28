@@ -1,5 +1,5 @@
+import CreateUserButton from "@/app/_components/CreateUserButton.component";
 import Login from "@/app/_components/Login.component";
-import CreateUser from "@/app/_components/CreateUser.component";
 
 export default function Page() {
     return (
@@ -7,7 +7,7 @@ export default function Page() {
             <span className="text-center gap-4">
                 <h1> Jens & Clemens ff</h1>
                 <Login/>
-                <CreateUser />
+                <CreateUserButton />
             </span>
         </div>
     )
