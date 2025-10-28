@@ -2,13 +2,14 @@
 'use client';
 
 import { useState } from 'react';
-import {router} from "next/client";
+import {useRouter} from "next/navigation";
 
 export default function RegisterUserPopup() {
     const [showPopup, setShowPopup] = useState(false);
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [role, setRole] = useState('');
+    const router = useRouter();
 
     const handleSubmit = async () => {
         console.log({ username, email });
@@ -28,14 +29,10 @@ export default function RegisterUserPopup() {
             }
             const newUser = await response.json()
 
-            const data = await response.json();
-            console.log('User created:', data);
-            router.push(`/${newUser.domain}`);
+            router.push(`/mainPage/${newUser.id}`);
         } catch (err) {
             console.error('Error:', err);
         }
-
-        setShowPopup(false); // Close popup after submit
     };
 
     return (
