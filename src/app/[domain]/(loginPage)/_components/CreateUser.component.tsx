@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import {router} from "next/client";
 
 export default function RegisterUserPopup() {
     const [showPopup, setShowPopup] = useState(false);
@@ -11,7 +12,7 @@ export default function RegisterUserPopup() {
 
     const handleSubmit = async () => {
         console.log({ username, email });
-        // TODO: Add your submit logic here
+
         try {
             const response = await fetch('/api/users', {
                 method: 'POST',
@@ -25,9 +26,11 @@ export default function RegisterUserPopup() {
             if (!response.ok) {
                 throw new Error('Failed to create user');
             }
+            const newUser = await response.json()
 
             const data = await response.json();
             console.log('User created:', data);
+            router.push(`/${newUser.domain}`);
         } catch (err) {
             console.error('Error:', err);
         }
