@@ -11,6 +11,7 @@ type CreateUserPanelProps = {
 export default function CreateUserPanel({ SuccessAction, CancelAction }: CreateUserPanelProps) {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
+    const [role, setRole] = useState<'Product-Manager' | 'Developer'>('Developer');
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -20,7 +21,7 @@ export default function CreateUserPanel({ SuccessAction, CancelAction }: CreateU
         setLoading(true);
 
         try {
-            const newUser = await createUser({ name: username, email });
+            const newUser = await createUser({ name: username, email, role });
             SuccessAction(newUser.id);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Kunne ikke oprette bruger');
@@ -55,6 +56,18 @@ export default function CreateUserPanel({ SuccessAction, CancelAction }: CreateU
                     disabled={loading}
                     required
                 />
+                Role
+                <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value as 'Product-Manager' | 'Developer')}
+                    className="m-2 p-2 rounded border border-white text-white bg-black"
+                    disabled={loading}
+                    required
+                >
+                    <option value="Developer">Developer</option>
+                    <option value="Product-Manager">Product-Manager</option>
+                </select>
+
             </div>
 
             <div className="flex justify-center mt-4 gap-2">
