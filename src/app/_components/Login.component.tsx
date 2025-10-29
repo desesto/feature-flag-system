@@ -2,7 +2,7 @@
 'use client';
 
 import {useEffect, useState} from "react";
-import type {User} from "@/types/user";
+import type {User} from "@/app/types/user";
 import {useRouter} from "next/navigation";
 
 

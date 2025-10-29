@@ -1,4 +1,4 @@
-import type { CreateUserInput, User } from '@/types/user';
+import type { CreateUserInput, User } from '@/app/types/user';
 
 export function validateUserInput(input: CreateUserInput): string | null {
     if (input.name.trim().length < 2) {
