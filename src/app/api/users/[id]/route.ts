@@ -5,9 +5,9 @@ import {drizzle} from "drizzle-orm/node-postgres";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }
-) {
-    const userId = Number(params.id);
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const userId = Number(id);
 
     if (isNaN(userId)) {
         return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
