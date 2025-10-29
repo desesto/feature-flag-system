@@ -1,13 +1,10 @@
 import { getUser } from '@/app/mainPage/_components/GetUser';
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
 
-    const response = await fetch(`http://localhost:3000/api/users/${id}`);
-
-    const response2 = await fetch(`http://localhost:3000/api/featureFlags`);
 
 export default async function Page({params}: {params: {id: string}}) {
+
     const user = await getUser(params.id);
+    const response2 = await fetch(`http://localhost:3000/api/featureFlags`);
 
     const featureFlags = await response2.json();
 
