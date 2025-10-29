@@ -1,4 +1,4 @@
-import type {User} from "@/types/user";
+import type {User} from "@/app/types/user";
 
 export async function getUser(id: string): Promise<User> {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';

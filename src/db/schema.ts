@@ -7,8 +7,11 @@ import {
     text,
     timestamp,
     integer,
-    foreignKey
+    foreignKey,
+    pgEnum,
 } from "drizzle-orm/pg-core";
+
+export const roleEnum = pgEnum("role", ["Product-Manager", "Developer"]);
 
 export const usersTable = pgTable(
     "users",
@@ -16,6 +19,7 @@ export const usersTable = pgTable(
         id: serial("id").primaryKey(),
         name: varchar("name", { length: 255 }),
         email: varchar("email", { length: 255 }),
+        role: roleEnum("role").notNull().default("Developer"),
     },
     (table) => ({
         email_unique: uniqueIndex("email_unique_idx").on(table.email),
