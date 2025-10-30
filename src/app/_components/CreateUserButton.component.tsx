@@ -31,7 +31,7 @@ export default function CreateUserButton() {
             </button>
 
             {showPopup && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="fixed inset-0 bg-black/84 backdrop-blur-xxs z-50 flex items-center justify-center">
                     <CreateUserPanel
                         SuccessAction={handleSuccess}
                         CancelAction={handleCancel}
