@@ -20,9 +20,12 @@ export default function CreateUserButton() {
 
     return (
         <>
+            <div className="text-sm mt-3">
+                Hvis du ikke har en bruger endnu, kan du oprette en her.
+            </div>
             <button
                 onClick={() => setShowPopup(true)}
-                className="border border-white bg-white text-black rounded-4xl cursor-pointer px-4 py-2"
+                className="border border-white bg-gray-800 hover:bg-cyan-500 font-bold text-whitefont-sans rounded-4xl cursor-pointer px-4 py-2 my-2"
             >
                 Opret bruger
             </button>

@@ -4,8 +4,8 @@ import Login from "@/app/_components/Login.component";
 export default function Page() {
     return (
         <div className="flex items-center justify-center">
-            <span className="text-center gap-4">
-                <h1> Jens & Clemens ff</h1>
+            <span className="text-center gap-4 mt-20">
+                <h1 className="font-pricedown text-pink-400 text-4xl"> Jens-Clemens FF</h1>
                 <Login/>
                 <CreateUserButton />
             </span>
