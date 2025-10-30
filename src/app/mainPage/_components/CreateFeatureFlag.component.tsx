@@ -29,37 +29,12 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
         deleted_at: ''
     });
 
-    const handleSubmit = async () => {
-        try {
-            const response = await fetch('/api/featureFlags', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(form),
-            });
-            console.log('Form payload:', form);
-            if (!response.ok) throw new Error('Failed to create feature flag');
+    const handleOpen = () => {
+        const time = new Date();
+        const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
+            .toISOString()
+            .slice(0, 16);
 
-            setForm({
-                user_id: userId,
-                name: '',
-                is_active: false,
-                description: '',
-                strategy: '',
-                start_time: '',
-                end_time: '',
-                created_at: local,
-                updated_at: '',
-                deleted_at: ''
-            });
-
-            setShowPopup(false)
-            router.refresh()
-        } catch (err) {
-            console.error('Error:', err);
-        }
-    };
-
-    const handleClose = () => {
         setForm({
             user_id: userId,
             name: '',
@@ -73,13 +48,31 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             deleted_at: ''
         });
 
-        setShowPopup(false);
+        setShowPopup(true);
+    };
+
+
+    const handleSubmit = async () => {
+        try {
+            const response = await fetch('/api/featureFlags', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(form),
+            });
+
+            if (!response.ok) throw new Error('Failed to create feature flag');
+
+            setShowPopup(false)
+            router.refresh()
+        } catch (err) {
+            console.error('Error:', err);
+        }
     };
 
     return (
         <>
             <button
-                onClick={() => setShowPopup(true)}
+                onClick={() => handleOpen()}
                 type="button"
                 className="border border-white bg-white text-black rounded-4xl cursor-pointer p-1"
             >
@@ -90,7 +83,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/84 backdrop-blur-xxs">
                     <div className="bg-gray-900 text-white p-6 rounded-2xl shadow-lg max-w-lg w-full relative">
                         <button
-                            onClick={() => handleClose()}
+                            onClick={() => setShowPopup(false)}
                             type="button"
                             className="absolute top-3 right-3 text-white hover:text-gray-300 text-xl font-bold"
                         >
@@ -116,12 +109,14 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                     type="checkbox"
                                     checked={form.is_active}
                                     onChange={(event) =>
-                                        setForm({ ...form, is_active: event.target.checked })
+                                        setForm({...form, is_active: event.target.checked})
                                     }
                                     className="sr-only peer"
                                 />
-                                <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-blue-600 transition-colors"></div>
-                                <div className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full peer-checked:translate-x-5 transition-transform"></div>
+                                <div
+                                    className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-blue-600 transition-colors"></div>
+                                <div
+                                    className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full peer-checked:translate-x-5 transition-transform"></div>
                             </div>
                         </label>
 
@@ -210,7 +205,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
 
                         <div className="flex justify-end gap-3 mt-6">
                             <button
-                                onClick={() => handleClose()}
+                                onClick={() => setShowPopup(false)}
                                 type="button"
                                 className="border border-gray-400 text-gray-300 rounded-lg px-4 py-2 hover:bg-gray-800"
                             >
