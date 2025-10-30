@@ -1,4 +1,4 @@
-import { getUser } from '@/app/mainPage/_components/GetUser';
+import { getUser} from "@/app/_components/UserService.component";
 import CreateFeatureFlag from "@/app/mainPage/_components/CreateFeatureFlag.component";
 
 
