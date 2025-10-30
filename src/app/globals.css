@@ -11,6 +11,7 @@
 
     /* GTA fonts fra next/font */
     --font-pricedown: var(--font-pricedown);
+    --font-bigbesty: var(--font-bigbesty);
 }
 
 @media (prefers-color-scheme: dark) {

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Bebas_Neue, Oswald } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -7,6 +6,11 @@ import "./globals.css";
 const pricedown = localFont({
     src: "./fonts/pricedown.otf",
     variable: "--font-pricedown",
+});
+
+const bigbesty = localFont({
+    src: "./fonts/bigbesty.otf",
+    variable: "--font-bigbesty",
 });
 
 export const metadata: Metadata = {
@@ -22,7 +26,8 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body
-            className={`${pricedown.variable} antialiased`}
+            className={`${pricedown.variable} ${bigbesty.variable} antialiased`}
+
         >
         {children}
         </body>
