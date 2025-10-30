@@ -29,6 +29,23 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     const { user_id, name, is_active, description, strategy, start_time, end_time, created_at, updated_at, deleted_at } = await req.json();
-    const newUser = await db.insert(featureFlagsTable).values({ user_id, name, is_active, description, strategy, start_time, end_time, created_at, updated_at, deleted_at }).returning();
-    return NextResponse.json(newUser[0]);
+    const parseDate = (v: string | null) => (v ? new Date(v) : null);
+
+    const newFlag = await db
+        .insert(featureFlagsTable)
+        .values({
+            user_id,
+            name,
+            is_active,
+            description,
+            strategy,
+            start_time: parseDate(start_time),
+            end_time: parseDate(end_time),
+            created_at: parseDate(created_at),
+            updated_at: parseDate(updated_at),
+            deleted_at: parseDate(deleted_at),
+        })
+        .returning();
+
+    return NextResponse.json(newFlag[0]);
 }

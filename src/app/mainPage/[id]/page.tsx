@@ -1,4 +1,5 @@
 import { getUser } from '@/app/mainPage/_components/GetUser';
+import CreateFeatureFlag from "@/app/mainPage/_components/CreateFeatureFlag.component";
 
 
 export default async function Page({params}: {params: {id: string}}) {
@@ -14,6 +15,7 @@ export default async function Page({params}: {params: {id: string}}) {
                 <h1>
                     Velkommen <strong>{user.name}</strong>
                 </h1>
+                <CreateFeatureFlag userId={user.id.toString()} />
             </div>
 
             <div className="flex flex-col mt-8 ml-5">
