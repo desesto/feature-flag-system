@@ -36,13 +36,13 @@ export default function Login() {
 
 
     return (
-        <div className="flex flex-col items-center justify-center gap-4 border-white border-b border-solid">
+        <div className="flex flex-col items-center justify-center gap-4 py-10 border-b ">
             <div>Vælg en bruger</div>
             <div className="flex gap-2">
                 <select
                     value={selectedUserId}
                     onChange={(e) => setSelectedUserId(e.target.value)}
-                    className="border border-white bg-white text-black cursor-pointer px-4 py-2"
+                    className="bg-white text-black cursor-pointer px-4 py-2"
                 >
                     <option value="">Vælg en bruger...</option>
                     {users.map((user) => (
@@ -54,7 +54,7 @@ export default function Login() {
                 <button
                     onClick={handleLogin}
                     disabled={!selectedUserId}
-                    className="px-4 py-2 bg-white text-black rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 text-white border rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-gray-800 hover:bg-cyan-500 font-bold text-whitefont-sans"
                 >
                     Login
                 </button>
