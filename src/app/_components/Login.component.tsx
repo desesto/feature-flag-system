@@ -4,6 +4,7 @@
 import {useEffect, useState} from "react";
 import type {User} from "@/app/types/user";
 import {useRouter} from "next/navigation";
+import {getUsers} from "@/app/_components/UserService.component";
 
 
 export default function Login() {
@@ -15,14 +16,10 @@ export default function Login() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch('/api/users');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch users');
-                }
-                const data: User[]= await response.json();
+                const data = await getUsers();
                 setUsers(data);
-            } catch (err) {
-                console.error('Error fetching users:', err);
+            } catch (error) {
+                console.error('Error fetching users:', error);
             }
         };
         fetchUsers();

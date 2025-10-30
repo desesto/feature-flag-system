@@ -29,3 +29,13 @@ export async function createUser(input: CreateUserInput): Promise<User> {
 
     return response.json();
 }
+
+export async function getUsers(): Promise<User[]> {
+    const response = await fetch('/api/users');
+
+    if (!response.ok) {
+        throw new Error('Kunne ikke hente brugere');
+    }
+
+    return response.json();
+}
