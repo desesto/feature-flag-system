@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import {createUser} from "@/app/_components/CreateUser.component";
+import {createUser} from "@/app/_components/UserService.component";
 
 type CreateUserPanelProps = {
     SuccessAction: (userId: number) => void;
