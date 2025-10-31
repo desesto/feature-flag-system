@@ -10,8 +10,7 @@ export default function CreateUserButton() {
     const router = useRouter();
 
     const handleSuccess = (userId: number) => {
-        setShowPopup(false);
-        router.push(`/mainPage/${userId}`);
+        router.push(`/${userId}`);
     };
 
     const handleCancel = () => {
@@ -33,8 +32,8 @@ export default function CreateUserButton() {
             {showPopup && (
                 <div className="fixed inset-0 bg-black/55 backdrop-blur-sm z-50 flex items-center justify-center">
                     <CreateUserPanel
-                        SuccessAction={handleSuccess}
-                        CancelAction={handleCancel}
+                        onSuccess={handleSuccess}
+                        onCancel={handleCancel}
                     />
                 </div>
             )}

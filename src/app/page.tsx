@@ -1,14 +1,5 @@
-import CreateUserButton from "@/app/_components/CreateUserButton.component";
-import Login from "@/app/_components/Login.component";
+import {redirect} from "next/navigation";
 
-export default function Page() {
-    return (
-        <div className="flex items-center justify-center">
-            <span className="text-center gap-4 mt-20">
-                <h1 className="font-bigbesty text-pink-400 text-4xl"> Jens-Clemens FF</h1>
-                <Login/>
-                <CreateUserButton />
-            </span>
-        </div>
-    )
+export default function LoginRedirect() {
+    redirect("/login");
 }

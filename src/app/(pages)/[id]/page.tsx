@@ -1,11 +1,13 @@
-import { getUser } from '@/app/mainPage/_components/GetUser';
-import CreateFeatureFlag from "@/app/mainPage/_components/CreateFeatureFlag.component";
+import CreateFeatureFlag from "@/components/createFeatureFlag/CreateFeatureFlag.component";
 
 
 export default async function Page({params}: {params: {id: string}}) {
 
-    const user = await getUser(params.id);
+    const response = await fetch(`http://localhost:3000/api/users/${params.id}`
+    );
     const response2 = await fetch(`http://localhost:3000/api/featureFlags`);
+
+    const user = await response.json();
 
     const featureFlags = await response2.json();
 

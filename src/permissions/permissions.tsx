@@ -1,4 +1,4 @@
-import type {User} from "@/app/types/user";
+import type {User} from "@/types/user";
 
 export type Permission =
     | 'feature_flags:create'

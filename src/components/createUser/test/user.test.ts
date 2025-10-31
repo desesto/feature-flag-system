@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { validateUserInput } from "@/app/_components/CreateUser.component"
-import type { CreateUserInput } from "@/app/types/user"
+import type { CreateUserInput } from "@/types/user"
+import {validateUserInput} from "@/components/createUser/validateUserInput.component";
 
 
 describe("validateUserInput", () => {

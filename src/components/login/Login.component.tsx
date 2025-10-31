@@ -2,9 +2,9 @@
 'use client';
 
 import {useEffect, useState} from "react";
-import type {User} from "@/app/types/user";
+import type {User} from "@/types/user";
 import {useRouter} from "next/navigation";
-import {getUsers} from "@/app/_components/UserService.component";
+
 
 
 export default function Login() {
@@ -16,18 +16,25 @@ export default function Login() {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const data = await getUsers();
+                const response = await fetch("/api/users");
+
+                if (!response.ok) {
+                    throw new Error("Kunne ikke hente brugere");
+                }
+
+                const data = await response.json();
                 setUsers(data);
             } catch (error) {
-                console.error('Error fetching users:', error);
+                console.error("Error fetching users:", error);
             }
         };
         fetchUsers();
     }, []);
 
+
     const handleLogin = () => {
         if (selectedUserId) {
-            router.push(`/mainPage/${selectedUserId}`);
+            router.push(`/${selectedUserId}`);
         }
     };
 
