@@ -52,6 +52,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                 deleted_at: ''
             });
 
+
             setShowPopup(false)
             router.refresh()
         } catch (err) {
@@ -138,21 +139,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             />
                         </label>
 
-                        <label className="flex flex-col gap-1 mb-3">
-                            Strategi:
-                            <select
-                                value={form.strategy}
-                                onChange={(event) =>
-                                    setForm({...form, strategy: event.target.value})
-                                }
-                                className="p-2 rounded border border-white bg-transparent text-white"
-                            >
-                                <option value="NO_STRATEGY">NO_STRATEGY</option>
-                                <option value="FUTURE_IMPLEMENTATIONS">
-                                    FUTURE_IMPLEMENTATIONS
-                                </option>
-                            </select>
-                        </label>
+
 
                         <label className="flex flex-col gap-1 mb-3">
                             Feature flagget skal slåes til:

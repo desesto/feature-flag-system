@@ -4,12 +4,12 @@ import "./globals.css";
 
 // Den RIGTIGE GTA font
 const pricedown = localFont({
-    src: "./fonts/pricedown.otf",
+    src: "../fonts/Pricedown.otf",
     variable: "--font-pricedown",
 });
 
 const bigbesty = localFont({
-    src: "./fonts/bigbesty.otf",
+    src: "../fonts/Bigbesty.otf",
     variable: "--font-bigbesty",
 });
 
