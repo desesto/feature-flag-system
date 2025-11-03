@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest"
-import type { CreateUserInput } from "@/types/user"
 import {validateUserInput} from "@/components/createUser/validateUserInput.component";
-
+import type { CreateUserInput } from "@/types/user"
 
 describe("validateUserInput", () => {
     it("returns error if name is less than 2 characters", () => {
@@ -34,7 +33,7 @@ describe("validateUserInput", () => {
 
         const actualOutput = validateUserInput(input)
 
-        expect(actualOutput).toBe("Email skal indeholde @")
+        expect(actualOutput).toBe("Email skal være gyldig og indeholde @")
     })
 
     it("returns null for valid input", () => {
