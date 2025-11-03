@@ -2,25 +2,28 @@
 
 import {useRouter} from "next/navigation";
 import {useState} from 'react';
+import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
+import type {CreateFeatureFlagInput} from "@/types/featureFlag";
 
 type CreateFeatureFlagProps = {
-    readonly userId: string
+    readonly userId: number
 }
 
 export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
     const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
+    const [showDateError, setShowDateError] = useState(false);
     const time = new Date();
     const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
         .toISOString()
         .slice(0, 16);
 
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<CreateFeatureFlagInput>({
         user_id: userId,
         name: '',
         is_active: false,
         description: '',
-        strategy: '',
+        strategy: 'NO_STRATEGY',
         start_time: '',
         end_time: '',
         created_at: local,
@@ -39,7 +42,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             name: '',
             is_active: false,
             description: '',
-            strategy: '',
+            strategy: 'NO_STRATEGY',
             start_time: '',
             end_time: '',
             created_at: local,
@@ -47,19 +50,24 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             deleted_at: ''
         });
 
+        setShowDateError(false)
         setShowPopup(true);
     };
 
 
     const handleSubmit = async () => {
         try {
-            const response = await fetch('/api/featureFlags', {
+            await fetch('/api/featureFlags', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(form),
             });
 
-            if (!response.ok) throw new Error('Failed to create feature flag');
+            const validationError = validateFeatureFlagInput(form);
+            if (validationError) {
+                setShowDateError(true)
+                return;
+            }
 
             setShowPopup(false)
             router.refresh()
@@ -137,7 +145,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             <select
                                 value={form.strategy}
                                 onChange={(event) =>
-                                    setForm({...form, strategy: event.target.value})
+                                    setForm({...form, strategy: event.target.value as "NO_STRATEGY" | "FUTURE_IMPLEMENTATIONS"})
                                 }
                                 className="p-2 rounded border border-white bg-transparent text-white"
                             >
@@ -170,6 +178,11 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                 }
                                 className="p-2 rounded border border-white bg-transparent text-white"
                             />
+                            {showDateError && (
+                                <p className="text-red-400">
+                                    Sluttidspunkt skal være efter starttidspunkt og begge skal angives
+                                </p>
+                            )}
                         </label>
 
                         <label className="flex flex-col gap-1 mb-3">
