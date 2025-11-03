@@ -10,6 +10,7 @@ import {
     foreignKey,
     pgEnum,
 } from "drizzle-orm/pg-core";
+import {relations} from "drizzle-orm";
 
 export const roleEnum = pgEnum("role", ["Product-Manager", "Developer"]);
 
@@ -49,3 +50,14 @@ export const featureFlagsTable = pgTable(
         }),
     })
 );
+
+export const usersRelations = relations(usersTable, ({ many }) => ({
+    featureFlags: many(featureFlagsTable),
+}));
+
+export const featureFlagsRelations = relations(featureFlagsTable, ({ one }) => ({
+    user: one(usersTable, {
+        fields: [featureFlagsTable.user_id],
+        references: [usersTable.id],
+    }),
+}));
