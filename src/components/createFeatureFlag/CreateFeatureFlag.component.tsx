@@ -81,7 +81,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             <button
                 onClick={() => handleOpen()}
                 type="button"
-                className="border border-white bg-white text-black rounded-4xl cursor-pointer p-1"
+                className="border border-green-500 bg-gray-800 hover:bg-green-500 font-bold text-whitefont-sans rounded-full cursor-pointer px-4 py-2 my-2"
             >
                 Opret feature flag
             </button>
