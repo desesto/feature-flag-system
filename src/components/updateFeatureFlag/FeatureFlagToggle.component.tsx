@@ -1,15 +1,16 @@
 'use client';
 
-
+import {useRouter} from "next/navigation";
 import {useState} from "react";
 
 export default function FeatureFlagToggle({ id, isActive, }: { id: number; isActive: boolean;
 }){
 
     const [active, setActive] = useState(isActive);
-
+    const router = useRouter();
 
     const handleToggle = async () => {
+
         const optimisticState = !active;
         setActive(optimisticState);
 
@@ -24,7 +25,7 @@ export default function FeatureFlagToggle({ id, isActive, }: { id: number; isAct
                 throw new Error("Failed to update feature flag");
             }
 
-            window.location.reload();
+            router.refresh()
 
             } catch (error) {
                 console.error("Error toggling feature flag:", error);
