@@ -23,6 +23,7 @@ export default async function Page({params}: {params: {id: string}}) {
             <div className="flex flex-col mt-8 ml-5">
                 <h2 className="font-bold">Feature Flags:</h2>
                 <ul className="border-white border-2 rounded-md p-2 mt-1 max-w-lg">
+                    {/*Lav dette til et komponent*/}
                     {featureFlags.map((flag: any) => (
                         <li className="border-b-2 border-gray-500 p-1" key={flag.id}>
                             <strong>{flag.name}</strong> - {flag.is_active ? "Active" : "Inactive"}
