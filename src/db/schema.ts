@@ -53,7 +53,6 @@ export const featureFlagsTable = pgTable(
 
 export const usersRelations = relations(usersTable, ({ many }) => ({
     featureFlags: many(featureFlagsTable),
-    // ☝️ ONE user can have MANY feature flags
 }));
 
 export const featureFlagsRelations = relations(featureFlagsTable, ({ one }) => ({
@@ -61,5 +60,4 @@ export const featureFlagsRelations = relations(featureFlagsTable, ({ one }) => (
         fields: [featureFlagsTable.user_id],
         references: [usersTable.id],
     }),
-    // ☝️ ONE feature flag belongs to ONE user
 }));
