@@ -1,3 +1,5 @@
+import FeatureFlagToggle from "@/components/updateFeatureFlag/FeatureFlagToggle.component";
+
 export default async function GetFeatureFlags() {
     const response2 = await fetch(`http://localhost:3000/api/featureFlags`);
 
@@ -7,7 +9,8 @@ export default async function GetFeatureFlags() {
         <ul className="border-white border-2 rounded-md p-2 mt-1 max-w-lg">
             {featureFlags.map((flag: any) => (
                 <li className="border-b-2 border-gray-500 p-1" key={flag.id}>
-                    <strong>{flag.name}</strong> - {flag.is_active ? "Active" : "Inactive"}
+                    <strong>{flag.name}</strong>
+                    <FeatureFlagToggle id={flag.id} isActive={flag.is_active} />
                     {flag.description && `: ${flag.description}`}{" "}
                     <em>(Created by {flag.user_name})</em>
                 </li>
