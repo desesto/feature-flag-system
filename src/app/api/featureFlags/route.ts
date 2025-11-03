@@ -53,15 +53,19 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
     const { id } = await req.json();
 
+    const currentFlag = await db
+        .select()
+        .from(featureFlagsTable)
+        .where(eq(featureFlagsTable.id, id));
+
     const updatedFlag = await db
         .update(featureFlagsTable)
         .set({
-            is_active: !featureFlagsTable.is_active
+            is_active: !currentFlag[0].is_active
         })
         .where(eq(featureFlagsTable.id, id))
         .returning();
 
     return NextResponse.json(updatedFlag[0]);
 }
-
 
