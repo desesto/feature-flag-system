@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 import FeatureFlagToggle from "@/components/updateFeatureFlag/FeatureFlagToggle.component";
 
 export default async function GetFeatureFlags() {
@@ -6,15 +7,31 @@ export default async function GetFeatureFlags() {
     const featureFlags = await response2.json();
 
     return (
-        <ul className="border-white border-2 rounded-md p-2 mt-1 max-w-lg">
-            {featureFlags.map((flag: any) => (
-                <li className="border-b-2 border-gray-500 p-1" key={flag.id}>
-                    <strong>{flag.name}</strong>
-                    <FeatureFlagToggle id={flag.id} isActive={flag.is_active} />
-                    {flag.description && `: ${flag.description}`}{" "}
-                    <em>(Created by {flag.user_name})</em>
-                </li>
-            ))}
-        </ul>
+        <div className="border-white border-2 rounded-md mt-4">
+
+            <div className="grid grid-cols-[minmax(200px,2fr)_200px_80px_100px] gap-4 p-3 font-bold border-b-2 border-gray-400 bg-gray-800">
+                <span>Name</span>
+                <span className="text-left">Strategy</span>
+                <span>Active</span>
+                <span>Actions</span>
+            </div>
+
+            <ul className="p-2">
+                {featureFlags.map((flag: any) => (
+                    <li
+                        className="border-b-2 border-gray-500 p-3 grid grid-cols-[minmax(100px,2fr)_220px_80px_100px] gap-2 items-center"
+                        key={flag.id}
+                    >
+                        <strong>{flag.name}</strong>
+                        <span className="text-gray-300 text-left">{flag.strategy || '—'}</span>
+                        <FeatureFlagToggle id={flag.id} isActive={flag.is_active} />
+                        <div className="flex gap-2 pr-1">
+                            <button className="text-blue-400 hover:underline outline px-1">Edit</button>
+                            <button className="text-red-400 hover:underline outline px-1">Delete</button>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
 }

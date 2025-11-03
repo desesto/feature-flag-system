@@ -10,16 +10,20 @@ export default async function Page({params}: {params: {id: string}}) {
 
 
     return (
-        <div className="flex flex-col">
-            <div className="flex items-center justify-center text-center gap-4">
+        <div className="mt-10 flex flex-col">
+            <div className="flex justify-center gap-4">
                 <h1>
                     Velkommen <strong>{user.name}</strong>
                 </h1>
-                <CreateFeatureFlag userId={user.id.toString()} />
             </div>
 
-            <div className="flex flex-col mt-8 ml-5">
-                <h2 className="font-bold">Feature Flags:</h2>
+
+
+            <div className=" mt-8 mx-40">
+                <h2 className="font-bold text-pink-400 text-2xl">Feature Flags:</h2>
+                <div className="mt-10">
+                <CreateFeatureFlag userId={user.id.toString()} />
+                </div>
                 <GetFeatureFlags/>
             </div>
         </div>
