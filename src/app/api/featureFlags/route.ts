@@ -49,3 +49,19 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(newFlag[0]);
 }
+
+export async function PATCH(req: NextRequest) {
+    const { id } = await req.json();
+
+    const updatedFlag = await db
+        .update(featureFlagsTable)
+        .set({
+            is_active: !featureFlagsTable.is_active
+        })
+        .where(eq(featureFlagsTable.id, id))
+        .returning();
+
+    return NextResponse.json(updatedFlag[0]);
+}
+
+
