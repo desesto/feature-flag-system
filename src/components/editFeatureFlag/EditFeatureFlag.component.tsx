@@ -1,15 +1,15 @@
 "use client";
 
-import {useRouter} from "next/navigation";
-import {useState} from 'react';
-import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
+import {useState} from "react";
 import type {CreateFeatureFlagInput} from "@/types/featureFlag";
+import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
+import {useRouter} from "next/navigation";
 
-type CreateFeatureFlagProps = {
-    readonly userId: number
+type EditFeatureFlagProps = {
+    readonly featureFlagId: number
 }
 
-export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
+export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
     const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
@@ -17,43 +17,41 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
     const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
         .toISOString()
         .slice(0, 16);
-
     const [form, setForm] = useState<CreateFeatureFlagInput>({
-        user_id: userId,
+        user_id: 0,
         name: '',
         is_active: false,
         description: '',
         strategy: 'NO_STRATEGY',
         start_time: '',
         end_time: '',
-        created_at: local,
+        created_at: '',
         updated_at: '',
         deleted_at: ''
     });
 
-    const handleOpen = () => {
-        const time = new Date();
-        const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
-            .toISOString()
-            .slice(0, 16);
+    const handleOpen = async () => {
+        const response = await fetch(`http://localhost:3000/api/featureFlags/${featureFlagId}`);
+
+        const featureFlag = await response.json();
 
         setForm({
-            user_id: userId,
-            name: '',
-            is_active: false,
-            description: '',
-            strategy: 'NO_STRATEGY',
-            start_time: '',
-            end_time: '',
-            created_at: local,
-            updated_at: '',
-            deleted_at: ''
+            user_id: featureFlag.userId,
+            name: featureFlag.name,
+            is_active: featureFlag.is_active,
+            description: featureFlag.description,
+            strategy: featureFlag.strategy,
+            start_time: featureFlag.start_time,
+            end_time: featureFlag.end_time,
+            created_at: featureFlag.created_at,
+            updated_at: featureFlag.updated_at,
+            deleted_at: featureFlag.deleted_at
         });
+        console.log("FEATURE FLAG:" , {...form})
 
         setShowDateError(false)
         setShowPopup(true);
     };
-
 
     const handleSubmit = async () => {
         const validationError = validateFeatureFlagInput(form);
@@ -61,15 +59,18 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             setShowDateError(true)
             return;
         }
+
+        //console.log("FEATURE FLAG:" , {...form})
+
         try {
             await fetch('/api/featureFlags', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(form),
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: featureFlagId, ...form, updated_at: local }),
             });
 
             setShowPopup(false)
-            router.refresh()
+            window.location.reload()
         } catch (err) {
             console.error('Error:', err);
         }
@@ -77,14 +78,9 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
 
     return (
         <>
-            <button
-                onClick={() => handleOpen()}
-                type="button"
-                className="border border-green-500 bg-gray-800 hover:bg-green-500 font-bold text-whitefont-sans rounded-full cursor-pointer px-4 py-2 my-2"
-            >
-                Opret feature flag
-            </button>
-
+        <div>
+            <button onClick={() => handleOpen()} type="button" className="text-blue-400 hover:underline outline px-1">Edit</button>
+        </div>
             {showPopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/84 backdrop-blur-xxs">
                     <div className="bg-gray-900 text-white p-6 rounded-2xl shadow-lg max-w-lg w-full relative">
@@ -96,7 +92,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             ✕
                         </button>
 
-                        <h2 className="text-xl font-bold mb-4">Lav feature flag</h2>
+                        <h2 className="text-xl font-bold mb-4">Redigér feature flag</h2>
 
                         <label className="flex flex-col gap-1 mb-3">
                             Navn:
@@ -159,7 +155,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             Feature flagget skal slåes til:
                             <input
                                 type="datetime-local"
-                                value={form.start_time}
+                                value={form.start_time.slice(0, 16)}
                                 onChange={(event) =>
                                     setForm({...form, start_time: event.target.value})
                                 }
@@ -171,7 +167,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={form.end_time}
+                                value={form.end_time.slice(0, 16)}
                                 onChange={(event) =>
                                     setForm({...form, end_time: event.target.value})
                                 }
@@ -182,6 +178,36 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                     Sluttidspunkt skal være efter starttidspunkt og begge skal angives
                                 </p>
                             )}
+                        </label>
+
+                        <label className="flex flex-col gap-1 mb-3">
+                            Oprettet den:
+                            <input
+                                type="datetime-local"
+                                value={form.created_at.slice(0, 16)}
+                                readOnly
+                                className="p-2 rounded border border-white bg-transparent text-white"
+                            />
+                        </label>
+
+                        <label className="flex flex-col gap-1 mb-3">
+                            Opdateret den:
+                            <input
+                                type="datetime-local"
+                                value={form.updated_at.slice(0, 16)}
+                                readOnly
+                                className="p-2 rounded border border-white bg-transparent text-white"
+                            />
+                        </label>
+
+                        <label className="flex flex-col gap-1 mb-3">
+                            Slettet den:
+                            <input
+                                type="datetime-local"
+                                value={form.deleted_at || ''}
+                                readOnly
+                                className="p-2 rounded border border-white bg-transparent text-white"
+                            />
                         </label>
 
                         <div className="flex justify-end gap-3 mt-6">
@@ -203,6 +229,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                     </div>
                 </div>
             )}
-        </>
+            </>
     );
 }
