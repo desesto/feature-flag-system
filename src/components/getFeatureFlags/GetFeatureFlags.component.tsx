@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 import FeatureFlagToggle from "@/components/updateFeatureFlag/FeatureFlagToggle.component";
+import EditFeatureFlag from "@/components/editFeatureFlag/EditFeatureFlag.component";
 
 export default async function GetFeatureFlags() {
     const response2 = await fetch(`http://localhost:3000/api/featureFlags`);
@@ -9,7 +9,8 @@ export default async function GetFeatureFlags() {
     return (
         <div className="border-white border-2 rounded-md mt-4">
 
-            <div className="grid grid-cols-[minmax(200px,2fr)_200px_80px_100px] gap-4 p-3 font-bold border-b-2 border-gray-400 bg-gray-800">
+            <div
+                className="grid grid-cols-[minmax(200px,2fr)_200px_80px_100px] gap-4 p-3 font-bold border-b-2 border-gray-400 bg-gray-800">
                 <span>Name</span>
                 <span className="text-left">Strategy</span>
                 <span>Active</span>
@@ -24,10 +25,10 @@ export default async function GetFeatureFlags() {
                     >
                         <strong>{flag.name}</strong>
                         <span className="text-gray-300 text-left">{flag.strategy || '—'}</span>
-                        <FeatureFlagToggle id={flag.id} isActive={flag.is_active} />
+                        <FeatureFlagToggle flag={flag} featureFlagId={flag.id} isActive={flag.is_active}/>
                         <div className="flex gap-2 pr-1">
-                            <button className="text-blue-400 bg-black hover:underline outline px-1">Edit</button>
-                            <button className="text-red-400 bg-black hover:underline outline px-1">Delete</button>
+                            <EditFeatureFlag featureFlagId={flag.id}/>
+                            <button type="button" className="text-red-400 hover:underline outline px-1">Delete</button>
                         </div>
                     </li>
                 ))}

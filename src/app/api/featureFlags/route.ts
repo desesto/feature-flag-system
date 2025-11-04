@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
 import { drizzle } from "drizzle-orm/node-postgres";
+import { NextRequest, NextResponse } from "next/server";
 import {featureFlagsTable} from "@/db/schema";
 import * as schema from "@/db/schema";
+import {asc} from "drizzle-orm";
 import {eq} from "drizzle-orm/sql/expressions/conditions";
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
@@ -12,6 +13,7 @@ export async function GET(req: NextRequest) {
         with: {
             user: true,
         },
+        orderBy: [asc(featureFlagsTable.name)],
     });
 
     return NextResponse.json(featureFlags);
@@ -41,21 +43,39 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-    const { id } = await req.json();
+    const body = await req.json();
+    const { id, ...updates } = body;
 
-    const currentFlag = await db
-        .select()
-        .from(featureFlagsTable)
-        .where(eq(featureFlagsTable.id, id));
+    if (!id) {
+        return NextResponse.json({ error: "Missing ID" }, { status: 400 });
+    }
+
+    const parseDate = (v: string | null | undefined) => (v ? new Date(v) : undefined);
+
+
+    const updateData = Object.fromEntries(
+        Object.entries({
+            name: updates.name,
+            is_active: updates.is_active,
+            description: updates.description,
+            strategy: updates.strategy,
+            start_time: parseDate(updates.start_time),
+            end_time: parseDate(updates.end_time),
+            updated_at: new Date(),
+        }).filter(([_, value]) => value !== undefined)
+    );
 
     const updatedFlag = await db
         .update(featureFlagsTable)
-        .set({
-            is_active: !currentFlag[0].is_active
-        })
+        .set(updateData)
         .where(eq(featureFlagsTable.id, id))
         .returning();
 
+    if (updatedFlag.length === 0) {
+        return NextResponse.json({ error: "Feature flag not found" }, { status: 404 });
+    }
+
     return NextResponse.json(updatedFlag[0]);
 }
+
 
