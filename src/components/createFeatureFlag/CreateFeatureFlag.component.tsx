@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {useRouter} from "next/navigation";
 import {useState} from 'react';
@@ -67,12 +67,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(form),
             });
-
-            const validationError = validateFeatureFlagInput(form);
-            if (validationError) {
-                setShowDateError(true)
-                return;
-            }
 
             setShowPopup(false)
             router.refresh()
