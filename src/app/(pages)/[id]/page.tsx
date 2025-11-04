@@ -19,7 +19,7 @@ export default async function Page({params}: {params: {id: string}}) {
 
 
 
-            <div className=" mt-8 mx-40">
+            <div className=" mt-8 mx-180">
                 <h2 className="font-bold text-pink-400 text-2xl">Feature Flags:</h2>
                 <div className="mt-10">
                 <CreateFeatureFlag userId={user.id.toString()} />

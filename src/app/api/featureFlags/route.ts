@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { drizzle } from "drizzle-orm/node-postgres";
 import {featureFlagsTable} from "@/db/schema";
 import * as schema from "@/db/schema";
+import {eq} from "drizzle-orm/sql/expressions/conditions";
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 
