@@ -20,9 +20,10 @@ export const CreateFeatureFlagSchema = object({
     name: string(),
     is_active: boolean(),
     description: optional(nullable(string())),
-    strategy: optional(picklist(['NO_STRATEGY', 'FUTURE_IMPLEMENTATIONS']), 'NO_STRATEGY'),  // ← Default her
+    strategy: optional(picklist(['NO_STRATEGY', 'FUTURE_IMPLEMENTATIONS']), 'NO_STRATEGY'),
     start_time: optional(nullable(string())),
     end_time: optional(nullable(string())),
+    created_at: string(),
 });
 
 export const UpdateFeatureFlagSchema = object({
