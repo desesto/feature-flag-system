@@ -1,7 +1,6 @@
-import {CreateFeatureFlagInput, EditFeatureFlagInput} from '@/types/featureFlag';
-import EditFeatureFlag from "@/components/editFeatureFlag/EditFeatureFlag.component";
+import type {CreateFeatureFlagDto, EditFeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 
-export function validateFeatureFlagInput(input: CreateFeatureFlagInput | EditFeatureFlagInput): string | null {
+export function validateFeatureFlagInput(input: CreateFeatureFlagDto | EditFeatureFlagDto): string | null {
     if (!input.name || input.name.trim().length < 2) {
         return 'Feature flaggets navn skal være mindst 2 tegn';
     }

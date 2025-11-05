@@ -8,18 +8,32 @@ import {parse} from "valibot";
 const db = drizzle(process.env.DATABASE_URL!);
 
 export async function GET(req: NextRequest) {
-    const users = await db.select().from(usersTable);
+    try {
+        const users = await db.select().from(usersTable);
 
-    const validatedUsers = parse(GetUsersSchema, users);
+        const validatedUsers = parse(GetUsersSchema, users);
 
-    return NextResponse.json(users);
+        return NextResponse.json(validatedUsers);
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
 }
 
 export async function POST(req: NextRequest) {
-    const body= await req.json();
+    try {
+        const body = await req.json();
 
-    const validatedData = parse(CreateUserSchema, body);
+        const validatedData = parse(CreateUserSchema, body);
 
-    const newUser = await db.insert(usersTable).values(validatedData).returning();
-    return NextResponse.json(newUser[0]);
+        const newUser = await db
+            .insert(usersTable)
+            .values(validatedData)
+            .returning();
+
+        return NextResponse.json(newUser[0]);
+    } catch (error) {
+        console.error("Error creating user:", error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
 }

@@ -3,6 +3,8 @@
 import {useState} from "react";
 import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
 import {EditFeatureFlagInput} from "@/types/featureFlag";
+import {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
+import type {EditFeatureFlagSchema} from "@/lib/schemas/featureFlag.schema";
 
 type EditFeatureFlagProps = {
     readonly featureFlagId: number
@@ -15,7 +17,8 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
     const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
         .toISOString()
         .slice(0, 16);
-    const [form, setForm] = useState<EditFeatureFlagInput>({
+    const [form, setForm] = useState<EditFeatureFlagDto>({
+        id: featureFlagId,
         user_id: 0,
         name: '',
         is_active: false,
@@ -23,6 +26,8 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
         strategy: 'NO_STRATEGY',
         start_time: '',
         end_time: '',
+    });
+    const [timestamps, setTimestamps] = useState<{ created_at: string; updated_at: string }>({
         created_at: '',
         updated_at: '',
     });
@@ -30,18 +35,22 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
     const handleOpen = async () => {
         const response = await fetch(`http://localhost:3000/api/featureFlags/${featureFlagId}`);
 
-        const featureFlag = await response.json();
+        const featureFlag: FeatureFlagDto = await response.json();
+
 
         setForm({
-            user_id: featureFlag.userId,
+            id: featureFlag.id,
+            user_id: featureFlag.user_id,
             name: featureFlag.name,
             is_active: featureFlag.is_active,
             description: featureFlag.description,
-            strategy: featureFlag.strategy,
-            start_time: featureFlag.start_time,
-            end_time: featureFlag.end_time,
-            created_at: featureFlag.created_at,
-            updated_at: featureFlag.updated_at,
+            strategy: featureFlag.strategy ?? 'NO_STRATEGY',
+            start_time: featureFlag.start_time ?? null,
+            end_time: featureFlag.end_time ?? null,
+        });
+        setTimestamps({
+            created_at: featureFlag.created_at ?? '',
+            updated_at: featureFlag.updated_at ?? '',
         });
         console.log("FEATURE FLAG:" , {...form})
 
@@ -56,13 +65,11 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
             return;
         }
 
-        //console.log("FEATURE FLAG:" , {...form})
-
         try {
             await fetch('/api/featureFlags', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: featureFlagId, ...form, updated_at: local }),
+                body: JSON.stringify({...form, updated_at: local }),
             });
 
             setShowPopup(false)
@@ -133,7 +140,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                         <label className="flex flex-col gap-1 mb-3">
                             Strategi:
                             <select
-                                value={form.strategy}
+                                value={form.strategy ?? 'NO_STRATEGY'}
                                 onChange={(event) =>
                                     setForm({...form, strategy: event.target.value as "NO_STRATEGY" | "FUTURE_IMPLEMENTATIONS"})
                                 }
@@ -150,7 +157,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                             Feature flagget skal slåes til:
                             <input
                                 type="datetime-local"
-                                value={form.start_time.slice(0, 16)}
+                                value={form.start_time?.slice(0, 16) ?? ""}
                                 onChange={(event) =>
                                     setForm({...form, start_time: event.target.value})
                                 }
@@ -162,7 +169,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={form.end_time.slice(0, 16)}
+                                value={form.end_time?.slice(0, 16) ?? "" }
                                 onChange={(event) =>
                                     setForm({...form, end_time: event.target.value})
                                 }
@@ -179,7 +186,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                             Oprettet den:
                             <input
                                 type="datetime-local"
-                                value={form.created_at.slice(0, 16)}
+                                value={timestamps.created_at.slice(0, 16)}
                                 readOnly
                                 className="p-2 rounded border border-white bg-transparent text-white"
                             />
@@ -189,7 +196,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                             Opdateret den:
                             <input
                                 type="datetime-local"
-                                value={form.updated_at?.slice(0, 16) ?? ''}
+                                value={timestamps.updated_at?.slice(0, 16) ?? ''}
                                 readOnly
                                 className="p-2 rounded border border-white bg-transparent text-white"
                             />

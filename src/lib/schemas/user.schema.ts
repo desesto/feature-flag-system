@@ -1,9 +1,9 @@
-import {array, number, object, optional, picklist, pipe, string, trim} from "valibot";
+import {array, nullable, number, object, optional, picklist, pipe, string, trim} from "valibot";
 
 export const UserSchema = object({
     id: number(),
-    name: string(),
-    email: string(),
+    name: nullable(string()),
+    email: nullable(string()),
     role: picklist(["Product-Manager", "Developer"]),
 })
 

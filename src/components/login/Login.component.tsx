@@ -2,14 +2,14 @@
 'use client';
 
 import {useEffect, useState} from "react";
-import type {User} from "@/types/user";
 import {useRouter} from "next/navigation";
+import {GetUsersDto} from "@/lib/dto/user.dto";
 
 
 
 export default function Login() {
 
-    const [users, setUsers] = useState<User[]>([]);
+    const [users, setUsers] = useState<GetUsersDto>([]);
     const [selectedUserId, setSelectedUserId] = useState('');
     const router = useRouter();
 
@@ -22,7 +22,7 @@ export default function Login() {
                     throw new Error("Kunne ikke hente brugere");
                 }
 
-                const data = await response.json();
+                const data : GetUsersDto = await response.json();
                 setUsers(data);
             } catch (error) {
                 console.error("Error fetching users:", error);
@@ -56,6 +56,7 @@ export default function Login() {
                     ))}
                 </select>
                 <button
+                    type="button"
                     onClick={handleLogin}
                     disabled={!selectedUserId}
                     className="px-4 py-2 text-white border rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-gray-800 hover:bg-cyan-500 font-bold text-whitefont-sans"

@@ -4,6 +4,8 @@ import {featureFlagsTable} from "@/db/schema";
 import * as schema from "@/db/schema";
 import {asc} from "drizzle-orm";
 import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
+import {parse} from "valibot";
+import {CreateFeatureFlagSchema, EditFeatureFlagSchema, GetFeatureFlagsSchema} from "@/lib/schemas/featureFlag.schema";
 
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
@@ -13,38 +15,53 @@ export async function GET() {
     const flags = await db.query.featureFlagsTable.findMany({
         where: (flag, { isNull }) => isNull(flag.deleted_at),
         with: { user: true },
-      orderBy: [asc(featureFlagsTable.name)],
+        orderBy: [asc(featureFlagsTable.name)],
     });
 
-    return NextResponse.json(flags);
+    const serializedFlags = flags.map(flag => ({
+        ...flag,
+        start_time: flag.start_time?.toISOString() ?? null,
+        end_time: flag.end_time?.toISOString() ?? null,
+        created_at: flag.created_at?.toISOString() ?? null,
+        updated_at: flag.updated_at?.toISOString() ?? null,
+        deleted_at: flag.deleted_at?.toISOString() ?? null,
+    }));
+
+
+    const validated = parse(GetFeatureFlagsSchema, serializedFlags);
+
+    return NextResponse.json(validated);
 }
 
 export async function POST(req: NextRequest) {
-    const { user_id, name, is_active, description, strategy, start_time, end_time, created_at, updated_at, deleted_at } = await req.json();
+    const body = await req.json();
     const parseDate = (v: string | null) => (v ? new Date(v) : null);
+
+    const validatedData = parse(CreateFeatureFlagSchema, body)
 
     const newFlag = await db
         .insert(featureFlagsTable)
         .values({
-            user_id,
-            name,
-            is_active,
-            description,
-            strategy,
-            start_time: parseDate(start_time),
-            end_time: parseDate(end_time),
-            created_at: parseDate(created_at),
-            updated_at: parseDate(updated_at),
-            deleted_at: parseDate(deleted_at),
+            user_id: validatedData.user_id,
+            name: validatedData.name,
+            is_active: validatedData.is_active,
+            description: validatedData.description,
+            strategy: validatedData.strategy,
+            start_time: parseDate(validatedData.start_time ?? null),
+            end_time: parseDate(validatedData.end_time ?? null),
         })
         .returning();
 
+
     return NextResponse.json(newFlag[0]);
+
 }
 
 export async function PATCH(req: NextRequest) {
     const body = await req.json();
-    const { id, ...updates } = body;
+
+    const validated = parse(EditFeatureFlagSchema, body)
+    const { id, ...updates } = validated;
 
     if (!id) {
         return NextResponse.json({ error: "Missing ID" }, { status: 400 });

@@ -3,7 +3,7 @@
 import {useRouter} from "next/navigation";
 import {useState} from 'react';
 import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
-import type {CreateFeatureFlagInput} from "@/types/featureFlag";
+import {CreateFeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 
 type CreateFeatureFlagProps = {
     readonly userId: number
@@ -18,15 +18,14 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
         .toISOString()
         .slice(0, 16);
 
-    const [form, setForm] = useState<CreateFeatureFlagInput>({
+    const [form, setForm] = useState<CreateFeatureFlagDto>({
         user_id: userId,
         name: '',
         is_active: false,
         description: '',
         strategy: 'NO_STRATEGY',
-        start_time: '',
-        end_time: '',
-        created_at: local,
+        start_time: null,
+        end_time: null,
     });
 
     const handleOpen = () => {
@@ -41,9 +40,8 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             is_active: false,
             description: '',
             strategy: 'NO_STRATEGY',
-            start_time: '',
-            end_time: '',
-            created_at: local,
+            start_time: null,
+            end_time: null,
         });
 
         setShowDateError(false)
@@ -154,7 +152,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             Feature flagget skal slåes til:
                             <input
                                 type="datetime-local"
-                                value={form.start_time}
+                                value={form.start_time ?? ''}
                                 onChange={(event) =>
                                     setForm({...form, start_time: event.target.value})
                                 }
@@ -166,7 +164,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={form.end_time}
+                                value={form.end_time ?? ''}
                                 onChange={(event) =>
                                     setForm({...form, end_time: event.target.value})
                                 }
