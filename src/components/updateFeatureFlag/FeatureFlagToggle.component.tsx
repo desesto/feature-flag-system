@@ -3,8 +3,7 @@
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 
-export default function FeatureFlagToggle({ id, isActive, }: { id: number; isActive: boolean;
-}){
+export default function FeatureFlagToggle({ id, isActive, }: { id: number; isActive: boolean; }){
 
     const [active, setActive] = useState(isActive);
     const router = useRouter();

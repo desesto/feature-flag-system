@@ -2,19 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { drizzle } from "drizzle-orm/node-postgres";
 import {featureFlagsTable} from "@/db/schema";
 import * as schema from "@/db/schema";
-import {eq} from "drizzle-orm/sql/expressions/conditions";
+import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
+
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 
-export async function GET(req: NextRequest) {
-
-    const featureFlags = await db.query.featureFlagsTable.findMany({
-        with: {
-            user: true,
-        },
+export async function GET() {
+    const flags = await db.query.featureFlagsTable.findMany({
+        where: (flag, { isNull }) => isNull(flag.deleted_at),
+        with: { user: true },
     });
 
-    return NextResponse.json(featureFlags);
+    return NextResponse.json(flags);
 }
 
 export async function POST(req: NextRequest) {
@@ -58,4 +57,6 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json(updatedFlag[0]);
 }
+
+
 
