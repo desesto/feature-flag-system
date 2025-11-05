@@ -27,8 +27,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
         start_time: '',
         end_time: '',
         created_at: local,
-        updated_at: '',
-        deleted_at: ''
     });
 
     const handleOpen = () => {
@@ -46,8 +44,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             start_time: '',
             end_time: '',
             created_at: local,
-            updated_at: '',
-            deleted_at: ''
         });
 
         setShowDateError(false)
