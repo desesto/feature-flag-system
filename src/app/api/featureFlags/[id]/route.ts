@@ -1,5 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
-import { featureFlagsTable } from "@/db/schema";
+import * as schema from "@/db/schema";
+import {featureFlagsTable} from "@/db/schema"
 import {eq} from "drizzle-orm/sql/expressions/conditions";
 import {drizzle} from "drizzle-orm/node-postgres";
 
@@ -21,4 +22,20 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 
     return NextResponse.json(featureFlag[0]);
+  }
+
+
+
+export async function DELETE(req: NextRequest) {
+    const { id } = await req.json();
+
+    const deletedFlag = await db
+        .update(featureFlagsTable)
+        .set({
+            deleted_at: new Date()
+        })
+        .where(eq(featureFlagsTable.id, id))
+        .returning();
+
+    return NextResponse.json(deletedFlag[0]);
 }

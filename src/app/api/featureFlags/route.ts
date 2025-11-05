@@ -5,19 +5,20 @@ import * as schema from "@/db/schema";
 import {asc} from "drizzle-orm";
 import {eq} from "drizzle-orm/sql/expressions/conditions";
 import {asc} from "drizzle-orm";
+import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
+
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 
-export async function GET(req: NextRequest) {
-
-    const featureFlags = await db.query.featureFlagsTable.findMany({
-        with: {
-            user: true,
-        },
-        orderBy: [asc(featureFlagsTable.name)],
+    
+export async function GET() {
+    const flags = await db.query.featureFlagsTable.findMany({
+        where: (flag, { isNull }) => isNull(flag.deleted_at),
+        with: { user: true },
+      orderBy: [asc(featureFlagsTable.name)],
     });
 
-    return NextResponse.json(featureFlags);
+    return NextResponse.json(flags);
 }
 
 export async function POST(req: NextRequest) {
@@ -78,5 +79,6 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json(updatedFlag[0]);
 }
+
 
 
