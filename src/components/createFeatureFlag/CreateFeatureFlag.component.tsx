@@ -3,7 +3,7 @@
 import {useRouter} from "next/navigation";
 import {useState} from 'react';
 import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
-import type {CreateFeatureFlagInput} from "@/types/featureFlag";
+import type {CreateFeatureFlagInput, EditFeatureFlagInput} from "@/types/featureFlag";
 
 type CreateFeatureFlagProps = {
     readonly userId: number
@@ -18,7 +18,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
         .toISOString()
         .slice(0, 16);
 
-    const [form, setForm] = useState<CreateFeatureFlagInput>({
+    const [form, setForm] = useState<EditFeatureFlagInput>({
         user_id: userId,
         name: '',
         is_active: false,
@@ -28,7 +28,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
         end_time: '',
         created_at: local,
         updated_at: '',
-        deleted_at: ''
     });
 
     const handleOpen = () => {
@@ -47,7 +46,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             end_time: '',
             created_at: local,
             updated_at: '',
-            deleted_at: ''
         });
 
         setShowDateError(false)

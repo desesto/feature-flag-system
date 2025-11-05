@@ -1,23 +1,21 @@
 "use client";
 
 import {useState} from "react";
-import type {CreateFeatureFlagInput} from "@/types/featureFlag";
 import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
-import {useRouter} from "next/navigation";
+import {EditFeatureFlagInput} from "@/types/featureFlag";
 
 type EditFeatureFlagProps = {
     readonly featureFlagId: number
 }
 
 export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
-    const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
     const time = new Date();
     const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
         .toISOString()
         .slice(0, 16);
-    const [form, setForm] = useState<CreateFeatureFlagInput>({
+    const [form, setForm] = useState<EditFeatureFlagInput>({
         user_id: 0,
         name: '',
         is_active: false,
@@ -27,7 +25,6 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
         end_time: '',
         created_at: '',
         updated_at: '',
-        deleted_at: ''
     });
 
     const handleOpen = async () => {
@@ -45,7 +42,6 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
             end_time: featureFlag.end_time,
             created_at: featureFlag.created_at,
             updated_at: featureFlag.updated_at,
-            deleted_at: featureFlag.deleted_at
         });
         console.log("FEATURE FLAG:" , {...form})
 
@@ -194,7 +190,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                             Opdateret den:
                             <input
                                 type="datetime-local"
-                                value={form.updated_at.slice(0, 16)}
+                                value={form.updated_at?.slice(0, 16) ?? ''}
                                 readOnly
                                 className="p-2 rounded border border-white bg-transparent text-white"
                             />
