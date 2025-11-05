@@ -115,8 +115,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                     }
                                     className="sr-only peer"
                                 />
-                                <div
-                                    className="w-11 h-6 bg-red-800 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                                <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-green-600 transition-colors"></div>
                                 <div
                                     className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full peer-checked:translate-x-5 transition-transform"></div>
                             </div>
