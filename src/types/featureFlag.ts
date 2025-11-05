@@ -22,7 +22,8 @@ export type CreateFeatureFlagInput = {
     strategy: "NO_STRATEGY" | "FUTURE_IMPLEMENTATIONS",
     start_time: string,
     end_time: string,
-    created_at: string,
+    created_at: string
+    updated_at: string,
 };
 
 

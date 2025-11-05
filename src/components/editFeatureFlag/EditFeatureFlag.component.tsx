@@ -27,7 +27,6 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
         end_time: '',
         created_at: '',
         updated_at: '',
-        deleted_at: ''
     });
 
     const handleOpen = async () => {
@@ -45,7 +44,6 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
             end_time: featureFlag.end_time,
             created_at: featureFlag.created_at,
             updated_at: featureFlag.updated_at,
-            deleted_at: featureFlag.deleted_at
         });
         console.log("FEATURE FLAG:" , {...form})
 
