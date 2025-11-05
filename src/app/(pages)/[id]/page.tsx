@@ -2,10 +2,12 @@ import CreateFeatureFlag from "@/components/createFeatureFlag/CreateFeatureFlag.
 import GetFeatureFlags from "@/components/getFeatureFlags/GetFeatureFlags.component";
 
 
-export default async function Page({params}: {params: {id: string}}) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
 
-    const response = await fetch(`http://localhost:3000/api/users/${params.id}`);
-
+    const response = await fetch(`http://localhost:3000/api/users/${id}`, {
+        cache: "no-store",
+    });
     const user = await response.json();
 
 
@@ -22,7 +24,7 @@ export default async function Page({params}: {params: {id: string}}) {
             <div className=" mt-8 mx-auto">
                 <h2 className="font-bold text-pink-400 text-2xl">Feature Flags:</h2>
                 <div className="mt-10">
-                <CreateFeatureFlag userId={user.id.toString()} />
+                <CreateFeatureFlag userId={user.id} />
                 </div>
                 <GetFeatureFlags/>
             </div>

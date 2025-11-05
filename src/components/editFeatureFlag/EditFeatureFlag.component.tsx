@@ -1,15 +1,15 @@
 "use client";
 
-import {useRouter} from "next/navigation";
-import {useState} from 'react';
-import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
+import {useState} from "react";
 import type {CreateFeatureFlagInput} from "@/types/featureFlag";
+import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
+import {useRouter} from "next/navigation";
 
-type CreateFeatureFlagProps = {
-    readonly userId: number
+type EditFeatureFlagProps = {
+    readonly featureFlagId: number
 }
 
-export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
+export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
     const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
@@ -17,43 +17,41 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
     const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
         .toISOString()
         .slice(0, 16);
-
     const [form, setForm] = useState<CreateFeatureFlagInput>({
-        user_id: userId,
+        user_id: 0,
         name: '',
         is_active: false,
         description: '',
         strategy: 'NO_STRATEGY',
         start_time: '',
         end_time: '',
-        created_at: local,
+        created_at: '',
         updated_at: '',
         deleted_at: ''
     });
 
-    const handleOpen = () => {
-        const time = new Date();
-        const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
-            .toISOString()
-            .slice(0, 16);
+    const handleOpen = async () => {
+        const response = await fetch(`http://localhost:3000/api/featureFlags/${featureFlagId}`);
+
+        const featureFlag = await response.json();
 
         setForm({
-            user_id: userId,
-            name: '',
-            is_active: false,
-            description: '',
-            strategy: 'NO_STRATEGY',
-            start_time: '',
-            end_time: '',
-            created_at: local,
-            updated_at: '',
-            deleted_at: ''
+            user_id: featureFlag.userId,
+            name: featureFlag.name,
+            is_active: featureFlag.is_active,
+            description: featureFlag.description,
+            strategy: featureFlag.strategy,
+            start_time: featureFlag.start_time,
+            end_time: featureFlag.end_time,
+            created_at: featureFlag.created_at,
+            updated_at: featureFlag.updated_at,
+            deleted_at: featureFlag.deleted_at
         });
+        console.log("FEATURE FLAG:" , {...form})
 
         setShowDateError(false)
         setShowPopup(true);
     };
-
 
     const handleSubmit = async () => {
         const validationError = validateFeatureFlagInput(form);
@@ -61,15 +59,18 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             setShowDateError(true)
             return;
         }
+
+        //console.log("FEATURE FLAG:" , {...form})
+
         try {
             await fetch('/api/featureFlags', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(form),
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: featureFlagId, ...form, updated_at: local }),
             });
 
             setShowPopup(false)
-            router.refresh()
+            window.location.reload()
         } catch (err) {
             console.error('Error:', err);
         }
@@ -77,26 +78,21 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
 
     return (
         <>
-            <button
-                onClick={() => handleOpen()}
-                type="button"
-                className="border border-green-500 bg-gray-800 hover:bg-green-500 font-bold text-whitefont-sans rounded-full cursor-pointer px-4 py-2 my-2"
-            >
-                Opret feature flag
-            </button>
-
+        <div>
+            <button onClick={() => handleOpen()} type="button" className="text-blue-400 hover:underline outline px-1">Edit</button>
+        </div>
             {showPopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/84 backdrop-blur-xxs">
-                    <div className="bg-gray-900 p-6 rounded-2xl shadow-lg max-w-lg w-full relative [color-scheme:dark]">
+                    <div className="bg-gray-900 text-white p-6 rounded-2xl shadow-lg max-w-lg w-full relative">
                         <button
                             onClick={() => setShowPopup(false)}
                             type="button"
-                            className="absolute top-3 right-3 hover:text-gray-300 text-xl font-bold"
+                            className="absolute top-3 right-3 text-white hover:text-gray-300 text-xl font-bold"
                         >
                             ✕
                         </button>
 
-                        <h2 className="text-xl font-bold mb-4">Lav feature flag</h2>
+                        <h2 className="text-xl font-bold mb-4">Redigér feature flag</h2>
 
                         <label className="flex flex-col gap-1 mb-3">
                             Navn:
@@ -104,7 +100,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                 type="text"
                                 value={form.name}
                                 onChange={(event) => setForm({...form, name: event.target.value})}
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border border-white bg-transparent text-white"
                             />
                         </label>
 
@@ -120,7 +116,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                     className="sr-only peer"
                                 />
                                 <div
-                                    className="w-11 h-6 bg-red-800 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                                    className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-blue-600 transition-colors"></div>
                                 <div
                                     className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full peer-checked:translate-x-5 transition-transform"></div>
                             </div>
@@ -135,7 +131,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                 onChange={(event) =>
                                     setForm({...form, description: event.target.value})
                                 }
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border border-white bg-transparent text-white"
                             />
                         </label>
 
@@ -146,7 +142,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                 onChange={(event) =>
                                     setForm({...form, strategy: event.target.value as "NO_STRATEGY" | "FUTURE_IMPLEMENTATIONS"})
                                 }
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border border-white bg-transparent text-white"
                             >
                                 <option value="NO_STRATEGY">NO_STRATEGY</option>
                                 <option value="FUTURE_IMPLEMENTATIONS">
@@ -159,11 +155,11 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             Feature flagget skal slåes til:
                             <input
                                 type="datetime-local"
-                                value={form.start_time}
+                                value={form.start_time.slice(0, 16)}
                                 onChange={(event) =>
                                     setForm({...form, start_time: event.target.value})
                                 }
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border border-white bg-transparent text-white"
                             />
                         </label>
 
@@ -171,17 +167,37 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={form.end_time}
+                                value={form.end_time.slice(0, 16)}
                                 onChange={(event) =>
                                     setForm({...form, end_time: event.target.value})
                                 }
-                                className="p-2 rounded border bg-transparent [color-scheme:dark]"
+                                className="p-2 rounded border border-white bg-transparent text-white"
                             />
                             {showDateError && (
                                 <p className="text-red-400">
                                     Sluttidspunkt skal være efter starttidspunkt og begge skal angives
                                 </p>
                             )}
+                        </label>
+
+                        <label className="flex flex-col gap-1 mb-3">
+                            Oprettet den:
+                            <input
+                                type="datetime-local"
+                                value={form.created_at.slice(0, 16)}
+                                readOnly
+                                className="p-2 rounded border border-white bg-transparent text-white"
+                            />
+                        </label>
+
+                        <label className="flex flex-col gap-1 mb-3">
+                            Opdateret den:
+                            <input
+                                type="datetime-local"
+                                value={form.updated_at.slice(0, 16)}
+                                readOnly
+                                className="p-2 rounded border border-white bg-transparent text-white"
+                            />
                         </label>
 
                         <div className="flex justify-end gap-3 mt-6">
@@ -203,6 +219,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                     </div>
                 </div>
             )}
-        </>
+            </>
     );
 }
