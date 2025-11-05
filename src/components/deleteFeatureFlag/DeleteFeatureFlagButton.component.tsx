@@ -14,7 +14,7 @@ export default function DeleteFeatureFlagButton({ id }: { id: number }) {
        }
 
        try {
-           const response = await fetch(`/api/featureFlags`, {
+           const response = await fetch(`/api/featureFlags/${id}`, {
                method: "DELETE",
                headers: {'Content-Type': 'application/json'},
                body: JSON.stringify({ id })

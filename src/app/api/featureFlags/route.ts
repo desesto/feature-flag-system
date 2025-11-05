@@ -58,19 +58,5 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json(updatedFlag[0]);
 }
 
-export async function DELETE(req: NextRequest) {
-    const { id } = await req.json();
-
-    const deletedFlag = await db
-        .update(featureFlagsTable)
-        .set({
-            deleted_at: new Date()
-        })
-        .where(eq(featureFlagsTable.id, id))
-        .returning();
-
-    return NextResponse.json(deletedFlag[0]);
-}
-
 
 
