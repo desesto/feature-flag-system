@@ -35,6 +35,13 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
 
         const featureFlag: FeatureFlagDto = await response.json();
 
+        const toLocalISOString = (dateString: string | null) => {
+            if (!dateString) return "";
+            const date = new Date(dateString);
+            const tzOffset = date.getTimezoneOffset() * 60000;
+            const localISOTime = new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+            return localISOTime;
+        };
 
         setForm({
             id: featureFlag.id,
@@ -47,8 +54,8 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
             end_time: featureFlag.end_time ?? null,
         });
         setTimestamps({
-            created_at: featureFlag.created_at ?? '',
-            updated_at: featureFlag.updated_at ?? '',
+            created_at: toLocalISOString(featureFlag.created_at) ?? '',
+            updated_at: toLocalISOString(featureFlag.updated_at) ?? '',
         });
         console.log("FEATURE FLAG:" , {...form})
 
@@ -67,7 +74,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
             await fetch('/api/featureFlags', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({...form, updated_at: local }),
+                body: JSON.stringify({...form }),
             });
 
             setShowPopup(false)
