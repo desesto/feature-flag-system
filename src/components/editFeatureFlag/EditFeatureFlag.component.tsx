@@ -11,10 +11,7 @@ type EditFeatureFlagProps = {
 export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
-    const time = new Date();
-    const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
-        .toISOString()
-        .slice(0, 16);
+
     const [form, setForm] = useState<EditFeatureFlagInput>({
         user_id: 0,
         name: '',
@@ -32,6 +29,14 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
 
         const featureFlag = await response.json();
 
+        const toLocalISOString = (dateString: string | null) => {
+            if (!dateString) return "";
+            const date = new Date(dateString);
+            const tzOffset = date.getTimezoneOffset() * 60000;
+            const localISOTime = new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+            return localISOTime;
+        };
+
         setForm({
             user_id: featureFlag.userId,
             name: featureFlag.name,
@@ -40,8 +45,8 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
             strategy: featureFlag.strategy,
             start_time: featureFlag.start_time,
             end_time: featureFlag.end_time,
-            created_at: featureFlag.created_at,
-            updated_at: featureFlag.updated_at,
+            created_at: toLocalISOString(featureFlag.created_at),
+            updated_at: toLocalISOString(featureFlag.updated_at),
         });
         console.log("FEATURE FLAG:" , {...form})
 
@@ -62,7 +67,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
             await fetch('/api/featureFlags', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: featureFlagId, ...form, updated_at: local }),
+                body: JSON.stringify({ id: featureFlagId, ...form }),
             });
 
             setShowPopup(false)

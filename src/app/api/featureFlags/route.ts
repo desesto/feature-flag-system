@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {featureFlagsTable} from "@/db/schema";
 import * as schema from "@/db/schema";
 import {asc} from "drizzle-orm";
-import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
+import {eq} from "drizzle-orm/sql/expressions/conditions";
 
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
@@ -51,7 +51,6 @@ export async function PATCH(req: NextRequest) {
     }
 
     const parseDate = (v: string | null | undefined) => (v ? new Date(v) : undefined);
-
 
     const updateData = Object.fromEntries(
         Object.entries({
