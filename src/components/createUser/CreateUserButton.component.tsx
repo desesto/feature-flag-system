@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -22,7 +21,7 @@ export default function CreateUserButton() {
             <div className="text-sm mt-3">
                 Hvis du ikke har en bruger endnu, kan du oprette en her.
             </div>
-            <button
+            <button type="button"
                 onClick={() => setShowPopup(true)}
                 className="border border-white bg-gray-800 hover:bg-cyan-500 font-bold text-whitefont-sans rounded-4xl cursor-pointer px-4 py-2 my-2"
             >
