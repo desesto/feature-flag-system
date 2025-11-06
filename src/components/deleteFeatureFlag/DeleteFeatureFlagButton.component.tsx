@@ -3,7 +3,11 @@
 
 import {useRouter} from "next/navigation";
 
-export default function DeleteFeatureFlagButton({ id }: { id: number }) {
+type DeleteFeatureFlagButtonProps = {
+    id: number;
+}
+
+export default function DeleteFeatureFlagButton({ id }: DeleteFeatureFlagButtonProps) {
 
     const router = useRouter();
 
