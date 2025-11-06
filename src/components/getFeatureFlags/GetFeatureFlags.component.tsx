@@ -1,5 +1,6 @@
-/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 import FeatureFlagToggle from "@/components/updateFeatureFlag/FeatureFlagToggle.component";
+import EditFeatureFlag from "@/components/editFeatureFlag/EditFeatureFlag.component";
+import DeleteFeatureFlagButtonComponent from "@/components/deleteFeatureFlag/DeleteFeatureFlagButton.component";
 
 export default async function GetFeatureFlags() {
     const response2 = await fetch(`http://localhost:3000/api/featureFlags`);
@@ -24,10 +25,10 @@ export default async function GetFeatureFlags() {
                     >
                         <strong>{flag.name}</strong>
                         <span className="text-gray-300 text-left">{flag.strategy || '—'}</span>
-                        <FeatureFlagToggle id={flag.id} isActive={flag.is_active} />
+                        <FeatureFlagToggle flag={flag} featureFlagId={flag.id} isActive={flag.is_active}/>
                         <div className="flex gap-2 pr-1">
-                            <button className="text-blue-400 bg-black hover:underline outline px-1">Edit</button>
-                            <button className="text-red-400 bg-black hover:underline outline px-1">Delete</button>
+                            <EditFeatureFlag featureFlagId={flag.id}/>
+                            <DeleteFeatureFlagButtonComponent id={flag.id} />
                         </div>
                     </li>
                 ))}
