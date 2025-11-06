@@ -25,7 +25,7 @@ export default async function GetFeatureFlags() {
                     >
                         <strong>{flag.name}</strong>
                         <span className="text-gray-300 text-left">{flag.strategy || '—'}</span>
-                        <FeatureFlagToggle flag={flag} featureFlagId={flag.id} isActive={flag.is_active}/>
+                        <FeatureFlagToggle featureFlagId={flag.id} isActive={flag.is_active}/>
                         <div className="flex gap-2 pr-1">
                             <EditFeatureFlag featureFlagId={flag.id}/>
                             <DeleteFeatureFlagButtonComponent id={flag.id} />

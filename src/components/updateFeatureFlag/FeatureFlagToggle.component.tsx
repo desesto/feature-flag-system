@@ -2,15 +2,13 @@
 
 import {useRouter} from "next/navigation";
 import {useState} from "react";
-import type {CreateFeatureFlagInput} from "@/types/featureFlag";
 
 type FeatureFlagToggleProps = {
     readonly featureFlagId: number
     readonly isActive: boolean
-    readonly flag: CreateFeatureFlagInput
 }
 
-export default function FeatureFlagToggle({featureFlagId, isActive, flag}: FeatureFlagToggleProps) {
+export default function FeatureFlagToggle({featureFlagId, isActive}: FeatureFlagToggleProps) {
 
     const router = useRouter();
 
