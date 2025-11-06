@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 'use client';
 
 import {useRouter} from "next/navigation";
