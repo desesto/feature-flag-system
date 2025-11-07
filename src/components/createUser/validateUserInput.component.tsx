@@ -1,6 +1,6 @@
-import type { CreateUserInput } from '@/types/user';
+import type { CreateUserDto} from "@/lib/dto/user.dto";
 
-export function validateUserInput(input: CreateUserInput): string | null {
+export function validateUserInput(input: CreateUserDto): string | null {
     if (!input.name || input.name.trim().length < 2) {
         return 'Brugernavn skal være mindst 2 tegn';
     }

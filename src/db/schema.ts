@@ -13,6 +13,7 @@ import {
 import {relations} from "drizzle-orm";
 
 export const roleEnum = pgEnum("role", ["Product-Manager", "Developer"]);
+export const strategyEnum = pgEnum("strategy", ["NO_STRATEGY", "FUTURE_IMPLEMENTATIONS"]);
 
 export const usersTable = pgTable(
     "users",
@@ -35,7 +36,7 @@ export const featureFlagsTable = pgTable(
         name: varchar("name", { length: 255 }),
         is_active: boolean("is_active").notNull(),
         description: text("description"),
-        strategy: varchar("strategy", { length: 255 }),
+        strategy: strategyEnum("strategy").notNull().default("NO_STRATEGY"),
         start_time: timestamp("start_time"),
         end_time: timestamp("end_time"),
         created_at: timestamp("created_at").defaultNow(),

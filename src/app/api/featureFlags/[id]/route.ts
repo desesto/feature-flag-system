@@ -3,6 +3,8 @@ import * as schema from "@/db/schema";
 import {featureFlagsTable} from "@/db/schema"
 import {eq} from "drizzle-orm/sql/expressions/conditions";
 import {drizzle} from "drizzle-orm/node-postgres";
+import {FeatureFlagSchema} from "@/lib/schemas/featureFlag.schema";
+import {parse} from "valibot";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
@@ -21,7 +23,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         return NextResponse.json({ error: "Feature flag not found" }, { status: 404 });
     }
 
-    return NextResponse.json(featureFlag[0]);
+    const serializedFlag = {
+        ...featureFlag[0],
+        start_time: featureFlag[0].start_time?.toISOString() ?? null,
+        end_time: featureFlag[0].end_time?.toISOString() ?? null,
+        created_at: featureFlag[0].created_at?.toISOString() ?? null,
+        updated_at: featureFlag[0].updated_at?.toISOString() ?? null,
+        deleted_at: featureFlag[0].deleted_at?.toISOString() ?? null,
+    };
+
+
+    const validated = parse(FeatureFlagSchema, serializedFlag);
+
+    return NextResponse.json(validated);
   }
 
 

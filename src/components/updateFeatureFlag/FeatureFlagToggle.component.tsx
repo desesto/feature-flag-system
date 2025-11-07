@@ -22,7 +22,10 @@ export default function FeatureFlagToggle({featureFlagId, isActive}: FeatureFlag
             const response = await fetch(`/api/featureFlags`, {
                 method: 'PATCH',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({id: featureFlagId, is_active: newValue}),
+                body:
+                    JSON.stringify({
+                        id: featureFlagId,
+                        is_active: newValue}),
             });
 
             if (!response.ok) {
