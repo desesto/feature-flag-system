@@ -52,9 +52,7 @@ export async function POST(req: NextRequest) {
         })
         .returning();
 
-
     return NextResponse.json(newFlag[0]);
-
 }
 
 export async function PATCH(req: NextRequest) {
