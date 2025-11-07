@@ -98,7 +98,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                 type="text"
                                 value={form.name}
                                 onChange={(event) => setForm({...form, name: event.target.value})}
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border"
                             />
                         </label>
 
@@ -122,13 +122,12 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
 
                         <label className="flex flex-col gap-1 mb-3">
                             Beskrivelse:
-                            <input
-                                type="text"
+                            <textarea
                                 value={form.description}
                                 onChange={(event) =>
                                     setForm({...form, description: event.target.value})
                                 }
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border resize-vertical"
                             />
                         </label>
 
@@ -139,7 +138,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                 onChange={(event) =>
                                     setForm({...form, strategy: event.target.value as "NO_STRATEGY" | "FUTURE_IMPLEMENTATIONS"})
                                 }
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border"
                             >
                                 <option value="NO_STRATEGY">NO_STRATEGY</option>
                                 <option value="FUTURE_IMPLEMENTATIONS">
@@ -156,7 +155,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                 onChange={(event) =>
                                     setForm({...form, start_time: event.target.value})
                                 }
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border"
                             />
                         </label>
 
@@ -168,7 +167,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                 onChange={(event) =>
                                     setForm({...form, end_time: event.target.value})
                                 }
-                                className="p-2 rounded border bg-transparent [color-scheme:dark]"
+                                className="p-2 rounded border"
                             />
                             {showDateError && (
                                 <p className="text-red-400">
@@ -188,7 +187,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             <button
                                 onClick={handleSubmit}
                                 type="button"
-                                className="border border-white rounded-lg px-4 py-2 hover:bg-white hover:text-black"
+                                className="border rounded-lg px-4 py-2 hover:bg-white hover:text-black"
                             >
                                 Submit
                             </button>

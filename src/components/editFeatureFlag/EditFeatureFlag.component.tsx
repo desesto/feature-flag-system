@@ -91,11 +91,11 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
         </div>
             {showPopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/84 backdrop-blur-xxs">
-                    <div className="bg-gray-900 text-white p-6 rounded-2xl shadow-lg max-w-lg w-full relative">
+                    <div className="bg-gray-900 text-white p-6 rounded-2xl shadow-lg max-w-lg w-full relative [color-scheme:dark]">
                         <button
                             onClick={() => setShowPopup(false)}
                             type="button"
-                            className="absolute top-3 right-3 text-white hover:text-gray-300 text-xl font-bold"
+                            className="absolute top-3 right-3 hover:text-gray-300 text-xl font-bold"
                         >
                             ✕
                         </button>
@@ -108,7 +108,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 type="text"
                                 value={form.name}
                                 onChange={(event) => setForm({...form, name: event.target.value})}
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border"
                             />
                         </label>
 
@@ -132,13 +132,12 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
 
                         <label className="flex flex-col gap-1 mb-3">
                             Beskrivelse:
-                            <input
-                                type="text"
+                            <textarea
                                 value={form.description}
                                 onChange={(event) =>
                                     setForm({...form, description: event.target.value})
                                 }
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border resize-vertical"
                             />
                         </label>
 
@@ -149,7 +148,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 onChange={(event) =>
                                     setForm({...form, strategy: event.target.value as "NO_STRATEGY" | "FUTURE_IMPLEMENTATIONS"})
                                 }
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border"
                             >
                                 <option value="NO_STRATEGY">NO_STRATEGY</option>
                                 <option value="FUTURE_IMPLEMENTATIONS">
@@ -166,7 +165,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 onChange={(event) =>
                                     setForm({...form, start_time: event.target.value})
                                 }
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border"
                             />
                         </label>
 
@@ -178,7 +177,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 onChange={(event) =>
                                     setForm({...form, end_time: event.target.value})
                                 }
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border"
                             />
                             {showDateError && (
                                 <p className="text-red-400">
@@ -193,7 +192,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 type="datetime-local"
                                 value={timestamps.created_at.slice(0, 16)}
                                 readOnly
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border"
                             />
                         </label>
 
@@ -203,7 +202,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 type="datetime-local"
                                 value={timestamps.updated_at?.slice(0, 16) ?? ''}
                                 readOnly
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border"
                             />
                         </label>
 
@@ -218,7 +217,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                             <button
                                 onClick={handleSubmit}
                                 type="button"
-                                className="border border-white rounded-lg px-4 py-2 hover:bg-white hover:text-black"
+                                className="border rounded-lg px-4 py-2 hover:bg-white hover:text-black"
                             >
                                 Submit
                             </button>
