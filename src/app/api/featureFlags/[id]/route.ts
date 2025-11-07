@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         ...featureFlag[0],
         start_time: featureFlag[0].start_time?.toISOString() ?? null,
         end_time: featureFlag[0].end_time?.toISOString() ?? null,
-        created_at: featureFlag[0].created_at.toISOString() ?? null,
+        created_at: featureFlag[0].created_at?.toISOString() ?? null,
         updated_at: featureFlag[0].updated_at?.toISOString() ?? null,
         deleted_at: featureFlag[0].deleted_at?.toISOString() ?? null,
     };

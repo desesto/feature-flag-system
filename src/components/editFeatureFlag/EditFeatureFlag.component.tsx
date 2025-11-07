@@ -2,9 +2,7 @@
 
 import {useState} from "react";
 import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
-import {EditFeatureFlagInput} from "@/types/featureFlag";
-import {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
-import type {EditFeatureFlagSchema} from "@/lib/schemas/featureFlag.schema";
+import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 
 type EditFeatureFlagProps = {
     readonly featureFlagId: number
