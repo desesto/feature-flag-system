@@ -7,7 +7,7 @@ import {type NextRequest, NextResponse} from "next/server";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
-export async function GET({ params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const featureFlagId = Number(id);
 
