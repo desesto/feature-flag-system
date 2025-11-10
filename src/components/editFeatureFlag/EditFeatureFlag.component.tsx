@@ -11,10 +11,6 @@ type EditFeatureFlagProps = {
 export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
-    const time = new Date();
-    const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
-        .toISOString()
-        .slice(0, 16);
     const [form, setForm] = useState<EditFeatureFlagDto>({
         id: featureFlagId,
         user_id: 0,
@@ -57,7 +53,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
             created_at: toLocalISOString(featureFlag.created_at) ?? '',
             updated_at: toLocalISOString(featureFlag.updated_at) ?? '',
         });
-        console.log("FEATURE FLAG:" , {...form})
+        console.log("FEATURE FLAG:", {...form})
 
         setShowDateError(false)
         setShowPopup(true);
@@ -73,8 +69,8 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
         try {
             await fetch('/api/featureFlags', {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({...form }),
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({...form}),
             });
 
             setShowPopup(false)
@@ -91,11 +87,11 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
         </div>
             {showPopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/84 backdrop-blur-xxs">
-                    <div className="bg-gray-900 text-white p-6 rounded-2xl shadow-lg max-w-lg w-full relative">
+                    <div className="bg-gray-900 p-6 rounded-2xl shadow-lg max-w-lg w-full relative [color-scheme:dark]">
                         <button
                             onClick={() => setShowPopup(false)}
                             type="button"
-                            className="absolute top-3 right-3 text-white hover:text-gray-300 text-xl font-bold"
+                            className="absolute top-3 right-3 hover:text-gray-300 text-xl font-bold"
                         >
                             ✕
                         </button>
@@ -108,7 +104,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 type="text"
                                 value={form.name}
                                 onChange={(event) => setForm({...form, name: event.target.value})}
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border bg-transparent"
                             />
                         </label>
 
@@ -138,7 +134,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 onChange={(event) =>
                                     setForm({...form, description: event.target.value})
                                 }
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border bg-transparent"
                             />
                         </label>
 
@@ -149,7 +145,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 onChange={(event) =>
                                     setForm({...form, strategy: event.target.value as "NO_STRATEGY" | "FUTURE_IMPLEMENTATIONS"})
                                 }
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border bg-transparent"
                             >
                                 <option value="NO_STRATEGY">NO_STRATEGY</option>
                                 <option value="FUTURE_IMPLEMENTATIONS">
@@ -166,7 +162,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 onChange={(event) =>
                                     setForm({...form, start_time: event.target.value})
                                 }
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border bg-transparent"
                             />
                         </label>
 
@@ -174,11 +170,11 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={form.end_time?.slice(0, 16) ?? "" }
+                                value={form.end_time?.slice(0, 16) ?? ""}
                                 onChange={(event) =>
                                     setForm({...form, end_time: event.target.value})
                                 }
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border bg-transparent"
                             />
                             {showDateError && (
                                 <p className="text-red-400">
@@ -193,7 +189,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 type="datetime-local"
                                 value={timestamps.created_at.slice(0, 16)}
                                 readOnly
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border bg-transparent"
                             />
                         </label>
 
@@ -203,7 +199,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                                 type="datetime-local"
                                 value={timestamps.updated_at?.slice(0, 16) ?? ''}
                                 readOnly
-                                className="p-2 rounded border border-white bg-transparent text-white"
+                                className="p-2 rounded border bg-transparent"
                             />
                         </label>
 
@@ -226,6 +222,6 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                     </div>
                 </div>
             )}
-            </>
+        </>
     );
 }
