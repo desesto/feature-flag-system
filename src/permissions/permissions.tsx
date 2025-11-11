@@ -1,4 +1,5 @@
-import type {User} from "@/types/user";
+import {UserDto} from "@/lib/dto/user.dto";
+
 
 export type Permission =
     | 'feature_flags:create'
@@ -8,7 +9,7 @@ export type Permission =
     | 'feature_flags:toggle'
 
 
-const rolePermissions: Record<User['role'], Permission[]> = {
+const rolePermissions: Record<UserDto['role'], Permission[]> = {
     'Developer': [
         'feature_flags:create',
         'feature_flags:update',
@@ -20,7 +21,7 @@ const rolePermissions: Record<User['role'], Permission[]> = {
     ]
 }
 
-export function hasPermission(user: User, permission: Permission): boolean {
+export function hasPermission(user: UserDto, permission: Permission): boolean {
 
     const permissions = rolePermissions[user.role];
 

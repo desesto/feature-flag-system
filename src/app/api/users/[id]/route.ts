@@ -1,4 +1,4 @@
-import {NextRequest, NextResponse} from "next/server";
+import {type NextRequest, NextResponse} from "next/server";
 import {usersTable} from "@/db/schema";
 import {eq} from "drizzle-orm/sql/expressions/conditions";
 import {drizzle} from "drizzle-orm/node-postgres";
