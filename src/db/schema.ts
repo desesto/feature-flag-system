@@ -14,6 +14,7 @@ import {relations} from "drizzle-orm";
 
 export const roleEnum = pgEnum("role", ["Product-Manager", "Developer"]);
 export const strategyEnum = pgEnum("strategy", ["NO_STRATEGY", "FUTURE_IMPLEMENTATIONS"]);
+export const ActionTypeEnum = pgEnum("action_type", ["CREATED", "UPDATED", "DELETED", "ACTIVATED", "DEACTIVATED"]);
 
 export const usersTable = pgTable(
     "users",
@@ -52,13 +53,46 @@ export const featureFlagsTable = pgTable(
     })
 );
 
+export const featureFlagHistoryTable = pgTable(
+    "feature_flag_history",
+    {
+        id: serial("id").primaryKey(),
+        feature_flag_id: integer("feature_flag_id").notNull(),
+        user_id: integer("user_id").notNull(),
+        timestamp: timestamp("timestamp").defaultNow(),
+        action_type: ActionTypeEnum("action_type",).notNull(),
+    },
+    (table) => ({
+    feature_flag_fk: foreignKey({
+        columns: [table.feature_flag_id],
+        foreignColumns: [featureFlagsTable.id],
+    }),
+    user_fk: foreignKey({
+        columns: [table.user_id],
+        foreignColumns: [usersTable.id],
+    })
+    }))
+
 export const usersRelations = relations(usersTable, ({ many }) => ({
     featureFlags: many(featureFlagsTable),
+    featureFlagHistories: many(featureFlagHistoryTable),
 }));
 
-export const featureFlagsRelations = relations(featureFlagsTable, ({ one }) => ({
+export const featureFlagsRelations = relations(featureFlagsTable, ({ one, many }) => ({
     user: one(usersTable, {
         fields: [featureFlagsTable.user_id],
         references: [usersTable.id],
     }),
+    featureFlagHistories: many(featureFlagHistoryTable),
 }));
+
+export const featureFlagHistoryRelations = relations(featureFlagHistoryTable, ({ one }) => ({
+    featureFlag: one(featureFlagsTable, {
+        fields: [featureFlagHistoryTable.feature_flag_id],
+        references: [featureFlagsTable.id],
+    }),
+    user: one(usersTable, {
+        fields: [featureFlagHistoryTable.user_id],
+        references: [usersTable.id],
+    }),
+}))
