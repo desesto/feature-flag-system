@@ -16,7 +16,7 @@ export const CreateFeatureFlagHistorySchema = object ({
     action_type: picklist(['CREATED', 'UPDATED', 'DELETED', 'ACTIVATED', 'DEACTIVATED']),
 });
 
-export const getFeatureFlagHistorySchema = object ({
+export const GetFeatureFlagHistoriesSchema = object ({
     feature_flag_id: number(),
 
 });

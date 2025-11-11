@@ -1,4 +1,4 @@
-import {InferInput, InferOutput} from "valibot";
+import type {InferInput, InferOutput} from "valibot";
 import type {
     CreateFeatureFlagSchema,
     EditFeatureFlagSchema,
