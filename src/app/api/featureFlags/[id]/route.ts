@@ -2,7 +2,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import {drizzle} from "drizzle-orm/node-postgres";
 import {FeatureFlagSchema} from "@/lib/schemas/featureFlag.schema";
 import {parse} from "valibot";
-import {featureFlagsTable} from "@/db/schema"
+import {auditLogsTable, featureFlagsTable} from "@/db/schema"
 import {type NextRequest, NextResponse} from "next/server";
 
 const db = drizzle(process.env.DATABASE_URL!);
@@ -40,7 +40,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 
 export async function DELETE(req: NextRequest) {
-    const { id } = await req.json();
+    const { id, user } = await req.json();
+
+    const [oldFlag] = await db
+        .select()
+        .from(featureFlagsTable)
+        .where(eq(featureFlagsTable.id, id));
 
     const deletedFlag = await db
         .update(featureFlagsTable)
@@ -50,9 +55,24 @@ export async function DELETE(req: NextRequest) {
         .where(eq(featureFlagsTable.id, id))
         .returning();
 
+    await db
+        .insert(auditLogsTable)
+            .values({
+                user_id: user.id,
+                user_email: user.email,
+                action: "DELETE",
+                entity: "feature_flag",
+                entity_id: id,
+                entity_name: oldFlag.name,
+                old_value: oldFlag,
+                new_value: deletedFlag[0],
+            })
+        .returning();
+
     return NextResponse.json(deletedFlag[0]);
 }
 
+// POST request to check if a feature flag is enabled by its name
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
     const { id } = await params;
     const flagName = decodeURIComponent(id).trim();

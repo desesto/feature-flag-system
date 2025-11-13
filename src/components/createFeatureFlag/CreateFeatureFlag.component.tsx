@@ -13,10 +13,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
     const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
-    const time = new Date();
-    const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
-        .toISOString()
-        .slice(0, 16);
 
     const [form, setForm] = useState<CreateFeatureFlagDto>({
         user_id: userId,
@@ -29,10 +25,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
     });
 
     const handleOpen = () => {
-        const time = new Date();
-        const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
-            .toISOString()
-            .slice(0, 16);
 
         setForm({
             user_id: userId,
@@ -55,11 +47,15 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             setShowDateError(true)
             return;
         }
+        const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+            cache: "no-store",
+        });
+        const user = await response.json();
         try {
             await fetch('/api/featureFlags', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(form),
+                body: JSON.stringify({...form, user_email: user.email}),
             });
 
             setShowPopup(false)

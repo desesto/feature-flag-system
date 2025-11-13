@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { usersTable } from "@/db/schema";
+import {auditLogsTable, usersTable} from "@/db/schema";
 import {CreateUserSchema, GetUsersSchema} from "@/lib/schemas/user.schema";
 import {parse} from "valibot";
 
@@ -29,6 +29,18 @@ export async function POST(req: NextRequest) {
         const newUser = await db
             .insert(usersTable)
             .values(validatedData)
+            .returning();
+
+        await db
+            .insert(auditLogsTable)
+            .values({
+                user_id: newUser[0].id,
+                action: "CREATE",
+                entity: "user",
+                entity_id: newUser[0].id,
+                entity_name: newUser[0].email,
+                new_value: newUser[0],
+            })
             .returning();
 
         return NextResponse.json(newUser[0]);
