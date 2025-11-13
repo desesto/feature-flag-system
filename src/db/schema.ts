@@ -61,6 +61,9 @@ export const featureFlagHistoryTable = pgTable(
         user_id: integer("user_id").notNull(),
         timestamp: timestamp("timestamp").defaultNow(),
         action_type: ActionTypeEnum("action_type",).notNull(),
+        changed_fields: text("changed_fields"),
+        old_values: text("old_values"),
+        new_values: text("new_values"),
     },
     (table) => ({
     feature_flag_fk: foreignKey({

@@ -4,9 +4,10 @@ import {useRouter} from "next/navigation";
 
 type DeleteFeatureFlagButtonProps = {
     id: number;
+    userId: number;
 }
 
-export default function DeleteFeatureFlagButton({ id }: DeleteFeatureFlagButtonProps) {
+export default function DeleteFeatureFlagButton({ id, userId }: DeleteFeatureFlagButtonProps) {
 
     const router = useRouter();
 
@@ -20,7 +21,7 @@ export default function DeleteFeatureFlagButton({ id }: DeleteFeatureFlagButtonP
            const response = await fetch(`/api/featureFlags/${id}`, {
                method: "DELETE",
                headers: {'Content-Type': 'application/json'},
-               body: JSON.stringify({ id })
+               body: JSON.stringify({ id, userId })
            });
 
            if (!response.ok) {

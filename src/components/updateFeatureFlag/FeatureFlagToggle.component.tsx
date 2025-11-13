@@ -6,9 +6,10 @@ import {useState} from "react";
 type FeatureFlagToggleProps = {
     readonly featureFlagId: number
     readonly isActive: boolean
+    readonly userId: number
 }
 
-export default function FeatureFlagToggle({featureFlagId, isActive}: FeatureFlagToggleProps) {
+export default function FeatureFlagToggle({featureFlagId, isActive, userId}: FeatureFlagToggleProps) {
 
     const router = useRouter();
 
@@ -25,6 +26,7 @@ export default function FeatureFlagToggle({featureFlagId, isActive}: FeatureFlag
                 body:
                     JSON.stringify({
                         id: featureFlagId,
+                        user_id: userId,
                         is_active: newValue}),
             });
 
