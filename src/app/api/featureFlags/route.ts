@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { NextRequest, NextResponse } from "next/server";
-import {featureFlagsTable} from "@/db/schema";
+import {auditLogsTable, featureFlagsTable} from "@/db/schema";
 import * as schema from "@/db/schema";
 import {asc} from "drizzle-orm";
 import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
@@ -52,6 +52,19 @@ export async function POST(req: NextRequest) {
         })
         .returning();
 
+    await db
+        .insert(auditLogsTable)
+        .values({
+            user_id: body.user_id,
+            user_email: body.user_email,
+            action: "CREATE",
+            entity: "feature_flag",
+            entity_name: newFlag[0].name,
+            entity_id: newFlag[0].id,
+            new_value: newFlag[0],
+        })
+        .returning();
+
     return NextResponse.json(newFlag[0]);
 }
 
@@ -92,6 +105,3 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json(updatedFlag[0]);
 }
-
-
-

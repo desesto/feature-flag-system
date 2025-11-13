@@ -8,7 +8,7 @@ import {
     timestamp,
     integer,
     foreignKey,
-    pgEnum,
+    pgEnum, jsonb,
 } from "drizzle-orm/pg-core";
 import {relations} from "drizzle-orm";
 
@@ -96,3 +96,28 @@ export const featureFlagHistoryRelations = relations(featureFlagHistoryTable, ({
         references: [usersTable.id],
     }),
 }))
+
+export const auditLogsTable = pgTable("audit_logs", {
+    id: serial("id").primaryKey(),
+    user_id: integer("user_id").notNull(),
+    user_email: varchar("user_email", { length: 255 }),
+    action: varchar("action", { length: 255 }).notNull(),
+    entity: varchar("entity", { length: 255 }).notNull(),
+    entity_id: integer("entity_id").notNull(),
+    entity_name: varchar("entity_name", { length: 255 }),
+    old_value: jsonb("old_value"),
+    new_value: jsonb("new_value"),
+    created_at: timestamp("created_at").defaultNow(),
+}, (table) => ({
+    user_fk: foreignKey({
+        columns: [table.user_id],
+        foreignColumns: [usersTable.id],
+    }),
+}));
+
+export const auditLogsRelations = relations(auditLogsTable, ({ one }) => ({
+    user: one(usersTable, {
+        fields: [auditLogsTable.user_id],
+        references: [usersTable.id],
+    }),
+}));
