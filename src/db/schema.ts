@@ -59,7 +59,7 @@ export const featureFlagHistoryTable = pgTable(
         id: serial("id").primaryKey(),
         feature_flag_id: integer("feature_flag_id").notNull(),
         user_id: integer("user_id").notNull(),
-        timestamp: timestamp("timestamp").defaultNow(),
+        timestamp: timestamp("timestamp").notNull().defaultNow(),
         action_type: ActionTypeEnum("action_type",).notNull(),
         changed_fields: text("changed_fields"),
         old_values: text("old_values"),

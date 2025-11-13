@@ -41,7 +41,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 
 export async function DELETE(req: NextRequest) {
-    const { id, user_id } = await req.json();
+    const { id, userId } = await req.json();
 
     const deletedFlag = await db
         .update(featureFlagsTable)
@@ -51,7 +51,7 @@ export async function DELETE(req: NextRequest) {
         .where(eq(featureFlagsTable.id, id))
         .returning();
 
-    await logFeatureFlagDeleted(id, user_id);
+    await logFeatureFlagDeleted(id, userId);
 
     return NextResponse.json(deletedFlag[0]);
 }

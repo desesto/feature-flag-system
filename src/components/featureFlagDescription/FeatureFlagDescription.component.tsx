@@ -2,6 +2,8 @@
 
 import {useState} from "react";
 import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
+import {router} from "next/client";
+import {useRouter} from "next/navigation";
 
 type FeatureFlagDescriptionProps = {
     readonly featureFlagId: number
@@ -9,6 +11,7 @@ type FeatureFlagDescriptionProps = {
 }
 
 export default function FeatureFlagDescription({featureFlagId, children}: FeatureFlagDescriptionProps) {
+    const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
     const [form, setForm] = useState<EditFeatureFlagDto>({
         id: featureFlagId,
@@ -63,7 +66,7 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
             <button
                 type="button"
                 onClick={handleOpen}
-                className="text-blue-400 hover:underline cursor-pointer bg-transparent border-none p-0 m-0"
+                className="text-blue-400 text-left hover:underline cursor-pointer bg-transparent border-none p-0 m-0"
             >
                 {children}
             </button>
@@ -91,17 +94,25 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             />
                         </label>
 
-                        <div className="flex flex-col gap-1 mb-3">
-                            <span className="text-gray-300">Aktiv status:</span>
-                            <span
-                                className={
-                                    form.is_active
-                                        ? "text-green-400 font-semibold"
-                                        : "text-red-400 font-semibold"
-                                }
+                        <div className="flex items-start justify-between mb-3">
+                            <div className="flex flex-col gap-1">
+                                <span className="text-gray-300">Aktiv status:</span>
+                                <span
+                                    className={ form.is_active
+                                            ? "text-green-400 font-semibold"
+                                            : "text-red-400 font-semibold"
+                                         }
+                                    >
+                                    {form.is_active ? "Aktiv" : "Inaktiv"}
+                                </span>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => router.push(`/featureFlags/history/${featureFlagId}`)}
+                                className="px-4 py-2 mt-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
                             >
-                                {form.is_active ? "Aktiv" : "Inaktiv"}
-                            </span>
+                                Se historik
+                            </button>
                         </div>
 
 
