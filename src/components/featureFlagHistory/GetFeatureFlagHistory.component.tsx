@@ -1,8 +1,11 @@
 import {FeatureFlagHistoryDto, GetFeatureFlagHistoriesDto} from "@/lib/dto/featureFlagHistory.dto";
 
+type GetFeatureFlagHistoryProps = {
+    readonly featureFlagId: number;
+};
 
-export default async function GetFeatureFlagHistory(props: {featureFlagId: number}) {
-    const response = await fetch(`http://localhost:3000/api/featureFlagHistories/${props.featureFlagId}`,);
+export default async function GetFeatureFlagHistory({featureFlagId}:GetFeatureFlagHistoryProps) {
+    const response = await fetch(`http://localhost:3000/api/featureFlagHistories/${featureFlagId}`,);
 
 
     const toLocalISOString = (dateString: string | null) => {

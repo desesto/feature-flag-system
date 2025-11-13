@@ -13,13 +13,12 @@ const pool = new Pool({
 
 const db = drizzle(pool);
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{id: string}>}) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{id: number}>}) {
 
     try{
         const { id } =  await params;
-        const featureFlagId = Number(id);
 
-        if (isNaN(featureFlagId)) {
+        if (isNaN(id)) {
             return NextResponse.json({ error: "Invalid feature flag ID" }, { status: 400 });
         }
         const histories = await db
@@ -36,7 +35,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{id: s
             })
             .from(featureFlagHistoryTable)
             .leftJoin(usersTable, eq(featureFlagHistoryTable.user_id, usersTable.id))
-            .where(eq(featureFlagHistoryTable.feature_flag_id, featureFlagId))
+            .where(eq(featureFlagHistoryTable.feature_flag_id, id))
             .orderBy(desc(featureFlagHistoryTable.timestamp));
 
         const serializedHistories = histories.map(history => ({
