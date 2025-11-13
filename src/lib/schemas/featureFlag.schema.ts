@@ -15,7 +15,6 @@ export const FeatureFlagSchema = object({
     created_at: nullable(string()),
     updated_at: nullable(string()),
     deleted_at: nullable(string()),
-    user: optional(UserSchema),
 });
 
 export const CreateFeatureFlagSchema = object({
@@ -30,7 +29,7 @@ export const CreateFeatureFlagSchema = object({
 
 export const EditFeatureFlagSchema = object({
     id: number(),
-    user_id: optional(nullable(number())),
+    user_id: number(),
     name: optional(string()),
     is_active: optional(boolean()),
     description: optional(string()),

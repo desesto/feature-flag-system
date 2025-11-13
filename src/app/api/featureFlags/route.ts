@@ -6,6 +6,8 @@ import {asc} from "drizzle-orm";
 import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
 import {parse} from "valibot";
 import {CreateFeatureFlagSchema, EditFeatureFlagSchema, GetFeatureFlagsSchema} from "@/lib/schemas/featureFlag.schema";
+import {logFeatureFlagCreated, logFeatureFlagUpdated} from "@/lib/helpers/featureFlagHistory";
+import {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
@@ -52,6 +54,8 @@ export async function POST(req: NextRequest) {
         })
         .returning();
 
+    await logFeatureFlagCreated(newFlag[0].id, newFlag[0].user_id);
+
     return NextResponse.json(newFlag[0]);
 }
 
@@ -59,11 +63,17 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
 
     const validated = parse(EditFeatureFlagSchema, body)
-    const { id, ...updates } = validated;
+    const { id, user_id, ...updates } = validated;
 
     if (!id) {
         return NextResponse.json({ error: "Missing ID" }, { status: 400 });
     }
+
+    //til historik - hent gamle flag inden opdatering
+    const oldFlag = await db
+        .select()
+        .from(featureFlagsTable)
+        .where(eq(featureFlagsTable.id, id));
 
     const parseDate = (v: string | null | undefined) => (v ? new Date(v) : undefined);
 
@@ -80,17 +90,22 @@ export async function PATCH(req: NextRequest) {
         }).filter(([_, value]) => value !== undefined)
     );
 
-    const updatedFlag = await db
+    const newFlag = await db
         .update(featureFlagsTable)
         .set(updateData)
         .where(eq(featureFlagsTable.id, id))
         .returning();
 
-    if (updatedFlag.length === 0) {
-        return NextResponse.json({ error: "Feature flag not found" }, { status: 404 });
-    }
 
-    return NextResponse.json(updatedFlag[0]);
+    await logFeatureFlagUpdated(
+        id,
+        user_id,
+        oldFlag[0] as FeatureFlagDto,
+        updates as EditFeatureFlagDto
+    );
+
+
+    return NextResponse.json(newFlag[0]);
 }
 
 
