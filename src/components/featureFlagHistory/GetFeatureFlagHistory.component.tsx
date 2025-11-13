@@ -50,7 +50,7 @@ export default async function GetFeatureFlagHistory({featureFlagId}:GetFeatureFl
                     }`}>
                             {history.action_type}
                         </span>
-                    <span className="text-gray-400">{history.user_name}</span>
+                    <span className="text-gray-400">{history.user.name}</span>
                     {history.action_type !== 'CREATED' && history.action_type !==  'DELETED'  && (
                         <details className="px-4 pb-4 w full">
                             <summary className="cursor-pointer text-blue-400 hover:text-blue-300 text-sm">
