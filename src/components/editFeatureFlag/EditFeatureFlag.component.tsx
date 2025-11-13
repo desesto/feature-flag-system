@@ -221,6 +221,6 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                     </div>
                 </div>
             )}
-            </>
+        </>
     );
 }

@@ -100,7 +100,7 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                                         : "text-red-400 font-semibold"
                                 }
                             >
-                                {form.is_active ? "Aktiv" : "Ikke aktiv"}
+                                {form.is_active ? "Aktiv" : "Inaktiv"}
                             </span>
                         </div>
 
