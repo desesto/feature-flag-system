@@ -2,6 +2,7 @@ import DeleteFeatureFlagButtonComponent from "@/components/deleteFeatureFlag/Del
 import EditFeatureFlag from "@/components/editFeatureFlag/EditFeatureFlag.component";
 import FeatureFlagToggle from "@/components/updateFeatureFlag/FeatureFlagToggle.component";
 import type {GetFeatureFlagsDto} from "@/lib/dto/featureFlag.dto";
+import FeatureFlagDescription from "@/components/featureFlagDescription/FeatureFlagDescription.component";
 
 export default async function GetFeatureFlags() {
     const response = await fetch(`http://localhost:3000/api/featureFlags`);
@@ -29,7 +30,9 @@ export default async function GetFeatureFlags() {
                         className="border-b-2 border-gray-500 p-3 grid grid-cols-[minmax(100px,2fr)_220px_80px_100px] gap-2 items-center even:bg-neutral-800"
                         key={flag.id}
                     >
-                        <strong>{flag.name}</strong>
+                        <FeatureFlagDescription featureFlagId={flag.id}>
+                            {flag.name}
+                        </FeatureFlagDescription>
                         <span className="text-gray-300 text-left">{flag.strategy || '—'}</span>
                         <FeatureFlagToggle featureFlagId={flag.id} isActive={flag.is_active}/>
                         <div className="flex gap-2 pr-1">

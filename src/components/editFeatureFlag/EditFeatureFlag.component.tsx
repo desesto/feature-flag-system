@@ -11,10 +11,6 @@ type EditFeatureFlagProps = {
 export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
-    const time = new Date();
-    const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
-        .toISOString()
-        .slice(0, 16);
     const [form, setForm] = useState<EditFeatureFlagDto>({
         id: featureFlagId,
         user_id: 0,
@@ -57,7 +53,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
             created_at: toLocalISOString(featureFlag.created_at) ?? '',
             updated_at: toLocalISOString(featureFlag.updated_at) ?? '',
         });
-        console.log("FEATURE FLAG:" , {...form})
+        console.log("FEATURE FLAG:", {...form})
 
         setShowDateError(false)
         setShowPopup(true);
@@ -73,8 +69,8 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
         try {
             await fetch('/api/featureFlags', {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({...form }),
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({...form}),
             });
 
             setShowPopup(false)
@@ -173,7 +169,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={form.end_time?.slice(0, 16) ?? "" }
+                                value={form.end_time?.slice(0, 16) ?? ""}
                                 onChange={(event) =>
                                     setForm({...form, end_time: event.target.value})
                                 }
@@ -225,6 +221,6 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
                     </div>
                 </div>
             )}
-            </>
+        </>
     );
 }
