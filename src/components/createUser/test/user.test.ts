@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest"
 import {validateUserInput} from "@/components/createUser/validateUserInput.component";
-import type { CreateUserInput } from "@/types/user"
+import type { CreateUserDto } from "@/lib/dto/user.dto"
 
 describe("validateUserInput", () => {
     it("returns error if name is less than 2 characters", () => {
         const input = {
             name: "a",
             email: "test@example.com",
-        } satisfies CreateUserInput
+        } satisfies CreateUserDto
 
         const actualOutput = validateUserInput(input)
 
@@ -18,7 +18,7 @@ describe("validateUserInput", () => {
         const input = {
             name: "  ",
             email: "test@example.com",
-        } satisfies CreateUserInput
+        } satisfies CreateUserDto
 
         const actualOutput = validateUserInput(input)
 
@@ -29,7 +29,7 @@ describe("validateUserInput", () => {
         const input = {
             name: "Test User",
             email: "invalidemail.com",
-        } satisfies CreateUserInput
+        } satisfies CreateUserDto
 
         const actualOutput = validateUserInput(input)
 
@@ -40,7 +40,7 @@ describe("validateUserInput", () => {
         const input = {
             name: "Test User",
             email: "test@example.com",
-        } satisfies CreateUserInput
+        } satisfies CreateUserDto
 
         const actualOutput = validateUserInput(input)
 
@@ -52,7 +52,7 @@ describe("validateUserInput", () => {
             name: "Test User",
             email: "test@example.com",
             role: "Developer",
-        } satisfies CreateUserInput
+        } satisfies CreateUserDto
 
         const actualOutput = validateUserInput(input)
 
@@ -63,7 +63,7 @@ describe("validateUserInput", () => {
         const input = {
             name: "Ab",
             email: "test@example.com",
-        } satisfies CreateUserInput
+        } satisfies CreateUserDto
 
         const actualOutput = validateUserInput(input)
 
@@ -74,7 +74,7 @@ describe("validateUserInput", () => {
         const input = {
             name: " a ",
             email: "test@example.com",
-        } satisfies CreateUserInput
+        } satisfies CreateUserDto
 
         const actualOutput = validateUserInput(input)
 
