@@ -25,7 +25,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                 <div className="mt-10">
                 <CreateFeatureFlag userId={user.id} />
                 </div>
-                <GetFeatureFlags/>
+                <GetFeatureFlags userId={user.id}/>
             </div>
         </div>
     )

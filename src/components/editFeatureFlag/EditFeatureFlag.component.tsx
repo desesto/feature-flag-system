@@ -6,14 +6,19 @@ import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto
 
 type EditFeatureFlagProps = {
     readonly featureFlagId: number
+    readonly userId: number
 }
 
-export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
+export default function EditFeatureFlag({featureFlagId, userId}: EditFeatureFlagProps) {
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
+    const time = new Date();
+    const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16);
     const [form, setForm] = useState<EditFeatureFlagDto>({
         id: featureFlagId,
-        user_id: 0,
+        user_id: userId,
         name: '',
         is_active: false,
         description: '',
@@ -41,7 +46,7 @@ export default function EditFeatureFlag({featureFlagId}: EditFeatureFlagProps) {
 
         setForm({
             id: featureFlag.id,
-            user_id: featureFlag.user_id,
+            user_id: userId,
             name: featureFlag.name,
             is_active: featureFlag.is_active,
             description: featureFlag.description,
