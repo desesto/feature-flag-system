@@ -7,7 +7,7 @@ import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
 import {parse} from "valibot";
 import {CreateFeatureFlagSchema, EditFeatureFlagSchema, GetFeatureFlagsSchema} from "@/lib/schemas/featureFlag.schema";
 import {logFeatureFlagCreated, logFeatureFlagUpdated} from "@/lib/helpers/featureFlagHistory";
-import {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
+import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
@@ -15,7 +15,7 @@ const db = drizzle(process.env.DATABASE_URL!, { schema });
     
 export async function GET() {
     const flags = await db.query.featureFlagsTable.findMany({
-        where: (flag, { isNull }) => isNull(flag.deleted_at),
+        where: (flag) => isNull(flag.deleted_at),
         with: { user: true },
         orderBy: [asc(featureFlagsTable.name)],
     });
