@@ -5,9 +5,10 @@ import {useRouter} from "next/navigation";
 type DeleteFeatureFlagButtonProps = {
     id: number;
     userId: number;
+    userRole: string | null;
 }
 
-export default function DeleteFeatureFlagButton({ id, userId }: DeleteFeatureFlagButtonProps) {
+export default function DeleteFeatureFlagButton({ id, userId, userRole }: DeleteFeatureFlagButtonProps) {
 
     const router = useRouter();
 
@@ -40,7 +41,12 @@ export default function DeleteFeatureFlagButton({ id, userId }: DeleteFeatureFla
         <button
                 type="button"
                 onClick={handleDelete}
-                className="text-red-400 bg-black hover:underline outline px-1">
+                disabled={userRole !== 'Developer'}
+                className={`px-1 ${
+                    userRole === 'Developer'
+                        ? "text-red-400 bg-black hover:underline outline"
+                        : "text-gray-400 cursor-not-allowed opacity-50"
+                }`}>
             Delete
         </button>
     );

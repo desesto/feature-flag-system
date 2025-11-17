@@ -7,9 +7,10 @@ import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto
 type EditFeatureFlagProps = {
     readonly featureFlagId: number
     readonly userId: number
+    readonly userRole: string | null
 }
 
-export default function EditFeatureFlag({featureFlagId, userId}: EditFeatureFlagProps) {
+export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditFeatureFlagProps) {
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
     const time = new Date();
@@ -88,7 +89,15 @@ export default function EditFeatureFlag({featureFlagId, userId}: EditFeatureFlag
     return (
         <>
         <div>
-            <button onClick={() => handleOpen()} type="button" className="text-blue-400 hover:underline outline px-1">Edit</button>
+            <button
+                onClick={() => handleOpen()}
+                type="button"
+                disabled ={userRole !== 'Developer'}
+                className={`px-1 ${
+                    userRole === 'Developer'
+                        ? "text-blue-400 bg-black hover:underline outline"
+                        : "text-gray-400 cursor-not-allowed opacity-50"
+            }`}>Edit</button>
         </div>
             {showPopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/84 backdrop-blur-xxs">
@@ -98,7 +107,7 @@ export default function EditFeatureFlag({featureFlagId, userId}: EditFeatureFlag
                             type="button"
                             className="absolute top-3 right-3 hover:text-gray-300 text-xl font-bold"
                         >
-                            ✕
+                            x
                         </button>
 
                         <h2 className="text-xl font-bold mb-4">Redigér feature flag</h2>
