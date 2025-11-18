@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import {validateUserInput} from "@/components/createUser/validateUserInput.component";
-import {CreateUserDto} from "@/lib/dto/user.dto";
+import type { CreateUserDto } from "@/lib/dto/user.dto"
 
 describe("validateUserInput", () => {
     it("returns error if name is less than 2 characters", () => {

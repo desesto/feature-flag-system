@@ -63,6 +63,7 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json(deletedFlag[0]);
 }
 
+// POST request to check if a feature flag is enabled by its name
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
     const { id } = await params;
     const flagName = decodeURIComponent(id).trim();
