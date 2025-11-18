@@ -1,9 +1,99 @@
 {
-  "id": "dfcd7930-caad-484d-8df1-b3d7cf603b02",
+  "id": "a2d6c6a9-7a8e-46b2-84b3-773e2824a04b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.feature_flag_history": {
+      "name": "feature_flag_history",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "feature_flag_id": {
+          "name": "feature_flag_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "action_type": {
+          "name": "action_type",
+          "type": "action_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "changed_fields": {
+          "name": "changed_fields",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "old_values": {
+          "name": "old_values",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "new_values": {
+          "name": "new_values",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "feature_flag_history_feature_flag_id_feature_flags_id_fk": {
+          "name": "feature_flag_history_feature_flag_id_feature_flags_id_fk",
+          "tableFrom": "feature_flag_history",
+          "tableTo": "feature_flags",
+          "columnsFrom": [
+            "feature_flag_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "feature_flag_history_user_id_users_id_fk": {
+          "name": "feature_flag_history_user_id_users_id_fk",
+          "tableFrom": "feature_flag_history",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.feature_flags": {
       "name": "feature_flags",
       "schema": "",
@@ -40,9 +130,11 @@
         },
         "strategy": {
           "name": "strategy",
-          "type": "varchar(255)",
+          "type": "strategy",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "'NO_STRATEGY'"
         },
         "start_time": {
           "name": "start_time",
@@ -172,12 +264,31 @@
     }
   },
   "enums": {
+    "public.action_type": {
+      "name": "action_type",
+      "schema": "public",
+      "values": [
+        "CREATED",
+        "UPDATED",
+        "DELETED",
+        "ACTIVATED",
+        "DEACTIVATED"
+      ]
+    },
     "public.role": {
       "name": "role",
       "schema": "public",
       "values": [
         "Product-Manager",
         "Developer"
+      ]
+    },
+    "public.strategy": {
+      "name": "strategy",
+      "schema": "public",
+      "values": [
+        "NO_STRATEGY",
+        "FUTURE_IMPLEMENTATIONS"
       ]
     }
   },
