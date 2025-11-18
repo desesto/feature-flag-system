@@ -55,23 +55,23 @@ beforeAll(async () => {
 
     await testDb.execute(`
         CREATE TABLE feature_flags (
-                                       id SERIAL PRIMARY KEY,
-                                       user_id INT NOT NULL,
-                                       name VARCHAR(255) NOT NULL UNIQUE,
-                                       is_active BOOLEAN NOT NULL,
-                                       description TEXT,
-                                       strategy VARCHAR(255) NOT NULL,
-                                       start_time TIMESTAMP NOT NULL,
-                                       end_time TIMESTAMP,
-                                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                       deleted_at TIMESTAMP
+            id SERIAL PRIMARY KEY,
+            user_id INT NOT NULL,
+            name VARCHAR(255) NOT NULL UNIQUE,
+            is_active BOOLEAN NOT NULL,
+            description TEXT,
+            strategy VARCHAR(255) NOT NULL,
+            start_time TIMESTAMP NOT NULL,
+            end_time TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            deleted_at TIMESTAMP
         )
     `);
 });
 
 beforeEach(async () => {
-    const { getUserRole } = await vi.importMock("@/lib/helpers/user");
+    const { getUserRole } = await import("@/lib/helpers/user");
     vi.mocked(getUserRole).mockResolvedValue("Developer");
 
     await testDb.delete(featureFlagsTable).execute();
@@ -169,7 +169,7 @@ describe("POST /api/featureFlags - Create feature flag", () => {
     });
 
     it("returns 401 if user is not a Developer", async () => {
-        const { getUserRole } = await vi.importMock("@/lib/helpers/user");
+        const { getUserRole } = await import("@/lib/helpers/user");
         vi.mocked(getUserRole).mockResolvedValueOnce("Product-Manager");
 
         const req = new NextRequest("http://localhost", {
@@ -245,7 +245,7 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
     });
 
     it("returns 403 if non-Developer tries to update (not just toggle)", async () => {
-        const { getUserRole } = await vi.importMock("@/lib/helpers/user");
+        const { getUserRole } = await import("@/lib/helpers/user");
         vi.mocked(getUserRole).mockResolvedValueOnce("Product-Manager");
 
         const created = await testDb
@@ -280,7 +280,7 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
     });
 
     it("allows Product-Manager to toggle is_active only", async () => {
-        const { getUserRole } = await vi.importMock("@/lib/helpers/user");
+        const { getUserRole } = await import("@/lib/helpers/user");
         vi.mocked(getUserRole).mockClear()
         const user = await getUserRole(2);
         vi.mocked(getUserRole).mockResolvedValueOnce(user);
@@ -358,7 +358,7 @@ describe("DELETE /api/featureFlags/[id] - Delete feature flag", () => {
     });
 
     it("returns 401 if non-Developer tries to delete", async () => {
-        const { getUserRole } = await vi.importMock("@/lib/helpers/user");
+        const { getUserRole } = await import("@/lib/helpers/user");
         vi.mocked(getUserRole).mockResolvedValueOnce("Product-Manager");
 
         const created = await testDb
