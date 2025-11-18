@@ -7,6 +7,8 @@ import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
 import {parse} from "valibot";
 import {CreateFeatureFlagSchema, EditFeatureFlagSchema, GetFeatureFlagsSchema} from "@/lib/schemas/featureFlag.schema";
 import {logFeatureFlagCreated, logFeatureFlagUpdated} from "@/lib/helpers/featureFlagHistory";
+import {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
+import {getUserRole} from "@/lib/helpers/user";
 import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 
 
@@ -37,10 +39,15 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
+    const role = await getUserRole(body.user_id);
+
     const parseDate = (v: string | null) => (v ? new Date(v) : null);
 
     const validatedData = parse(CreateFeatureFlagSchema, body)
 
+    if(role !== "Developer") {
+        return NextResponse.json({ error: "Unauthorized action: only developers can create flags" }, { status: 401 });
+    }
     const newFlag = await db
         .insert(featureFlagsTable)
         .values({
@@ -68,6 +75,17 @@ export async function PATCH(req: NextRequest) {
     if (!id) {
         return NextResponse.json({ error: "Missing ID" }, { status: 400 });
     }
+
+    const role = await getUserRole(user_id);
+    const updatingFields = Object.keys(updates).filter(key => updates[key as keyof typeof updates] !== undefined);
+    const isOnlyToggle = updatingFields.length === 1 && 'is_active' in updates;
+
+    if (!isOnlyToggle && role !== "Developer") {
+        return NextResponse.json({
+            error: "Unauthorized: Only Developers can update feature flags (Product-Managers can only toggle is_active)"
+        }, { status: 403 });
+    }
+
 
     //til historik - hent gamle flag inden opdatering
     const oldFlag = await db

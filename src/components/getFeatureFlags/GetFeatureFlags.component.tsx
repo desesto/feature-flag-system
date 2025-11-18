@@ -3,11 +3,13 @@ import EditFeatureFlag from "@/components/editFeatureFlag/EditFeatureFlag.compon
 import FeatureFlagToggle from "@/components/updateFeatureFlag/FeatureFlagToggle.component";
 import type {GetFeatureFlagsDto} from "@/lib/dto/featureFlag.dto";
 import FeatureFlagDescription from "@/components/featureFlagDescription/FeatureFlagDescription.component";
+import {getUserRole} from "@/lib/helpers/user";
 
 
 
 export default async function GetFeatureFlags(props: { userId: number }) {
     const response = await fetch(`http://localhost:3000/api/featureFlags`);
+    const role = await getUserRole(props.userId);
 
     if (!response.ok) {
         throw new Error('Failed to fetch feature flags');
@@ -38,8 +40,8 @@ export default async function GetFeatureFlags(props: { userId: number }) {
                         <span className="text-gray-300 text-left">{flag.strategy || '—'}</span>
                         <FeatureFlagToggle featureFlagId={flag.id} isActive={flag.is_active} userId={props.userId} />
                         <div className="flex gap-2 pr-1">
-                            <EditFeatureFlag featureFlagId={flag.id} userId={props.userId}/>
-                            <DeleteFeatureFlagButtonComponent id={flag.id} userId={props.userId} />
+                            <EditFeatureFlag featureFlagId={flag.id} userId={props.userId} userRole={role}/>
+                            <DeleteFeatureFlagButtonComponent id={flag.id} userId={props.userId} userRole={role} />
                         </div>
                     </li>
                 ))}

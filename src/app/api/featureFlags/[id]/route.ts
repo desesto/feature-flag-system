@@ -5,6 +5,7 @@ import {parse} from "valibot";
 import {featureFlagsTable} from "@/db/schema"
 import {type NextRequest, NextResponse} from "next/server";
 import {logFeatureFlagDeleted} from "@/lib/helpers/featureFlagHistory";
+import {getUserRole} from "@/lib/helpers/user";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
@@ -43,6 +44,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function DELETE(req: NextRequest) {
     const { id, userId } = await req.json();
 
+    const role = await getUserRole(userId);
+
+
+    if (role !== "Developer") {
+        return NextResponse.json({ error: "Unauthorized action: only developers can delete flags" }, { status: 401 });
+    }
     const deletedFlag = await db
         .update(featureFlagsTable)
         .set({

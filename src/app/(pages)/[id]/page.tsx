@@ -10,6 +10,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     const user = await response.json();
 
 
+
     return (
         <div className="mt-10 flex flex-col">
             <div className="flex justify-center gap-4">
@@ -23,7 +24,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             <div className=" mt-8 mx-auto">
                 <h2 className="font-bold text-pink-400 text-2xl">Feature Flags:</h2>
                 <div className="mt-10">
-                <CreateFeatureFlag userId={user.id} />
+                    {user.role === "Developer" && (
+                        <CreateFeatureFlag userId={user.id} />
+                    )}
                 </div>
                 <GetFeatureFlags userId={user.id}/>
             </div>
