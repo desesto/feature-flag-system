@@ -50,6 +50,10 @@ export async function logFeatureFlagUpdated(
 
     (Object.keys(updates) as (keyof EditFeatureFlagDto)[]).forEach(key => {
 
+        if (key === 'id' || key === 'user_id') {
+            return;
+        }
+
         const oldValue = oldFlag[key];
         const newValue = updates[key];
 
