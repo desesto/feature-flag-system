@@ -1,13 +1,12 @@
 import { and, eq, isNull } from "drizzle-orm";
-import {drizzle} from "drizzle-orm/node-postgres";
 import {FeatureFlagSchema} from "@/lib/schemas/featureFlag.schema";
 import {parse} from "valibot";
 import {featureFlagsTable} from "@/db/schema"
 import {type NextRequest, NextResponse} from "next/server";
 import {logFeatureFlagDeleted} from "@/lib/helpers/featureFlagHistory";
+import { db } from "@/db";
 import {getUserRole} from "@/lib/helpers/user";
 
-const db = drizzle(process.env.DATABASE_URL!);
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
