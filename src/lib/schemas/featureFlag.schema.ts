@@ -33,7 +33,7 @@ export const EditFeatureFlagSchema = object({
     name: optional(string()),
     is_active: optional(boolean()),
     description: optional(string()),
-    strategy: optional(picklist(strategyValues), "NO_STRATEGY"),
+    strategy: optional(picklist(strategyValues)),
     start_time: optional(nullable(string())),
     end_time: optional(nullable(string())),
 });
