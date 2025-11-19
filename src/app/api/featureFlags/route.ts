@@ -1,19 +1,13 @@
-import { drizzle } from "drizzle-orm/node-postgres";
 import { NextRequest, NextResponse } from "next/server";
 import {featureFlagsTable} from "@/db/schema";
-import * as schema from "@/db/schema";
 import {asc} from "drizzle-orm";
 import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
 import {parse} from "valibot";
 import {CreateFeatureFlagSchema, EditFeatureFlagSchema, GetFeatureFlagsSchema} from "@/lib/schemas/featureFlag.schema";
 import {logFeatureFlagCreated, logFeatureFlagUpdated} from "@/lib/helpers/featureFlagHistory";
-import {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 import {getUserRole} from "@/lib/helpers/user";
 import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
-
-
-const db = drizzle(process.env.DATABASE_URL!, { schema });
-
+import { db } from "@/db";
     
 export async function GET() {
     const flags = await db.query.featureFlagsTable.findMany({
