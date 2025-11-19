@@ -7,7 +7,6 @@ import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
 import {parse} from "valibot";
 import {CreateFeatureFlagSchema, EditFeatureFlagSchema, GetFeatureFlagsSchema} from "@/lib/schemas/featureFlag.schema";
 import {logFeatureFlagCreated, logFeatureFlagUpdated} from "@/lib/helpers/featureFlagHistory";
-import {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 import {getUserRole} from "@/lib/helpers/user";
 import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 
