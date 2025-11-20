@@ -1,16 +1,19 @@
 'use client';
 
 import {useRouter} from "next/navigation";
+import {hasAccessToDeleteFeatureFlag} from "@/access-control/featureFlagAccess";
 
 type DeleteFeatureFlagButtonProps = {
     id: number;
     userId: number;
-    userRole: string | null;
+    userRole: string;
 }
 
 export default function DeleteFeatureFlagButton({ id, userId, userRole }: DeleteFeatureFlagButtonProps) {
 
     const router = useRouter();
+
+    const canDelete = hasAccessToDeleteFeatureFlag(userRole)
 
     async function handleDelete(): Promise<void> {
 
@@ -41,9 +44,9 @@ export default function DeleteFeatureFlagButton({ id, userId, userRole }: Delete
         <button
                 type="button"
                 onClick={handleDelete}
-                disabled={userRole !== 'Developer'}
+                disabled={!canDelete}
                 className={`px-1 ${
-                    userRole === 'Developer'
+                    canDelete
                         ? "text-red-400 bg-black hover:underline outline"
                         : "text-gray-400 cursor-not-allowed opacity-50"
                 }`}>

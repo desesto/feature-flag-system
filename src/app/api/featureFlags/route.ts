@@ -7,6 +7,11 @@ import {CreateFeatureFlagSchema, EditFeatureFlagSchema, GetFeatureFlagsSchema} f
 import {logFeatureFlagCreated, logFeatureFlagUpdated} from "@/lib/helpers/featureFlagHistory";
 import {getUserRole} from "@/lib/helpers/user";
 import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
+import {
+    hasAccessToCreateFeatureFlag,
+    hasAccessToEditFeatureFlag,
+    hasAccessToToggleFeatureFlag
+} from "@/access-control/featureFlagAccess";
 import { db } from "@/db";
     
 export async function GET() {
@@ -35,13 +40,18 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const role = await getUserRole(body.user_id);
 
+    if (!role) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     const parseDate = (v: string | null) => (v ? new Date(v) : null);
 
-    const validatedData = parse(CreateFeatureFlagSchema, body)
 
-    if(role !== "Developer") {
+    if(!hasAccessToCreateFeatureFlag(role)) {
         return NextResponse.json({ error: "Unauthorized action: only developers can create flags" }, { status: 401 });
     }
+    const validatedData = parse(CreateFeatureFlagSchema, body)
+
     const newFlag = await db
         .insert(featureFlagsTable)
         .values({
@@ -62,7 +72,6 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
     const body = await req.json();
-
     const validated = parse(EditFeatureFlagSchema, body)
     const { id, user_id, ...updates } = validated;
 
@@ -71,15 +80,17 @@ export async function PATCH(req: NextRequest) {
     }
 
     const role = await getUserRole(user_id);
-    const updatingFields = Object.keys(updates).filter(key => updates[key as keyof typeof updates] !== undefined);
-    const isOnlyToggle = updatingFields.length === 1 && 'is_active' in updates;
 
-    if (!isOnlyToggle && role !== "Developer") {
-        return NextResponse.json({
-            error: "Unauthorized: Only Developers can update feature flags (Product-Managers can only toggle is_active)"
-        }, { status: 403 });
+    if (!role) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+        if (!hasAccessToEditFeatureFlag(role)) {
+            return NextResponse.json(
+                { error: "Du har ikke adgang til at redigere feature flags" },
+                { status: 403 }
+            );
+        }
 
     //til historik - hent gamle flag inden opdatering
     const oldFlag = await db
@@ -107,7 +118,6 @@ export async function PATCH(req: NextRequest) {
         .set(updateData)
         .where(eq(featureFlagsTable.id, id))
         .returning();
-
 
     await logFeatureFlagUpdated(
         id,

@@ -12,7 +12,7 @@ export default function CreateUserPanel({ onSuccess, onCancel }: CreateUserPanel
     const [form, setForm] = useState({
         name: '',
         email: '',
-        role: 'Developer' as 'Product-Manager' | 'Developer',
+        role: 'Developer' as 'Product-Manager' | 'Developer' | 'Non-Technical-User',
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -93,13 +93,14 @@ export default function CreateUserPanel({ onSuccess, onCancel }: CreateUserPanel
                 <select
                     value={form.role}
                     onChange={(e) =>
-                        setForm({ ...form, role: e.target.value as 'Product-Manager' | 'Developer' })
+                        setForm({ ...form, role: e.target.value as 'Product-Manager' | 'Developer' | 'Non-Technical-User' })
                     }
                     className="p-2 rounded border border-white bg-black text-white"
                     disabled={loading}
                 >
                     <option value="Developer">Developer</option>
                     <option value="Product-Manager">Product-Manager</option>
+                    <option value="Non-Technical-User">Non-Technical-User</option>
                 </select>
             </label>
 

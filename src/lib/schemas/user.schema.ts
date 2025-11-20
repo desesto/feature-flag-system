@@ -4,13 +4,13 @@ export const UserSchema = object({
     id: number(),
     name: nullable(string()),
     email: nullable(string()),
-    role: picklist(["Product-Manager", "Developer"]),
+    role: picklist(["Product-Manager", "Developer", "Non-Technical-User"]),
 })
 
 export const CreateUserSchema = object({
     name: string(),
     email: string(),
-    role: optional(picklist(["Product-Manager", "Developer"]), "Developer"),
+    role: optional(picklist(["Product-Manager", "Developer" , "Non-Technical-User"]), "Developer"),
 });
 
 
