@@ -90,25 +90,13 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const updatingFields = Object.keys(updates).filter(key => updates[key as keyof typeof updates] !== undefined);
-    const isOnlyToggle = updatingFields.length === 1 && 'is_active' in updates;
-
-    if (isOnlyToggle) {
-
-        if (!hasAccessToToggleFeatureFlag(role)) {
-            return NextResponse.json(
-                { error: "Du har ikke adgang til at toggle feature flags" },
-                { status: 403 }
-            );
-        }
-    } else {
         if (!hasAccessToEditFeatureFlag(role)) {
             return NextResponse.json(
                 { error: "Du har ikke adgang til at redigere feature flags" },
                 { status: 403 }
             );
         }
-    }
+
 
     //til historik - hent gamle flag inden opdatering
     const oldFlag = await db
