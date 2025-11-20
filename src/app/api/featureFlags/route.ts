@@ -102,7 +102,6 @@ export async function PATCH(req: NextRequest) {
             );
         }
     } else {
-        // Updating other fields (name, description, strategy, etc.)
         if (!hasAccessToEditFeatureFlag(role)) {
             return NextResponse.json(
                 { error: "Du har ikke adgang til at redigere feature flags" },
@@ -110,7 +109,6 @@ export async function PATCH(req: NextRequest) {
             );
         }
     }
-
 
     //til historik - hent gamle flag inden opdatering
     const oldFlag = await db

@@ -3,16 +3,20 @@
 import {useState} from "react";
 import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
 import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
+import {hasAccessToEditFeatureFlag} from "@/access-control/featureFlagAccess";
 
 type EditFeatureFlagProps = {
     readonly featureFlagId: number
     readonly userId: number
-    readonly userRole: string | null
+    readonly userRole: string
 }
 
 export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditFeatureFlagProps) {
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
+
+    const canEdit = hasAccessToEditFeatureFlag(userRole)
+
     const time = new Date();
     const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
         .toISOString()
@@ -33,6 +37,7 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
     });
 
     const handleOpen = async () => {
+
         const response = await fetch(`http://localhost:3000/api/featureFlags/${featureFlagId}`);
 
         const featureFlag: FeatureFlagDto = await response.json();
@@ -92,9 +97,9 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
             <button
                 onClick={() => handleOpen()}
                 type="button"
-                disabled ={userRole !== 'Developer'}
+                disabled ={!canEdit}
                 className={`px-1 ${
-                    userRole === 'Developer'
+                        canEdit
                         ? "text-blue-400 bg-black hover:underline outline"
                         : "text-gray-400 cursor-not-allowed opacity-50"
             }`}>Edit</button>

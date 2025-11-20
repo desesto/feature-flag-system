@@ -9,12 +9,12 @@ const pool = new Pool({
 
 const db = drizzle(pool);
 
-export async function getUserRole(userId: number): Promise<string | null> {
+export async function getUserRole(userId: number): Promise<string> {
     const [user] = await db
         .select({ role: usersTable.role })
         .from(usersTable)
         .where(eq(usersTable.id, userId));
 
-    return user?.role ?? null;
+    return user.role;
 }
 
