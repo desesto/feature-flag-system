@@ -1,7 +1,5 @@
-import { drizzle } from "drizzle-orm/node-postgres";
 import { NextRequest, NextResponse } from "next/server";
 import {featureFlagsTable} from "@/db/schema";
-import * as schema from "@/db/schema";
 import {asc} from "drizzle-orm";
 import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
 import {parse} from "valibot";
@@ -14,10 +12,7 @@ import {
     hasAccessToEditFeatureFlag,
     hasAccessToToggleFeatureFlag
 } from "@/access-control/featureFlagAccess";
-
-
-const db = drizzle(process.env.DATABASE_URL!, { schema });
-
+import { db } from "@/db";
     
 export async function GET() {
     const flags = await db.query.featureFlagsTable.findMany({
