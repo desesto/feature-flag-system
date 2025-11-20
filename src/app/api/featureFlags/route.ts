@@ -97,7 +97,6 @@ export async function PATCH(req: NextRequest) {
             );
         }
 
-
     //til historik - hent gamle flag inden opdatering
     const oldFlag = await db
         .select()
@@ -124,7 +123,6 @@ export async function PATCH(req: NextRequest) {
         .set(updateData)
         .where(eq(featureFlagsTable.id, id))
         .returning();
-
 
     await logFeatureFlagUpdated(
         id,
