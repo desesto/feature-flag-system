@@ -51,7 +51,7 @@ describe("DELETE /api/feature-flags/[id]", () => {
         const data = await response.json()
 
         expect(response.status).toBe(401)
-        expect(data.error).toBe("Unauthorized action: only developers can delete flags")
+        expect(data.error).toBe("Unauthorized action: only authorized users can delete flags")
     })
 
     it("successfully deletes flag and logs history when user is Developer", async () => {

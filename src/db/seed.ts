@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";  // ← Tilføj denne import
-import { featureFlagsTable, usersTable } from "./schema";
+import {featureFlagHistoryTable, featureFlagsTable, usersTable} from "./schema";
 import * as schema from "./schema";
 
 // Opret pool connection
@@ -16,6 +16,7 @@ async function seed() {
 
     try {
         console.log("Clearing existing data...");
+        await db.delete(featureFlagHistoryTable)
         await db.delete(featureFlagsTable);
         await db.delete(usersTable);
 
@@ -24,7 +25,7 @@ async function seed() {
         await pool.query('ALTER SEQUENCE feature_flags_id_seq RESTART WITH 1');
 
         console.log("Creating users...");
-        const [user1, user2, user3] = await db
+        const [user1, user2, user3, user4] = await db
             .insert(usersTable)
             .values([
                 {
@@ -42,10 +43,15 @@ async function seed() {
                     email: "bob@jppol.dk",
                     role: "Product-Manager",
                 },
+                {
+                    name: "Bobette",
+                    email: "bobette@jppol.dk",
+                    role: "Non-Technical-User",
+                }
             ])
             .returning();
 
-        console.log("Users created:", user1?.id, user2?.id, user3?.id);
+        console.log("Users created:", user1?.id, user2?.id, user3?.id, user4?.id);
 
         console.log("Creating feature flags...");
         await db

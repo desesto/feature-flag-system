@@ -1,5 +1,5 @@
 import {PERMISSIONS} from "@/access-control/permissions";
-import {hasPermission} from "@/lib/helpers/permissions";
+import {canLogin, hasPermission} from "@/lib/helpers/permissions";
 
 
 export function hasAccessToCreateFeatureFlag(role: string): boolean {
@@ -16,4 +16,8 @@ export function hasAccessToDeleteFeatureFlag(role: string): boolean {
 
 export function hasAccessToToggleFeatureFlag(role: string): boolean {
     return hasPermission(role, PERMISSIONS.FEATURE_TOGGLE);
+}
+
+export function hasAccessToLogin(role: string) : boolean {
+    return canLogin(role)
 }

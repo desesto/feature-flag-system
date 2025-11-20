@@ -12,7 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 import {relations} from "drizzle-orm";
 
-export const roleEnum = pgEnum("role", ["Product-Manager", "Developer"]);
+export const roleEnum = pgEnum("role", ["Product-Manager", "Developer" , "Non-Technical-User"]);
 export const strategyEnum = pgEnum("strategy", ["NO_STRATEGY", "FUTURE_IMPLEMENTATIONS"]);
 export const ActionTypeEnum = pgEnum("action_type", ["CREATED", "UPDATED", "DELETED", "ACTIVATED", "DEACTIVATED"]);
 

@@ -6,6 +6,7 @@ import {type NextRequest, NextResponse} from "next/server";
 import {logFeatureFlagDeleted} from "@/lib/helpers/featureFlagHistory";
 import { db } from "@/db";
 import {getUserRole} from "@/lib/helpers/user";
+import {hasAccessToDeleteFeatureFlag} from "@/access-control/featureFlagAccess";
 
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -46,9 +47,13 @@ export async function DELETE(req: NextRequest) {
     const role = await getUserRole(userId);
 
 
-    if (role !== "Developer") {
-        return NextResponse.json({ error: "Unauthorized action: only developers can delete flags" }, { status: 401 });
+    if (!role) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+    if(!hasAccessToDeleteFeatureFlag(role)) {
+        return NextResponse.json({ error: "Unauthorized action: only authorized users can delete flags" }, { status: 401 });
+    }
+
     const deletedFlag = await db
         .update(featureFlagsTable)
         .set({

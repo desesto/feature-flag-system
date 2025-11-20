@@ -4,6 +4,7 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {GetUsersDto} from "@/lib/dto/user.dto";
+import {hasAccessToLogin} from "@/access-control/featureFlagAccess";
 
 
 
@@ -34,6 +35,18 @@ export default function Login() {
 
     const handleLogin = () => {
         if (selectedUserId) {
+            const selectedUser = users.find(user => user.id === Number(selectedUserId));
+
+            if (!selectedUser) {
+                alert("Bruger ikke fundet");
+                return;
+            }
+
+            if (!hasAccessToLogin(selectedUser.role)) {
+                alert(`${selectedUser.role} har ikke adgang til systemet. Kun Developer og Product-Manager kan logge ind.`);
+                return;
+            }
+
             router.push(`/${selectedUserId}`);
         }
     };

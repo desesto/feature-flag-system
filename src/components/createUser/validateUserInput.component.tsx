@@ -10,7 +10,7 @@ export function validateUserInput(input: CreateUserDto): string | null {
         return 'Email skal være gyldig og indeholde @';
     }
 
-    if (input.role && !['Developer', 'Product-Manager'].includes(input.role)) {
+    if (input.role && !['Developer', 'Product-Manager', "Non-Technical-User"].includes(input.role)) {
         return 'Ugyldig rolle';
     }
 
