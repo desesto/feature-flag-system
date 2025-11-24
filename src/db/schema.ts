@@ -58,7 +58,6 @@ export const whiteListsTable = pgTable(
     "whitelists",
     {
         id: serial("id").primaryKey(),
-        feature_flag_id: integer("feature_flag_id").notNull().unique(),
         name: varchar("name", { length: 255 }).notNull(),
     },
     (table) => ({
