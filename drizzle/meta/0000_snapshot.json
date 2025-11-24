@@ -1,5 +1,5 @@
 {
-  "id": "a2d6c6a9-7a8e-46b2-84b3-773e2824a04b",
+  "id": "feb2f17d-f895-4768-b9ee-d6571f13a72d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -280,7 +280,8 @@
       "schema": "public",
       "values": [
         "Product-Manager",
-        "Developer"
+        "Developer",
+        "Non-Technical-User"
       ]
     },
     "public.strategy": {
