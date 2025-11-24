@@ -1,7 +1,6 @@
 import {nullable, number, object, picklist, string, boolean, optional, array, fallback} from "valibot";
-import { UserSchema } from "./user.schema";
 
-export const strategyValues = ['NO_STRATEGY', 'FUTURE_IMPLEMENTATIONS'] as const;
+export const strategyValues = ['NO_STRATEGY', 'CANARY', 'FUTURE_IMPLEMENTATIONS'] as const;
 
 export const FeatureFlagSchema = object({
     id: number(),
