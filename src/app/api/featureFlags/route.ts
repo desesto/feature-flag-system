@@ -107,6 +107,7 @@ export async function PATCH(req: NextRequest) {
             is_active: updates.is_active,
             description: updates.description,
             strategy: updates.strategy,
+            whitelist_id: updates.whitelist_id,
             start_time: parseDate(updates.start_time),
             end_time: parseDate(updates.end_time),
             updated_at: new Date(),

@@ -15,10 +15,6 @@ export const UpdateWhiteListSchema = object({
     user_ids: array(number()),
 });
 
-export const AssignWhiteListToFeatureFlagSchema = object({
-    whitelist_id: number(),
-});
-
 export const GetWhiteListWithUsersSchema = object({
     id: number(),
     name: string(),

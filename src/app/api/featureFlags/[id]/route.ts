@@ -7,7 +7,6 @@ import {logFeatureFlagDeleted} from "@/lib/helpers/featureFlagHistory";
 import { db } from "@/db";
 import {getUserRole} from "@/lib/helpers/user";
 import {hasAccessToDeleteFeatureFlag} from "@/access-control/featureFlagAccess";
-import {AssignWhiteListToFeatureFlagSchema} from "@/lib/schemas/whiteList.schema";
 
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -92,42 +91,4 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 }
 
 
-export async function PATCH(
-    req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
-) {
-    try {
-        const { id } = await params;
-        const featureFlagId = Number(id);
 
-        if (isNaN(featureFlagId)) {
-            return NextResponse.json(
-                { error: "Invalid feature flag ID" },
-                { status: 400 }
-            );
-        }
-
-        const body = await req.json();
-        const validatedData = parse(AssignWhiteListToFeatureFlagSchema, body);
-
-        await db
-            .update(featureFlagsTable)
-            .set({
-                whitelist_id: validatedData.whitelist_id,
-                updated_at: new Date(),
-            })
-            .where(eq(featureFlagsTable.id, featureFlagId));
-
-        return NextResponse.json({
-            message: validatedData.whitelist_id
-                ? "Whitelist assigned successfully"
-                : "Whitelist removed successfully"
-        });
-    } catch (error) {
-        console.error("Error assigning whitelist to feature flag:", error);
-        return NextResponse.json(
-            { error: "Internal server error" },
-            { status: 500 }
-        );
-    }
-}
