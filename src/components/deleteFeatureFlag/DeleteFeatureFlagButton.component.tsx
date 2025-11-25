@@ -39,7 +39,6 @@ export default function DeleteFeatureFlagButton({ id, userId, userRole }: Delete
        }
     }
 
-
     return (
         <button
                 type="button"

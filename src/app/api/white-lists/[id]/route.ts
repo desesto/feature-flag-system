@@ -5,10 +5,10 @@ import {eq} from "drizzle-orm/sql/expressions/conditions";
 import {GetWhiteListWithUsersSchema, UpdateWhiteListSchema} from "@/lib/schemas/whiteList.schema";
 import {parse} from "valibot";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: number }> }) {
     try {
         const { id } = await params;
-        const whitelistId = Number(id);
+        const whitelistId = id;
 
         if (isNaN(whitelistId)) {
             return NextResponse.json({ error: "Invalid whitelist ID" }, { status: 400 });

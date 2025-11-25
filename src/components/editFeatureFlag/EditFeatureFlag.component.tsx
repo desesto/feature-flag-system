@@ -15,13 +15,6 @@ type EditFeatureFlagProps = {
 export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditFeatureFlagProps) {
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
-
-    const canEdit = hasAccessToEditFeatureFlag(userRole)
-
-    const time = new Date();
-    const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
-        .toISOString()
-        .slice(0, 16);
     const [form, setForm] = useState<EditFeatureFlagDto>({
         id: featureFlagId,
         user_id: userId,
@@ -37,6 +30,8 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
         created_at: '',
         updated_at: '',
     });
+
+    const canEdit = hasAccessToEditFeatureFlag(userRole)
 
     const handleOpen = async () => {
 

@@ -1,4 +1,4 @@
-import {FeatureFlagHistoryDto, GetFeatureFlagHistoriesDto} from "@/lib/dto/featureFlagHistory.dto";
+import type {FeatureFlagHistoryDto, GetFeatureFlagHistoriesDto} from "@/lib/dto/featureFlagHistory.dto";
 
 type GetFeatureFlagHistoryProps = {
     readonly featureFlagId: number;
