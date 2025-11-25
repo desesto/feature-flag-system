@@ -17,20 +17,24 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         return NextResponse.json({ error: "Invalid feature flag ID" }, { status: 400 });
     }
 
-    const featureFlag = await db.select().from(featureFlagsTable).where(eq(featureFlagsTable.id, featureFlagId));
-    console.log('Fetched feature flag:', featureFlag);
+    const featureFlag = await db.query.featureFlagsTable.findFirst({
+        where: eq(featureFlagsTable.id, featureFlagId),
+        with: {
+            whitelist: true,
+        },
+    });
 
-    if (featureFlag.length === 0) {
+    if (!featureFlag) {
         return NextResponse.json({ error: "Feature flag not found" }, { status: 404 });
     }
 
     const serializedFlag = {
-        ...featureFlag[0],
-        start_time: featureFlag[0].start_time?.toISOString() ?? null,
-        end_time: featureFlag[0].end_time?.toISOString() ?? null,
-        created_at: featureFlag[0].created_at?.toISOString() ?? null,
-        updated_at: featureFlag[0].updated_at?.toISOString() ?? null,
-        deleted_at: featureFlag[0].deleted_at?.toISOString() ?? null,
+        ...featureFlag,
+        start_time: featureFlag.start_time?.toISOString() ?? null,
+        end_time: featureFlag.end_time?.toISOString() ?? null,
+        created_at: featureFlag.created_at?.toISOString() ?? null,
+        updated_at: featureFlag.updated_at?.toISOString() ?? null,
+        deleted_at: featureFlag.deleted_at?.toISOString() ?? null,
     };
 
 

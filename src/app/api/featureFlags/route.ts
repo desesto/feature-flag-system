@@ -10,7 +10,6 @@ import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto
 import {
     hasAccessToCreateFeatureFlag,
     hasAccessToEditFeatureFlag,
-    hasAccessToToggleFeatureFlag
 } from "@/access-control/featureFlagAccess";
 import { db } from "@/db";
     
@@ -60,6 +59,7 @@ export async function POST(req: NextRequest) {
             is_active: validatedData.is_active,
             description: validatedData.description,
             strategy: validatedData.strategy,
+            whitelist_id: validatedData.whitelist_id,
             start_time: parseDate(validatedData.start_time ?? null),
             end_time: parseDate(validatedData.end_time ?? null),
         })
@@ -93,10 +93,12 @@ export async function PATCH(req: NextRequest) {
         }
 
     //til historik - hent gamle flag inden opdatering
-    const oldFlag = await db
-        .select()
-        .from(featureFlagsTable)
-        .where(eq(featureFlagsTable.id, id));
+    const oldFlag = await db.query.featureFlagsTable.findFirst({
+        where: eq(featureFlagsTable.id, body.id),
+        with: {
+            whitelist: true,
+        },
+    });
 
     const parseDate = (v: string | null | undefined) => (v ? new Date(v) : undefined);
 
@@ -114,21 +116,32 @@ export async function PATCH(req: NextRequest) {
         }).filter(([_, value]) => value !== undefined)
     );
 
-    const newFlag = await db
+    if (updates.strategy && updates.strategy !== 'CANARY') {
+        updateData.whitelist_id = null;
+    }
+
+    await db
         .update(featureFlagsTable)
         .set(updateData)
-        .where(eq(featureFlagsTable.id, id))
-        .returning();
+        .where(eq(featureFlagsTable.id, id));
+
+    //kun til at hente opdateret whitelist
+    const newFlag = await db.query.featureFlagsTable.findFirst({
+        where: eq(featureFlagsTable.id, body.id),
+        with: {
+            whitelist: true,
+        },
+    })
 
     await logFeatureFlagUpdated(
         id,
         user_id,
-        oldFlag[0] as FeatureFlagDto,
-        updates as EditFeatureFlagDto
+        oldFlag as FeatureFlagDto,
+        newFlag as FeatureFlagDto
     );
 
 
-    return NextResponse.json(newFlag[0]);
+    return NextResponse.json(newFlag);
 }
 
 

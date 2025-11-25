@@ -14,7 +14,7 @@ export async function GET(req: NextRequest){
         return NextResponse.json(validatedWhiteLists);
     }
     catch (error) {
-        console.error("Error fetching white lists:", error);
+        console.error("Error fetching whitelists:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 
     }

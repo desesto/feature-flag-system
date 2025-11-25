@@ -4,6 +4,7 @@ import {useState} from "react";
 import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
 import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 import {hasAccessToEditFeatureFlag} from "@/access-control/featureFlagAccess";
+import WhitelistSelector from "@/components/whitelist/WhitelistSelector.component";
 
 type EditFeatureFlagProps = {
     readonly featureFlagId: number
@@ -28,6 +29,7 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
         is_active: false,
         description: '',
         strategy: 'NO_STRATEGY',
+        whitelist_id: null,
         start_time: '',
         end_time: '',
     });
@@ -57,6 +59,7 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
             is_active: featureFlag.is_active,
             description: featureFlag.description,
             strategy: featureFlag.strategy ?? 'NO_STRATEGY',
+            whitelist_id: featureFlag.whitelist_id ?? null,
             start_time: featureFlag.start_time ?? null,
             end_time: featureFlag.end_time ?? null,
         });
@@ -170,6 +173,13 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                                 <option value="FUTURE_IMPLEMENTATIONS">FUTURE_IMPLEMENTATIONS</option>
                             </select>
                         </label>
+                        {form.strategy === 'CANARY' && (
+                            <WhitelistSelector
+                                currentWhitelistId={form.whitelist_id ?? null}
+                                onWhitelistChange={(whitelistId) => setForm({...form, whitelist_id: whitelistId})}
+                            />
+                        )}
+
 
                         <label className="flex flex-col gap-1 mb-3">
                             Feature flagget skal slåes til:

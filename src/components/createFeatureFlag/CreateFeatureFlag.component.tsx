@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {useState} from 'react';
 import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
 import {CreateFeatureFlagDto} from "@/lib/dto/featureFlag.dto";
+import WhitelistSelector from "@/components/whitelist/WhitelistSelector.component";
 
 type CreateFeatureFlagProps = {
     readonly userId: number
@@ -24,6 +25,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
         is_active: false,
         description: '',
         strategy: 'NO_STRATEGY',
+        whitelist_id: null,
         start_time: null,
         end_time: null,
     });
@@ -40,6 +42,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             is_active: false,
             description: '',
             strategy: 'NO_STRATEGY',
+            whitelist_id: null,
             start_time: null,
             end_time: null,
         });
@@ -145,6 +148,12 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                 <option value="FUTURE_IMPLEMENTATIONS">FUTURE_IMPLEMENTATIONS</option>
                             </select>
                         </label>
+                        {form.strategy === 'CANARY' && (
+                            <WhitelistSelector
+                                currentWhitelistId={form.whitelist_id ?? null}
+                                onWhitelistChange={(whitelistId) => setForm({...form, whitelist_id: whitelistId})}
+                            />
+                        )}
 
                         <label className="flex flex-col gap-1 mb-3">
                             Feature flagget skal slåes til:
