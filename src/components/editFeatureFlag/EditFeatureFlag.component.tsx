@@ -161,14 +161,13 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                             <select
                                 value={form.strategy ?? 'NO_STRATEGY'}
                                 onChange={(event) =>
-                                    setForm({...form, strategy: event.target.value as "NO_STRATEGY" | "FUTURE_IMPLEMENTATIONS"})
+                                    setForm({...form, strategy: event.target.value as "NO_STRATEGY" | "CANARY" | "FUTURE_IMPLEMENTATIONS"})
                                 }
                                 className="p-2 rounded border"
                             >
                                 <option value="NO_STRATEGY">NO_STRATEGY</option>
-                                <option value="FUTURE_IMPLEMENTATIONS">
-                                    FUTURE_IMPLEMENTATIONS
-                                </option>
+                                <option value="CANARY">CANARY</option>
+                                <option value="FUTURE_IMPLEMENTATIONS">FUTURE_IMPLEMENTATIONS</option>
                             </select>
                         </label>
 

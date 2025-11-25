@@ -89,3 +89,6 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const isEnabled = !!featureFlag[0].is_active;
     return NextResponse.json({ enabled: isEnabled });
 }
+
+
+
