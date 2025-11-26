@@ -72,29 +72,6 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json(deletedFlag[0]);
 }
 
-// POST request to check if a feature flag is enabled by its name
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = await params;
-    const flagName = decodeURIComponent(id).trim();
-    const apiKey = req.headers.get("x-api-key");
-
-    if (apiKey !== process.env.FEATURE_FLAG_API_KEY) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const featureFlag = await db
-        .select()
-        .from(featureFlagsTable)
-        .where(and(eq(featureFlagsTable.name, flagName), isNull(featureFlagsTable.deleted_at)));
-
-    if (featureFlag.length === 0) {
-        return NextResponse.json({ enabled: false });
-    }
-
-    const isEnabled = !!featureFlag[0].is_active;
-    return NextResponse.json({ enabled: isEnabled });
-}
-
 export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const validated = parse(EditFeatureFlagSchema, body)
