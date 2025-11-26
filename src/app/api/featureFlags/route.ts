@@ -70,79 +70,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(newFlag[0]);
 }
 
-export async function PATCH(req: NextRequest) {
-    const body = await req.json();
-    const validated = parse(EditFeatureFlagSchema, body)
-    const { id, user_id, ...updates } = validated;
 
-    if (!id) {
-        return NextResponse.json({ error: "Missing ID" }, { status: 400 });
-    }
-
-    const role = await getUserRole(user_id);
-
-    if (!role) {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-        if (!hasAccessToEditFeatureFlag(role)) {
-            return NextResponse.json(
-                { error: "Du har ikke adgang til at redigere feature flags" },
-                { status: 403 }
-            );
-        }
-
-    //til historik - hent gamle flag inden opdatering
-    const oldFlag = await db.query.featureFlagsTable.findFirst({
-        where: eq(featureFlagsTable.id, body.id),
-        with: {
-            whitelist: true,
-        },
-    });
-
-    const parseDate = (v: string | null | undefined) => (v ? new Date(v) : undefined);
-
-
-    const updateData = Object.fromEntries(
-        Object.entries({
-            name: updates.name,
-            is_active: updates.is_active,
-            description: updates.description,
-            strategy: updates.strategy,
-            whitelist_id: updates.whitelist_id,
-            start_time: parseDate(updates.start_time),
-            end_time: parseDate(updates.end_time),
-            updated_at: new Date(),
-        }).filter(([_, value]) => value !== undefined)
-    );
-
-    if (updates.strategy && updates.strategy !== 'CANARY') {
-        updateData.whitelist_id = null;
-    }
-
-    await db
-        .update(featureFlagsTable)
-        .set(updateData)
-        .where(eq(featureFlagsTable.id, id));
-
-    //kun til at hente opdateret whitelist
-    const newFlag = await db.query.featureFlagsTable.findFirst({
-        where: eq(featureFlagsTable.id, body.id),
-        with: {
-            whitelist: true,
-        },
-    })
-
-    await logFeatureFlagUpdated(
-        id,
-        user_id,
-        oldFlag as FeatureFlagDto,
-        newFlag as FeatureFlagDto
-    );
-
-
-    return NextResponse.json(newFlag);
-}
 
 
 
