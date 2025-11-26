@@ -20,7 +20,7 @@ export default function FeatureFlagToggle({featureFlagId, isActive, userId}: Fea
         setActive(newValue);
 
         try {
-            const response = await fetch(`/api/featureFlags`, {
+            const response = await fetch(`/api/featureFlags/[id]`, {
                 method: 'PATCH',
                 headers: {'Content-Type': 'application/json'},
                 body:
