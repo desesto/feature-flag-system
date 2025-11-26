@@ -10,6 +10,10 @@ export const FeatureFlagSchema = object({
     description: string(),
     strategy: nullable(picklist(strategyValues)),
     whitelist_id: nullable(number()),
+    whitelist: optional(nullable(object({
+        id: number(),
+        name: string(),
+    }))),
     start_time: nullable(string()),
     end_time: nullable(string()),
     created_at: nullable(string()),
@@ -36,6 +40,10 @@ export const EditFeatureFlagSchema = object({
     description: optional(string()),
     strategy: optional(picklist(strategyValues)),
     whitelist_id: optional(nullable(number())),
+    whitelist: optional(nullable(object({
+        id: number(),
+        name: string(),
+    }))),
     start_time: optional(nullable(string())),
     end_time: optional(nullable(string())),
 });

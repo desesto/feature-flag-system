@@ -38,37 +38,50 @@ export async function logFeatureFlagDeleted(
     });
 }
 
+const ignore_keys = ['id', 'user_id', 'whitelist', 'created_at', 'updated_at', 'deleted_at'];
+
 export async function logFeatureFlagUpdated(
     featureFlagId: number,
     userId: number,
     oldFlag: FeatureFlagDto,
-    updates: EditFeatureFlagDto
+    newFlag: FeatureFlagDto
 ): Promise<void> {
     const changedFields: string[] = [];
     const oldValues: Record<string, unknown> = {};
     const newValues: Record<string, unknown> = {};
 
-    (Object.keys(updates) as (keyof EditFeatureFlagDto)[]).forEach(key => {
-
-        if (key === 'id' || key === 'user_id') {
-            return;
+    for (const key of Object.keys(newFlag)) {
+        if (ignore_keys.includes(key)) {
+            continue;
         }
 
-        const oldValue = oldFlag[key];
-        const newValue = updates[key];
+        if (key === 'whitelist_id') {
+            if (oldFlag.whitelist_id !== newFlag.whitelist_id) {
+                changedFields.push('whitelist');
+                oldValues.whitelist = oldFlag.whitelist?.name ?? null;
+                newValues.whitelist = newFlag.whitelist?.name ?? null;
+            }
+            continue;
+        }
 
-        if (oldValue !== newValue) {
+        const oldValue: any = (oldFlag as any)[key];
+        const newValue: any = (newFlag as any)[key];
+
+        const oldString = oldValue instanceof Date ? oldValue.toISOString() : oldValue;
+        const newString = newValue instanceof Date ? newValue.toISOString() : newValue;
+
+        if (oldString !== newString) {
             changedFields.push(key);
-            oldValues[key] = oldValue;
-            newValues[key] = newValue;
+            oldValues[key] = oldString;
+            newValues[key] = newString;
         }
-    });
+    }
 
     if (changedFields.length === 0) {
         return;
     }
 
-    const actionType = determineUpdateActionType(changedFields, updates.is_active);
+    const actionType = determineUpdateActionType(changedFields, newFlag.is_active);
 
     await db.insert(featureFlagHistoryTable).values({
         feature_flag_id: featureFlagId,

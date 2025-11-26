@@ -10,7 +10,6 @@ import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto
 import {
     hasAccessToCreateFeatureFlag,
     hasAccessToEditFeatureFlag,
-    hasAccessToToggleFeatureFlag
 } from "@/access-control/featureFlagAccess";
 import { db } from "@/db";
     
@@ -60,6 +59,7 @@ export async function POST(req: NextRequest) {
             is_active: validatedData.is_active,
             description: validatedData.description,
             strategy: validatedData.strategy,
+            whitelist_id: validatedData.whitelist_id,
             start_time: parseDate(validatedData.start_time ?? null),
             end_time: parseDate(validatedData.end_time ?? null),
         })
@@ -70,66 +70,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(newFlag[0]);
 }
 
-export async function PATCH(req: NextRequest) {
-    const body = await req.json();
-    const validated = parse(EditFeatureFlagSchema, body)
-    const { id, user_id, ...updates } = validated;
 
-    if (!id) {
-        return NextResponse.json({ error: "Missing ID" }, { status: 400 });
-    }
-
-    const role = await getUserRole(user_id);
-
-    if (!role) {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-        if (!hasAccessToEditFeatureFlag(role)) {
-            return NextResponse.json(
-                { error: "Du har ikke adgang til at redigere feature flags" },
-                { status: 403 }
-            );
-        }
-
-    //til historik - hent gamle flag inden opdatering
-    const oldFlag = await db
-        .select()
-        .from(featureFlagsTable)
-        .where(eq(featureFlagsTable.id, id));
-
-    const parseDate = (v: string | null | undefined) => (v ? new Date(v) : undefined);
-
-
-    const updateData = Object.fromEntries(
-        Object.entries({
-            name: updates.name,
-            is_active: updates.is_active,
-            description: updates.description,
-            strategy: updates.strategy,
-            whitelist_id: updates.whitelist_id,
-            start_time: parseDate(updates.start_time),
-            end_time: parseDate(updates.end_time),
-            updated_at: new Date(),
-        }).filter(([_, value]) => value !== undefined)
-    );
-
-    const newFlag = await db
-        .update(featureFlagsTable)
-        .set(updateData)
-        .where(eq(featureFlagsTable.id, id))
-        .returning();
-
-    await logFeatureFlagUpdated(
-        id,
-        user_id,
-        oldFlag[0] as FeatureFlagDto,
-        updates as EditFeatureFlagDto
-    );
-
-
-    return NextResponse.json(newFlag[0]);
-}
 
 
 

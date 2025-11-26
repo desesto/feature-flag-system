@@ -20,6 +20,8 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
         is_active: false,
         description: '',
         strategy: 'NO_STRATEGY',
+        whitelist_id: null,
+        whitelist: null,
         start_time: '',
         end_time: '',
     });
@@ -48,6 +50,8 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
             is_active: featureFlag.is_active,
             description: featureFlag.description,
             strategy: featureFlag.strategy ?? 'NO_STRATEGY',
+            whitelist_id: featureFlag.whitelist_id ?? null,
+            whitelist: featureFlag.whitelist ?? null,
             start_time: featureFlag.start_time ?? null,
             end_time: featureFlag.end_time ?? null,
         });
@@ -134,6 +138,16 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                                 className="p-2 rounded border bg-transparent cursor-default"
                             />
                         </label>
+                        {form.strategy === 'CANARY' && (
+                            <label className="flex flex-col gap-1 mb-3">
+                                Whitelist:
+                                <input
+                                    value={form.whitelist?.name ?? 'Ingen whitelist valgt'}
+                                    readOnly
+                                    className="p-2 rounded border bg-transparent cursor-default"
+                                />
+                            </label>
+                        )}
 
                         <label className="flex flex-col gap-1 mb-3">
                             Feature flagget skal slåes til:

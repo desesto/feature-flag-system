@@ -1,12 +1,13 @@
 import { and, eq, isNull } from "drizzle-orm";
-import {FeatureFlagSchema} from "@/lib/schemas/featureFlag.schema";
+import {EditFeatureFlagSchema, FeatureFlagSchema} from "@/lib/schemas/featureFlag.schema";
 import {parse} from "valibot";
 import {featureFlagsTable} from "@/db/schema"
 import {type NextRequest, NextResponse} from "next/server";
-import {logFeatureFlagDeleted} from "@/lib/helpers/featureFlagHistory";
+import {logFeatureFlagDeleted, logFeatureFlagUpdated} from "@/lib/helpers/featureFlagHistory";
 import { db } from "@/db";
 import {getUserRole} from "@/lib/helpers/user";
-import {hasAccessToDeleteFeatureFlag} from "@/access-control/featureFlagAccess";
+import {hasAccessToDeleteFeatureFlag, hasAccessToEditFeatureFlag} from "@/access-control/featureFlagAccess";
+import type {FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -17,20 +18,24 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         return NextResponse.json({ error: "Invalid feature flag ID" }, { status: 400 });
     }
 
-    const featureFlag = await db.select().from(featureFlagsTable).where(eq(featureFlagsTable.id, featureFlagId));
-    console.log('Fetched feature flag:', featureFlag);
+    const featureFlag = await db.query.featureFlagsTable.findFirst({
+        where: eq(featureFlagsTable.id, featureFlagId),
+        with: {
+            whitelist: true,
+        },
+    });
 
-    if (featureFlag.length === 0) {
+    if (!featureFlag) {
         return NextResponse.json({ error: "Feature flag not found" }, { status: 404 });
     }
 
     const serializedFlag = {
-        ...featureFlag[0],
-        start_time: featureFlag[0].start_time?.toISOString() ?? null,
-        end_time: featureFlag[0].end_time?.toISOString() ?? null,
-        created_at: featureFlag[0].created_at?.toISOString() ?? null,
-        updated_at: featureFlag[0].updated_at?.toISOString() ?? null,
-        deleted_at: featureFlag[0].deleted_at?.toISOString() ?? null,
+        ...featureFlag,
+        start_time: featureFlag.start_time?.toISOString() ?? null,
+        end_time: featureFlag.end_time?.toISOString() ?? null,
+        created_at: featureFlag.created_at?.toISOString() ?? null,
+        updated_at: featureFlag.updated_at?.toISOString() ?? null,
+        deleted_at: featureFlag.deleted_at?.toISOString() ?? null,
     };
 
 
@@ -88,6 +93,80 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     const isEnabled = !!featureFlag[0].is_active;
     return NextResponse.json({ enabled: isEnabled });
+}
+
+export async function PATCH(req: NextRequest) {
+    const body = await req.json();
+    const validated = parse(EditFeatureFlagSchema, body)
+    const { id, user_id, ...updates } = validated;
+
+    if (!id) {
+        return NextResponse.json({ error: "Missing ID" }, { status: 400 });
+    }
+
+    const role = await getUserRole(user_id);
+
+    if (!role) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (!hasAccessToEditFeatureFlag(role)) {
+        return NextResponse.json(
+            { error: "Du har ikke adgang til at redigere feature flags" },
+            { status: 403 }
+        );
+    }
+
+    //til historik - hent gamle flag inden opdatering
+    const oldFlag = await db.query.featureFlagsTable.findFirst({
+        where: eq(featureFlagsTable.id, body.id),
+        with: {
+            whitelist: true,
+        },
+    });
+
+    const parseDate = (v: string | null | undefined) => (v ? new Date(v) : undefined);
+
+
+    const updateData = Object.fromEntries(
+        Object.entries({
+            name: updates.name,
+            is_active: updates.is_active,
+            description: updates.description,
+            strategy: updates.strategy,
+            whitelist_id: updates.whitelist_id,
+            start_time: parseDate(updates.start_time),
+            end_time: parseDate(updates.end_time),
+            updated_at: new Date(),
+        }).filter(([_, value]) => value !== undefined)
+    );
+
+    if (updates.strategy && updates.strategy !== 'CANARY') {
+        updateData.whitelist_id = null;
+    }
+
+    await db
+        .update(featureFlagsTable)
+        .set(updateData)
+        .where(eq(featureFlagsTable.id, id));
+
+    //kun til at hente opdateret whitelist
+    const newFlag = await db.query.featureFlagsTable.findFirst({
+        where: eq(featureFlagsTable.id, body.id),
+        with: {
+            whitelist: true,
+        },
+    })
+
+    await logFeatureFlagUpdated(
+        id,
+        user_id,
+        oldFlag as FeatureFlagDto,
+        newFlag as FeatureFlagDto
+    );
+
+
+    return NextResponse.json(newFlag);
 }
 
 
