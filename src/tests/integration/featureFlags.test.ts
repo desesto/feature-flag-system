@@ -35,12 +35,12 @@ let POST_CreateFlag: any;
 let PATCH_UpdateFlag: any;
 
 beforeAll(async () => {
-    const flagByIdRoute = await import("@/app/api/featureFlags/[id]/route");
+    const flagByIdRoute = await import("@/app/api/feature-flags/[id]/route");
     POST_GetFlagById = flagByIdRoute.POST;
     DELETE_Flag = flagByIdRoute.DELETE;
 
     try {
-        const flagsRoute = await import("@/app/api/featureFlags/route");
+        const flagsRoute = await import("@/app/api/feature-flags/route");
         POST_CreateFlag = flagsRoute.POST;
         PATCH_UpdateFlag = flagsRoute.PATCH;
     } catch (e) {

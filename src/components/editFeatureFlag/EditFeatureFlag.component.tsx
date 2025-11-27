@@ -40,7 +40,7 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
 
     const handleOpen = async () => {
 
-        const response = await fetch(`http://localhost:3000/api/featureFlags/${featureFlagId}`);
+        const response = await fetch(`http://localhost:3000/api/feature-flags/${featureFlagId}`);
 
         const featureFlag: FeatureFlagDto = await response.json();
 

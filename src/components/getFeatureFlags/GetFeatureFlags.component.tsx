@@ -8,7 +8,7 @@ import {getUserRole} from "@/lib/helpers/user";
 
 
 export default async function GetFeatureFlags(props: { userId: number }) {
-    const response = await fetch(`http://localhost:3000/api/featureFlags`);
+    const response = await fetch(`http://localhost:3000/api/feature-flags`);
     const role = await getUserRole(props.userId);
 
     if (!response.ok) {

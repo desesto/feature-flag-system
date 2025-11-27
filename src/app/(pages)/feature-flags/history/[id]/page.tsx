@@ -5,7 +5,7 @@ export default async function Page({ params }: { params: Promise<{ id: number }>
     const { id } = await params;
 
 
-    const response = await fetch(`http://localhost:3000/api/featureFlags/${id}`, {
+    const response = await fetch(`http://localhost:3000/api/feature-flags/${id}`, {
         cache: "no-store",
     });
 

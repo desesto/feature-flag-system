@@ -31,7 +31,7 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
     });
 
     const handleOpen = async () => {
-        const response = await fetch(`http://localhost:3000/api/featureFlags/${featureFlagId}`);
+        const response = await fetch(`http://localhost:3000/api/feature-flags/${featureFlagId}`);
 
         const featureFlag: FeatureFlagDto = await response.json();
 
@@ -112,7 +112,7 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             </div>
                             <button
                                 type="button"
-                                onClick={() => router.push(`/featureFlags/history/${featureFlagId}`)}
+                                onClick={() => router.push(`/feature-flags/history/${featureFlagId}`)}
                                 className="px-4 py-2 mt-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
                             >
                                 Se historik

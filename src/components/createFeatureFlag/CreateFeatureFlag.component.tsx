@@ -59,7 +59,7 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             return;
         }
         try {
-            await fetch('/api/featureFlags', {
+            await fetch('/api/feature-flags', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(form),

@@ -19,7 +19,7 @@ export default function WhitelistSelector({currentWhitelistId, onWhitelistChange
     useEffect(() => {
         const fetchWhitelists = async () => {
             try {
-                const response = await fetch('/api/whiteLists');
+                const response = await fetch('/api/white-lists');
                 const data = await response.json();
                 setWhitelists(data);
             } catch (error) {

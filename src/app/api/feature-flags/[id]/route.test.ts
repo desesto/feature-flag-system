@@ -30,7 +30,7 @@ vi.mock("@/lib/helpers/featureFlagHistory", () => ({
 }))
 
 // Import AFTER mocks
-import { DELETE } from "@/app/api/featureFlags/[id]/route"
+import { DELETE } from "@/app/api/feature-flags/[id]/route"
 import { getUserRole } from "@/lib/helpers/user"
 import { logFeatureFlagDeleted } from "@/lib/helpers/featureFlagHistory"
 
