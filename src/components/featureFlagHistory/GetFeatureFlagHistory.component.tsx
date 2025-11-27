@@ -5,7 +5,7 @@ type GetFeatureFlagHistoryProps = {
 };
 
 export default async function GetFeatureFlagHistory({featureFlagId}:GetFeatureFlagHistoryProps) {
-    const response = await fetch(`http://localhost:3000/api/featureFlagHistories/${featureFlagId}`,);
+    const response = await fetch(`http://localhost:3000/api/feature-flag-histories/${featureFlagId}`,);
 
 
     const toLocalISOString = (dateString: string | null) => {

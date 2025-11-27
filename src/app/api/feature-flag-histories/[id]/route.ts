@@ -1,5 +1,4 @@
 import {type NextRequest, NextResponse} from "next/server";
-import {featureFlagHistoryTable} from "@/db/schema";
 import {eq} from "drizzle-orm/sql/expressions/conditions";
 import {drizzle} from "drizzle-orm/node-postgres";
 import {desc} from "drizzle-orm";

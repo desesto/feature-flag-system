@@ -22,7 +22,7 @@ export default function DeleteFeatureFlagButton({ id, userId, userRole }: Delete
        }
 
        try {
-           const response = await fetch(`/api/featureFlags/${id}`, {
+           const response = await fetch(`/api/feature-flags/${id}`, {
                method: "DELETE",
                headers: {'Content-Type': 'application/json'},
                body: JSON.stringify({ id, userId })
