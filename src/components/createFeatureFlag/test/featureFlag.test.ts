@@ -21,8 +21,16 @@ describe("validateFeatureFlagInput", () => {
     });
 
     it("returns error if start time is after end time", () => {
-        const input = { user_id: 1, name: "A very good name", is_active: true, description: "A very good description", strategy: "NO_STRATEGY", start_time: "2025-12-01-12:00", end_time: "2025-11-10-15:00",
+        const input = {
+            user_id: 1,
+            name: "A very good name",
+            is_active: true,
+            description: "A very good description",
+            strategy: "NO_STRATEGY",
+            start_time: "2025-12-01T12:00:00Z",
+            end_time: "2025-11-10T15:00:00Z",
         } satisfies CreateFeatureFlagDto
+
         const actualOutput = validateFeatureFlagInput(input)
 
         expect(actualOutput).toBe("Sluttidspunkt skal være efter starttidspunkt og begge skal angives")

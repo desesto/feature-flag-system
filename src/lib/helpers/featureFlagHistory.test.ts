@@ -1,11 +1,9 @@
-// src/lib/helpers/featureFlagHistory.test.ts
 /**
  * @vitest-environment node
  */
 import { describe, expect, it, vi, beforeEach } from "vitest"
-import type { EditFeatureFlagDto, FeatureFlagDto } from "@/lib/dto/featureFlag.dto"
+import type { FeatureFlagDto } from "@/lib/dto/featureFlag.dto"
 
-// Mock database
 const { mockDb } = vi.hoisted(() => {
     const mockDb = {
         insert: vi.fn().mockReturnThis(),
@@ -80,6 +78,7 @@ describe("logFeatureFlagUpdated", () => {
             description: "Test",
             strategy: "NO_STRATEGY",
             user_id: 1,
+            whitelist_id: null,
             start_time: null,
             end_time: null,
             created_at: "2025-01-01T00:00:00.000Z",
@@ -87,14 +86,12 @@ describe("logFeatureFlagUpdated", () => {
             deleted_at: null,
         }
 
-        const updates: EditFeatureFlagDto = {
-            id: 1,
-            user_id: 2,
-            strategy: "NO_STRATEGY",
+        const newFlag: FeatureFlagDto = {
+            ...oldFlag,
             is_active: true,
         }
 
-        await logFeatureFlagUpdated(1, 2, oldFlag, updates)
+        await logFeatureFlagUpdated(1, 2, oldFlag, newFlag)
 
         expect(mockDb.values).toHaveBeenCalledWith({
             feature_flag_id: 1,
@@ -114,6 +111,7 @@ describe("logFeatureFlagUpdated", () => {
             description: "Test",
             strategy: "NO_STRATEGY",
             user_id: 1,
+            whitelist_id: null,
             start_time: null,
             end_time: null,
             created_at: "2025-01-01T00:00:00.000Z",
@@ -121,14 +119,12 @@ describe("logFeatureFlagUpdated", () => {
             deleted_at: null,
         }
 
-        const updates: EditFeatureFlagDto = {
-            id: 1,
-            user_id: 2,
-            strategy: "NO_STRATEGY",
+        const newFlag: FeatureFlagDto = {
+            ...oldFlag,
             is_active: false,
         }
 
-        await logFeatureFlagUpdated(1, 2, oldFlag, updates)
+        await logFeatureFlagUpdated(1, 2, oldFlag, newFlag)
 
         expect(mockDb.values).toHaveBeenCalledWith({
             feature_flag_id: 1,
@@ -148,6 +144,7 @@ describe("logFeatureFlagUpdated", () => {
             description: "Old description",
             strategy: "NO_STRATEGY",
             user_id: 1,
+            whitelist_id: null,
             start_time: null,
             end_time: null,
             created_at: "2025-01-01T00:00:00.000Z",
@@ -155,15 +152,13 @@ describe("logFeatureFlagUpdated", () => {
             deleted_at: null,
         }
 
-        const updates: EditFeatureFlagDto = {
-            id: 1,
-            user_id: 2,
-            strategy: "NO_STRATEGY",
+        const newFlag: FeatureFlagDto = {
+            ...oldFlag,
             name: "new-name",
             description: "New description",
         }
 
-        await logFeatureFlagUpdated(1, 2, oldFlag, updates)
+        await logFeatureFlagUpdated(1, 2, oldFlag, newFlag)
 
         expect(mockDb.values).toHaveBeenCalledWith({
             feature_flag_id: 1,
@@ -189,6 +184,7 @@ describe("logFeatureFlagUpdated", () => {
             description: "Test",
             strategy: "NO_STRATEGY",
             user_id: 1,
+            whitelist_id: null,
             start_time: null,
             end_time: null,
             created_at: "2025-01-01T00:00:00.000Z",
@@ -196,14 +192,12 @@ describe("logFeatureFlagUpdated", () => {
             deleted_at: null,
         }
 
-        const updates: EditFeatureFlagDto = {
-            id: 1,
-            user_id: 2,
-            strategy: "NO_STRATEGY",
+        const newFlag: FeatureFlagDto = {
+            ...oldFlag,
             name: "test-flag",
         }
 
-        await logFeatureFlagUpdated(1, 2, oldFlag, updates)
+        await logFeatureFlagUpdated(1, 2, oldFlag, newFlag)
 
         expect(mockDb.insert).not.toHaveBeenCalled()
         expect(mockDb.values).not.toHaveBeenCalled()
