@@ -2,6 +2,8 @@ import CreateFeatureFlag from "@/components/createFeatureFlag/CreateFeatureFlag.
 import GetFeatureFlags from "@/components/getFeatureFlags/GetFeatureFlags.component";
 import {hasAccessToCreateFeatureFlag, hasAccessToLogin} from "@/access-control/featureFlagAccess";
 import {redirect} from "next/navigation";
+import Tabs from "@/components/tabs/Tabs.component";
+import UserIdSaver from "@/components/tabs/UserIdSaver.component";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -17,14 +19,15 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
     return (
         <div className="mt-10 flex flex-col">
-            <div className="flex justify-center gap-4">
-                <h1>
-                    Velkommen <strong>{user.name}</strong>
-                </h1>
+            <UserIdSaver userId={user.id} />
+            <div className="absolute top-4 right-8 text-gray-400 text-sm">
+                Logget ind som <strong className="text-white">{user.name}</strong>
             </div>
 
 
-
+            <div className="mx-auto w-full max-w-7xl">
+                <Tabs userId={user.id} />
+            </div>
             <div className=" mt-8 mx-auto">
                 <h2 className="font-bold text-pink-400 text-2xl">Feature Flags:</h2>
                 <div className="mt-10">
@@ -35,5 +38,5 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                 <GetFeatureFlags userId={user.id}/>
             </div>
         </div>
-    )
+    );
 }
