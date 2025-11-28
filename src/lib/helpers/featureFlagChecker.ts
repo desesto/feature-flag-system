@@ -50,7 +50,7 @@ export async function checkFeatureFlagAccess(
     }
 
     if (featureFlag.strategy === 'FUTURE_IMPLEMENTATIONS') {
-        return false;
+        return true;
     }
 
     return false;
