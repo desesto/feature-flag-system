@@ -1,9 +1,9 @@
 import GetFeatureFlagHistory from "@/components/featureFlagHistory/GetFeatureFlagHistory.component";
 
 
-export default async function Page({ params }: { params: Promise<{ id: number }> }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-
+    const historyId = Number(id);
 
     const response = await fetch(`http://localhost:3000/api/feature-flags/${id}`, {
         cache: "no-store",
@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: Promise<{ id: number }>
                 <div className="text-2xl">
                     History:
                 </div>
-                <GetFeatureFlagHistory featureFlagId={id} />
+                <GetFeatureFlagHistory featureFlagId={historyId} />
             </div>
         </div>
     );
