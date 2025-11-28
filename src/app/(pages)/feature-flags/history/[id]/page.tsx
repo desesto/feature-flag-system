@@ -1,4 +1,5 @@
 import GetFeatureFlagHistory from "@/components/featureFlagHistory/GetFeatureFlagHistory.component";
+import Tabs from "@/components/tabs/Tabs.component";
 
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -16,6 +17,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     const featureFlag = await response.json();
 
     return (
+
         <div className="mt-10 flex flex-col px-6">
             <div className="flex justify-center gap-4 mb-8">
                 <h1 className="text-3xl">
