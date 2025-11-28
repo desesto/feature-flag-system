@@ -20,7 +20,7 @@ export default async function WhiteListsPage() {
     return (
         <div className="mt-10 flex flex-col">
             <div className="mx-auto w-full max-w-7xl">
-                <Tabs />
+                <Tabs/>
                 <div className="flex justify-center mt-8">
                     <div className="w-full max-w-6xl">
                         <div className="grid grid-cols-[300px_1fr] gap-4 h-full">

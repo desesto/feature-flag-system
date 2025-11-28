@@ -16,11 +16,10 @@ export default function Tabs({ userId }: TabsProps) {
 
     useEffect(() => {
         if (userId !== undefined) {
-            // Gem userId når den er tilgængelig
+
             localStorage.setItem("lastUserId", String(userId));
             setStoredUserId(userId);
         } else {
-            // Hent fra localStorage hvis ikke angivet
             const stored = localStorage.getItem("lastUserId");
             if (stored) {
                 setStoredUserId(Number(stored));
