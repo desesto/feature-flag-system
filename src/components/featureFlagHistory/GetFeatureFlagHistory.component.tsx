@@ -1,4 +1,5 @@
 import type {FeatureFlagHistoryDto, GetFeatureFlagHistoriesDto} from "@/lib/dto/featureFlagHistory.dto";
+import {parseApiDates, toLocalDatetimeString} from "@/lib/utils/dateConversion";
 
 type GetFeatureFlagHistoryProps = {
     readonly featureFlagId: number;
@@ -7,20 +8,14 @@ type GetFeatureFlagHistoryProps = {
 export default async function GetFeatureFlagHistory({featureFlagId}:GetFeatureFlagHistoryProps) {
     const response = await fetch(`http://localhost:3000/api/feature-flag-histories/${featureFlagId}`,);
 
-
-    const toLocalISOString = (dateString: string | null) => {
-        if (!dateString) return "";
-        const date = new Date(dateString);
-        const tzOffset = date.getTimezoneOffset() * 60000;
-        const localISOTime = new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
-        return localISOTime;
-    };
-
     if (!response.ok) {
         throw new Error('Failed to fetch history for featureflag');
     }
 
-    const featureFlagHistories: GetFeatureFlagHistoriesDto = await response.json();
+    const data = await response.json();
+
+
+    const featureFlagHistories: GetFeatureFlagHistoriesDto = parseApiDates(data);
 
     if (featureFlagHistories.length === 0) {
         return <div className="text-gray-400 p-4">Ingen historik endnu</div>;
@@ -40,7 +35,7 @@ export default async function GetFeatureFlagHistory({featureFlagId}:GetFeatureFl
                     className="border-b-2 border-gray-500 p-4 grid grid-cols-3 gap-2 items-center even:bg-neutral-800"
                     key={history.id}
                 >
-                    <span className="text-gray-400">Date: {toLocalISOString(history.timestamp)}</span>
+                    <span className="text-gray-400">Date: {toLocalDatetimeString(history.timestamp)}</span>
                     <span className={`font-semibold ${
                         history.action_type === 'CREATED' ? 'text-green-400' : 
                             history.action_type === 'ACTIVATED' ? 'text-blue-400' :

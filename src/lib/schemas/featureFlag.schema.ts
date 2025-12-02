@@ -1,4 +1,4 @@
-import {nullable, number, object, picklist, string, boolean, optional, array, fallback} from "valibot";
+import {nullable, number, object, picklist, string, boolean, optional, array, fallback, date} from "valibot";
 
 export const strategyValues = ['NO_STRATEGY', 'CANARY', 'FUTURE_IMPLEMENTATIONS'] as const;
 
@@ -14,11 +14,11 @@ export const FeatureFlagSchema = object({
         id: number(),
         name: string(),
     }))),
-    start_time: nullable(string()),
-    end_time: nullable(string()),
-    created_at: nullable(string()),
-    updated_at: nullable(string()),
-    deleted_at: nullable(string()),
+    start_time: nullable(date()),
+    end_time: nullable(date()),
+    created_at: nullable(date()),
+    updated_at: nullable(date()),
+    deleted_at: nullable(date()),
 });
 
 export const CreateFeatureFlagSchema = object({
@@ -28,8 +28,8 @@ export const CreateFeatureFlagSchema = object({
     description: string(),
     strategy: fallback(picklist(strategyValues), "NO_STRATEGY"),
     whitelist_id: optional(nullable(number())),
-    start_time: optional(nullable(string())),
-    end_time: optional(nullable(string())),
+    start_time: optional(nullable(date())),
+    end_time: optional(nullable(date())),
 });
 
 export const EditFeatureFlagSchema = object({
@@ -44,8 +44,8 @@ export const EditFeatureFlagSchema = object({
         id: number(),
         name: string(),
     }))),
-    start_time: optional(nullable(string())),
-    end_time: optional(nullable(string())),
+    start_time: optional(nullable(date())),
+    end_time: optional(nullable(date())),
 });
 
 export const GetFeatureFlagsSchema = array(FeatureFlagSchema);

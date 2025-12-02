@@ -29,17 +29,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         return NextResponse.json({ error: "Feature flag not found" }, { status: 404 });
     }
 
-    const serializedFlag = {
-        ...featureFlag,
-        start_time: featureFlag.start_time?.toISOString() ?? null,
-        end_time: featureFlag.end_time?.toISOString() ?? null,
-        created_at: featureFlag.created_at?.toISOString() ?? null,
-        updated_at: featureFlag.updated_at?.toISOString() ?? null,
-        deleted_at: featureFlag.deleted_at?.toISOString() ?? null,
-    };
 
-
-    const validated = parse(FeatureFlagSchema, serializedFlag);
+    const validated = parse(FeatureFlagSchema, featureFlag);
 
     return NextResponse.json(validated);
   }
@@ -102,8 +93,6 @@ export async function PATCH(req: NextRequest) {
         },
     });
 
-    const parseDate = (v: string | null | undefined) => (v ? new Date(v) : undefined);
-
 
     const updateData = Object.fromEntries(
         Object.entries({
@@ -112,8 +101,8 @@ export async function PATCH(req: NextRequest) {
             description: updates.description,
             strategy: updates.strategy,
             whitelist_id: updates.whitelist_id,
-            start_time: parseDate(updates.start_time),
-            end_time: parseDate(updates.end_time),
+            start_time: updates.start_time,
+            end_time: updates.end_time,
             updated_at: new Date(),
         }).filter(([_, value]) => value !== undefined)
     );

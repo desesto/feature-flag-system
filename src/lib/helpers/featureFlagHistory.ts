@@ -3,6 +3,7 @@ import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { featureFlagHistoryTable } from "@/db/schema";
 import {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
+import {toISOStringIfDate} from "@/lib/utils/dateConversion";
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -67,8 +68,8 @@ export async function logFeatureFlagUpdated(
         const oldValue: any = (oldFlag as any)[key];
         const newValue: any = (newFlag as any)[key];
 
-        const oldString = oldValue instanceof Date ? oldValue.toISOString() : oldValue;
-        const newString = newValue instanceof Date ? newValue.toISOString() : newValue;
+        const oldString = toISOStringIfDate(oldValue);
+        const newString = toISOStringIfDate(newValue);
 
         if (oldString !== newString) {
             changedFields.push(key);
