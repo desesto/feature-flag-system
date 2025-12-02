@@ -39,8 +39,8 @@ vi.mock("@/lib/helpers/featureFlagHistory", () => ({
     logFeatureFlagUpdated: vi.fn(),
 }))
 
-import {POST} from "@/app/api/featureFlags/route"
-import {PATCH} from "@/app/api/featureFlags/[id]/route"
+import {POST} from "@/app/api/feature-flags/route"
+import {PATCH} from "@/app/api/feature-flags/[id]/route"
 import { getUserRole } from "@/lib/helpers/user"
 import { logFeatureFlagCreated, logFeatureFlagUpdated } from "@/lib/helpers/featureFlagHistory"
 
