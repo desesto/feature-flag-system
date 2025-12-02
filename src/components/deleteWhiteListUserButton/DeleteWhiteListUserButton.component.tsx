@@ -18,7 +18,7 @@ export default function DeleteWhiteListUserButton({ whiteListId, userId }: Delet
         }
 
         try {
-            const response = await fetch(`/api/white-lists/${whiteListId}`, {
+            const response = await fetch(`/api/white-list-users/${whiteListId}`, {
                 method: "DELETE",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ whiteListId, userId })

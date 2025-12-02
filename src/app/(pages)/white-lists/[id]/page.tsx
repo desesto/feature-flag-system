@@ -3,6 +3,8 @@ import type { GetWhiteListsDto, GetWhiteListWithUsersDto } from "@/lib/dto/white
 import DeleteWhiteListUserButton from "@/components/deleteWhiteListUserButton/DeleteWhiteListUserButton.component";
 import AddWhiteListUserButton from "@/components/addWhiteListUserButton/AddWhiteListUserButton.component";
 import Tabs from "@/components/tabs/Tabs.component";
+import CreateWhiteList from "@/components/createWhiteList/CreateWhiteList.component";
+import DeleteWhiteList from "@/components/deleteWhiteList/DeleteWhiteList.component";
 
 export default async function WhiteListDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -29,13 +31,15 @@ export default async function WhiteListDetailPage({ params }: { params: Promise<
         <div className="mt-10 flex flex-col">
             <div className="mx-auto w-full max-w-7xl">
                 <Tabs/>
-                <div className="flex justify-center mt-8">
+                <CreateWhiteList/>
+                <div className="flex mt-1">
                     <div className="w-full max-w-6xl">
                         <div className="grid grid-cols-[300px_1fr] gap-4 h-full">
-                            <div className="border-r border-gray-700">
+                            <div className="border-r border-gray-700 border-t">
                                 <ul className="overflow-y-auto">
                                     {whiteLists.map((whiteList) => (
-                                        <li key={whiteList.id}>
+                                        <li key={whiteList.id} className="flex items-center">
+                                            <DeleteWhiteList whiteListId={whiteList.id}/>
                                             <Link
                                                 href={`/white-lists/${whiteList.id}`}
                                                 className={`block w-full text-left p-4 hover:bg-neutral-800 transition-colors text-white ${
