@@ -9,10 +9,18 @@ export function validateFeatureFlagInput(input: CreateFeatureFlagDto | EditFeatu
         return 'Feature flaggets beskrivelse skal være mindst 5 tegn';
     }
 
-    if (!input.start_time || !input.end_time || input.start_time >= input.end_time) {
-        return 'Sluttidspunkt skal være efter starttidspunkt og begge skal angives';
-    }
+    if (input.start_time && input.end_time) {
+        const startTime = new Date(input.start_time).getTime();
+        const endTime = new Date(input.end_time).getTime();
 
+        if (isNaN(startTime) || isNaN(endTime)) {
+            return 'Ugyldigt datoformat';
+        }
+
+        if (startTime >= endTime) {
+            return 'Sluttidspunkt skal være efter starttidspunkt og begge skal angives';
+        }
+    }
     return null;
 }
 

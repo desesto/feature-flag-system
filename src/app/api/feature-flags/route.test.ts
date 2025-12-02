@@ -10,6 +10,7 @@ const { mockDb } = vi.hoisted(() => {
         query: {
             featureFlagsTable: {
                 findMany: vi.fn(),
+                findFirst: vi.fn(),
             },
         },
         select: vi.fn().mockReturnThis(),
@@ -38,7 +39,8 @@ vi.mock("@/lib/helpers/featureFlagHistory", () => ({
     logFeatureFlagUpdated: vi.fn(),
 }))
 
-import { POST, PATCH } from "@/app/api/feature-flags/route"
+import {POST} from "@/app/api/featureFlags/route"
+import {PATCH} from "@/app/api/featureFlags/[id]/route"
 import { getUserRole } from "@/lib/helpers/user"
 import { logFeatureFlagCreated, logFeatureFlagUpdated } from "@/lib/helpers/featureFlagHistory"
 
@@ -77,8 +79,8 @@ describe("POST /api/feature-flags", () => {
             user_id: 1,
             start_time: null,
             end_time: null,
-            created_at: new Date("2025-01-01"),
-            updated_at: new Date("2025-01-01"),
+            created_at: "2025-01-01T00:00:00.000Z",
+            updated_at: "2025-01-01T00:00:00.000Z",
             deleted_at: null,
         }
 
@@ -136,24 +138,37 @@ describe("PATCH /api/feature-flags", () => {
             name: "old-name",
             is_active: false,
             description: "Old description",
-            strategy: "standard",
+            strategy: "NO_STRATEGY",
             user_id: 1,
+            whitelist_id: null,
+            whitelist: null,
             start_time: null,
             end_time: null,
-            created_at: new Date("2025-01-01"),
-            updated_at: new Date("2025-01-01"),
+            created_at: "2025-01-01T00:00:00.000Z",
+            updated_at: "2025-01-01T00:00:00.000Z",
             deleted_at: null,
         }
 
         const mockUpdatedFlag = {
-            ...mockOldFlag,
+            id: 1,
             name: "new-name",
-            updated_at: new Date("2025-01-02"),
+            is_active: false,
+            description: "Old description",
+            strategy: "NO_STRATEGY",
+            user_id: 1,
+            whitelist_id: null,
+            whitelist: null,
+            start_time: null,
+            end_time: null,
+            created_at: "2025-01-01T00:00:00.000Z",
+            updated_at: "2025-01-02T00:00:00.000Z",
+            deleted_at: null,
         }
 
         vi.mocked(getUserRole).mockResolvedValueOnce("Developer")
-        mockDb.where.mockResolvedValueOnce([mockOldFlag])
-        mockDb.returning.mockResolvedValueOnce([mockUpdatedFlag])
+        mockDb.query.featureFlagsTable.findFirst
+            .mockResolvedValueOnce(mockOldFlag)
+            .mockResolvedValueOnce(mockUpdatedFlag)
 
         const req = new NextRequest("http://localhost:3000/api/feature-flags", {
             method: "PATCH",
