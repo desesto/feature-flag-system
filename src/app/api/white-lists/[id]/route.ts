@@ -77,39 +77,7 @@ export async function PATCH(req: NextRequest, {params}: { params: Promise<{ id: 
     }
 }
 
-export async function DELETE(req: NextRequest, {params}: { params: Promise<{ id: string }> }) {
-    try {
-        const {id} = await params;
-        const whitelistId = Number(id);
-
-        if (isNaN(whitelistId)) {
-            return NextResponse.json({error: "Invalid whitelist ID"}, {status: 400});
-        }
-
-        const body = await req.json();
-        const {userId} = body;
-
-        if (!userId || isNaN(Number(userId))) {
-            return NextResponse.json({error: "Invalid user ID"}, {status: 400});
-        }
-
-        const result = await db
-            .delete(whiteListUsersTable)
-            .where(
-                and(
-                    eq(whiteListUsersTable.whitelist_id, whitelistId),
-                    eq(whiteListUsersTable.user_id, Number(userId))
-                )
-            );
-
-        return NextResponse.json({message: "User removed from whitelist successfully"});
-    } catch (error) {
-        console.error("Error deleting user from whitelist:", error);
-        return NextResponse.json({error: "Internal server error"}, {status: 500});
-    }
-}
-
-export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
         const whitelistId = Number(id);
@@ -118,21 +86,21 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             return NextResponse.json({ error: "Invalid whitelist ID" }, { status: 400 });
         }
 
-        const body = await req.json();
-        const { userId } = body;
-
-        if (!userId || isNaN(Number(userId))) {
-            return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
-        }
-
-        await db.insert(whiteListUsersTable).values({
-            whitelist_id: whitelistId,
-            user_id: Number(userId),
+        const whitelist = await db.query.whiteListsTable.findFirst({
+            where: eq(whiteListsTable.id, whitelistId),
         });
 
-        return NextResponse.json({ message: "User added successfully" });
+        if (!whitelist) {
+            return NextResponse.json({ error: "Whitelist not found" }, { status: 404 });
+        }
+
+        await db
+            .delete(whiteListsTable)
+            .where(eq(whiteListsTable.id, whitelistId));
+
+        return NextResponse.json({ message: "Whitelist deleted successfully" });
     } catch (error) {
-        console.error("Error adding user:", error);
+        console.error("Error deleting whitelist:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

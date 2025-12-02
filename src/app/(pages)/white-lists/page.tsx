@@ -1,6 +1,9 @@
 import Link from "next/link";
 import type { GetWhiteListsDto, WhiteListDto } from "@/lib/dto/whiteList.dto";
 import Tabs from "@/components/tabs/Tabs.component";
+import {CreateWhiteListSchema} from "@/lib/schemas/whiteList.schema";
+import CreateWhiteList from "@/components/createWhiteList/CreateWhiteList.component";
+import DeleteWhiteList from "@/components/deleteWhiteList/DeleteWhiteList.component";
 
 export default async function WhiteListsPage() {
     const response = await fetch("http://localhost:3000/api/white-lists", {
@@ -21,13 +24,15 @@ export default async function WhiteListsPage() {
         <div className="mt-10 flex flex-col">
             <div className="mx-auto w-full max-w-7xl">
                 <Tabs/>
-                <div className="flex justify-center mt-8">
+                <CreateWhiteList/>
+                <div className="flex mt-1">
                     <div className="w-full max-w-6xl">
                         <div className="grid grid-cols-[300px_1fr] gap-4 h-full">
-                            <div className="border-r border-gray-700">
+                            <div className="border-r border-gray-700 border-t">
                                 <ul className="overflow-y-auto">
                                     {whiteLists.map((whiteList: WhiteListDto) => (
-                                        <li key={whiteList.id}>
+                                        <li key={whiteList.id} className="flex items-center">
+                                            <DeleteWhiteList whiteListId={whiteList.id}/>
                                             <Link
                                                 href={`/white-lists/${whiteList.id}`}
                                                 className="block w-full text-left p-4 hover:bg-neutral-800 transition-colors text-white"

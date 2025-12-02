@@ -38,7 +38,7 @@ export default function Tabs({ userId }: TabsProps) {
     };
 
     return (
-        <nav className="border-b border-gray-700 mb-8">
+        <nav className="border-b border-gray-700 mb-1">
             <div className="flex">
                 {storedUserId !== undefined ? (
                     <Link
