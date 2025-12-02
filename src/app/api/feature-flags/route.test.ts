@@ -79,8 +79,8 @@ describe("POST /api/feature-flags", () => {
             user_id: 1,
             start_time: null,
             end_time: null,
-            created_at: new Date("2025-01-01"),
-            updated_at: new Date("2025-01-01"),
+            created_at: "2025-01-01T00:00:00.000Z",
+            updated_at: "2025-01-01T00:00:00.000Z",
             deleted_at: null,
         }
 
