@@ -12,8 +12,8 @@ describe("validateFeatureFlagInput", () => {
             description: "En god beskrivelse",
             strategy: "NO_STRATEGY",
             whitelist_id: null,
-            start_time: new Date("2025-11-01T12:00:00Z"),
-            end_time: new Date("2025-11-10T15:00:00Z"),
+            start_time: new Date("2025-11-01"),
+            end_time: new Date("2025-11-10"),
         };
         const actualOutput = validateFeatureFlagInput(input)
 
@@ -28,8 +28,8 @@ describe("validateFeatureFlagInput", () => {
                 description: "En",
                 strategy: "NO_STRATEGY",
                 whitelist_id: null,
-                start_time: new Date("2025-11-01T12:00:00Z"),
-                end_time: new Date("2025-11-10T15:00:00Z"),
+                start_time: new Date("2025-11-01"),
+                end_time: new Date("2025-11-10"),
             };
         const actualOutput = validateFeatureFlagInput(input)
 
@@ -44,8 +44,8 @@ describe("validateFeatureFlagInput", () => {
                 description: "A very good description",
                 strategy: "NO_STRATEGY",
                 whitelist_id: null,
-                start_time: new Date("2025-12-01T12:00:00Z"),
-                end_time: new Date("2025-11-10T15:00:00Z"),
+                start_time: new Date("2025-12-01"),
+                end_time: new Date("2025-11-10"),
             };
 
         const actualOutput = validateFeatureFlagInput(input)
