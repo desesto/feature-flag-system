@@ -10,8 +10,13 @@ export function validateFeatureFlagInput(input: CreateFeatureFlagDto | EditFeatu
     }
 
     if (input.start_time && input.end_time) {
-        const startTime = new Date(input.start_time).getTime();
-        const endTime = new Date(input.end_time).getTime();
+        const startTime = input.start_time instanceof Date
+            ? input.start_time.getTime()
+            : new Date(input.start_time).getTime();
+
+        const endTime = input.end_time instanceof Date
+            ? input.end_time.getTime()
+            : new Date(input.end_time).getTime();
 
         if (isNaN(startTime) || isNaN(endTime)) {
             return 'Ugyldigt datoformat';

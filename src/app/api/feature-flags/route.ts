@@ -3,13 +3,11 @@ import {featureFlagsTable} from "@/db/schema";
 import {asc} from "drizzle-orm";
 import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
 import {parse} from "valibot";
-import {CreateFeatureFlagSchema, EditFeatureFlagSchema, GetFeatureFlagsSchema} from "@/lib/schemas/featureFlag.schema";
-import {logFeatureFlagCreated, logFeatureFlagUpdated} from "@/lib/helpers/featureFlagHistory";
+import {CreateFeatureFlagSchema, GetFeatureFlagsSchema} from "@/lib/schemas/featureFlag.schema";
+import {logFeatureFlagCreated} from "@/lib/helpers/featureFlagHistory";
 import {getUserRole} from "@/lib/helpers/user";
-import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 import {
     hasAccessToCreateFeatureFlag,
-    hasAccessToEditFeatureFlag,
 } from "@/access-control/featureFlagAccess";
 import { db } from "@/db";
     
@@ -20,17 +18,7 @@ export async function GET() {
         orderBy: [asc(featureFlagsTable.name)],
     });
 
-    const serializedFlags = flags.map(flag => ({
-        ...flag,
-        start_time: flag.start_time?.toISOString() ?? null,
-        end_time: flag.end_time?.toISOString() ?? null,
-        created_at: flag.created_at?.toISOString() ?? null,
-        updated_at: flag.updated_at?.toISOString() ?? null,
-        deleted_at: flag.deleted_at?.toISOString() ?? null,
-    }));
-
-
-    const validated = parse(GetFeatureFlagsSchema, serializedFlags);
+    const validated = parse(GetFeatureFlagsSchema, flags);
 
     return NextResponse.json(validated);
 }
@@ -42,9 +30,6 @@ export async function POST(req: NextRequest) {
     if (!role) {
         return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-
-    const parseDate = (v: string | null) => (v ? new Date(v) : null);
-
 
     if(!hasAccessToCreateFeatureFlag(role)) {
         return NextResponse.json({ error: "Unauthorized action: only developers can create flags" }, { status: 401 });
@@ -60,8 +45,8 @@ export async function POST(req: NextRequest) {
             description: validatedData.description,
             strategy: validatedData.strategy,
             whitelist_id: validatedData.whitelist_id,
-            start_time: parseDate(validatedData.start_time ?? null),
-            end_time: parseDate(validatedData.end_time ?? null),
+            start_time: validatedData.start_time,
+            end_time: validatedData.end_time,
         })
         .returning();
 

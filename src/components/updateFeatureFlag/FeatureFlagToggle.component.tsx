@@ -12,7 +12,6 @@ type FeatureFlagToggleProps = {
 export default function FeatureFlagToggle({featureFlagId, isActive, userId}: FeatureFlagToggleProps) {
 
     const router = useRouter();
-
     const [active, setActive] = useState(isActive);
 
     const handleToggle = async (event: React.ChangeEvent<HTMLInputElement>) => {

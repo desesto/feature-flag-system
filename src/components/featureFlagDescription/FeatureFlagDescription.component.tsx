@@ -2,8 +2,8 @@
 
 import {useState} from "react";
 import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
-import {router} from "next/client";
 import {useRouter} from "next/navigation";
+import {parseApiDates, toLocalDatetimeString} from "@/lib/utils/dateConversion";
 
 type FeatureFlagDescriptionProps = {
     readonly featureFlagId: number
@@ -22,26 +22,19 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
         strategy: 'NO_STRATEGY',
         whitelist_id: null,
         whitelist: null,
-        start_time: '',
-        end_time: '',
+        start_time: null,
+        end_time: null,
     });
-    const [timestamps, setTimestamps] = useState<{ created_at: string; updated_at: string }>({
-        created_at: '',
-        updated_at: '',
+    const [timestamps, setTimestamps] = useState<{ created_at: Date | null; updated_at: Date | null }>({
+        created_at: null,
+        updated_at: null,
     });
 
     const handleOpen = async () => {
         const response = await fetch(`http://localhost:3000/api/feature-flags/${featureFlagId}`);
+        const data = await response.json();
 
-        const featureFlag: FeatureFlagDto = await response.json();
-
-        const toLocalISOString = (dateString: string | null) => {
-            if (!dateString) return "";
-            const date = new Date(dateString);
-            const tzOffset = date.getTimezoneOffset() * 60000;
-            const localISOTime = new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
-            return localISOTime;
-        };
+        const featureFlag: FeatureFlagDto = parseApiDates(data);
 
         setForm({
             id: featureFlag.id,
@@ -56,8 +49,8 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
             end_time: featureFlag.end_time ?? null,
         });
         setTimestamps({
-            created_at: toLocalISOString(featureFlag.created_at) ?? '',
-            updated_at: toLocalISOString(featureFlag.updated_at) ?? '',
+            created_at: featureFlag.created_at,
+            updated_at: featureFlag.updated_at,
         });
         console.log("FEATURE FLAG:", {...form})
 
@@ -153,9 +146,9 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             Feature flagget skal slåes til:
                             <input
                                 type="datetime-local"
-                                value={form.start_time?.slice(0, 16) ?? ""}
+                                value={toLocalDatetimeString(form.start_time)}
                                 readOnly
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border bg-transparent cursor-default"
                             />
                         </label>
 
@@ -163,9 +156,9 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={form.end_time?.slice(0, 16) ?? ""}
+                                value={toLocalDatetimeString(form.end_time)}
                                 readOnly
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border bg-transparent cursor-default"
                             />
                         </label>
 
@@ -173,9 +166,9 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             Oprettet den:
                             <input
                                 type="datetime-local"
-                                value={timestamps.created_at.slice(0, 16)}
+                                value={toLocalDatetimeString(timestamps.created_at)}
                                 readOnly
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border bg-transparent cursor-default"
                             />
                         </label>
 
@@ -183,9 +176,9 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             Opdateret den:
                             <input
                                 type="datetime-local"
-                                value={timestamps.updated_at?.slice(0, 16) ?? ''}
+                                value={toLocalDatetimeString(timestamps.updated_at)}
                                 readOnly
-                                className="p-2 rounded border bg-transparent"
+                                className="p-2 rounded border bg-transparent cursor-default"
                             />
                         </label>
                     </div>

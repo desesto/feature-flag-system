@@ -5,6 +5,12 @@ import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateF
 import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 import {hasAccessToEditFeatureFlag} from "@/access-control/featureFlagAccess";
 import WhitelistSelector from "@/components/whitelist/WhitelistSelector.component";
+import {
+    fromLocalDatetimeString,
+    parseApiDates,
+    serializeDates,
+    toLocalDatetimeString
+} from "@/lib/utils/dateConversion";
 
 type EditFeatureFlagProps = {
     readonly featureFlagId: number
@@ -23,12 +29,12 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
         description: '',
         strategy: 'NO_STRATEGY',
         whitelist_id: null,
-        start_time: '',
-        end_time: '',
+        start_time: null,
+        end_time: null,
     });
-    const [timestamps, setTimestamps] = useState<{ created_at: string; updated_at: string }>({
-        created_at: '',
-        updated_at: '',
+    const [timestamps, setTimestamps] = useState<{ created_at: Date | null; updated_at: Date | null }>({
+        created_at: null,
+        updated_at: null,
     });
 
     const canEdit = hasAccessToEditFeatureFlag(userRole)
@@ -37,15 +43,9 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
 
         const response = await fetch(`http://localhost:3000/api/feature-flags/${featureFlagId}`);
 
-        const featureFlag: FeatureFlagDto = await response.json();
+        const data = await response.json();
 
-        const toLocalISOString = (dateString: string | null) => {
-            if (!dateString) return "";
-            const date = new Date(dateString);
-            const tzOffset = date.getTimezoneOffset() * 60000;
-            const localISOTime = new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
-            return localISOTime;
-        };
+        const featureFlag: FeatureFlagDto = parseApiDates(data);
 
         setForm({
             id: featureFlag.id,
@@ -59,8 +59,8 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
             end_time: featureFlag.end_time ?? null,
         });
         setTimestamps({
-            created_at: toLocalISOString(featureFlag.created_at) ?? '',
-            updated_at: toLocalISOString(featureFlag.updated_at) ?? '',
+            created_at: featureFlag.created_at,
+            updated_at: featureFlag.updated_at,
         });
         console.log("FEATURE FLAG:", {...form})
 
@@ -76,10 +76,12 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
         }
 
         try {
-            await fetch('/api/featureFlags/[id]', {
+            const payload = serializeDates(form);
+
+            await fetch(`/api/feature-flags/${featureFlagId}`, {
                 method: 'PATCH',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({...form}),
+                body: JSON.stringify(payload),
             });
 
             setShowPopup(false)
@@ -180,10 +182,11 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                             Feature flagget skal slåes til:
                             <input
                                 type="datetime-local"
-                                value={form.start_time?.slice(0, 16) ?? ""}
-                                onChange={(event) =>
-                                    setForm({...form, start_time: event.target.value})
-                                }
+                                value={toLocalDatetimeString(form.start_time)}
+                                onChange={(e) => setForm({
+                                    ...form,
+                                    start_time: fromLocalDatetimeString(e.target.value)
+                                })}
                                 className="p-2 rounded border"
                             />
                         </label>
@@ -192,10 +195,11 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={form.end_time?.slice(0, 16) ?? ""}
-                                onChange={(event) =>
-                                    setForm({...form, end_time: event.target.value})
-                                }
+                                value={toLocalDatetimeString(form.end_time)}
+                                onChange={(e) => setForm({
+                                    ...form,
+                                    end_time: fromLocalDatetimeString(e.target.value)
+                                })}
                                 className="p-2 rounded border"
                             />
                             {showDateError && (
@@ -209,9 +213,9 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                             Oprettet den:
                             <input
                                 type="datetime-local"
-                                value={timestamps.created_at.slice(0, 16)}
+                                value={toLocalDatetimeString(timestamps.created_at)}
                                 readOnly
-                                className="p-2 rounded border"
+                                className="p-2 rounded border bg-gray-800 cursor-default"
                             />
                         </label>
 
@@ -219,9 +223,9 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                             Opdateret den:
                             <input
                                 type="datetime-local"
-                                value={timestamps.updated_at?.slice(0, 16) ?? ''}
+                                value={toLocalDatetimeString(timestamps.updated_at)}
                                 readOnly
-                                className="p-2 rounded border"
+                                className="p-2 rounded border bg-gray-800 cursor-default"
                             />
                         </label>
 

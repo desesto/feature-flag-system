@@ -31,12 +31,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{id: n
         });
 
 
-        const serializedHistories = histories.map(history => ({
-            ...history,
-            timestamp: history.timestamp.toISOString(),
-        }));
-
-        const validated = parse(GetFeatureFlagHistoriesSchema, serializedHistories);
+        const validated = parse(GetFeatureFlagHistoriesSchema, histories);
 
         return NextResponse.json(validated);
     } catch (error) {

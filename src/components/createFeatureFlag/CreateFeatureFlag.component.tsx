@@ -5,6 +5,7 @@ import {useState} from 'react';
 import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
 import {CreateFeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 import WhitelistSelector from "@/components/whitelist/WhitelistSelector.component";
+import {fromLocalDatetimeString, serializeDates, toLocalDatetimeString} from "@/lib/utils/dateConversion";
 
 type CreateFeatureFlagProps = {
     readonly userId: number
@@ -14,10 +15,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
     const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
-    const time = new Date();
-    const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
-        .toISOString()
-        .slice(0, 16);
 
     const [form, setForm] = useState<CreateFeatureFlagDto>({
         user_id: userId,
@@ -31,11 +28,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
     });
 
     const handleOpen = () => {
-        const time = new Date();
-        const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000)
-            .toISOString()
-            .slice(0, 16);
-
         setForm({
             user_id: userId,
             name: '',
@@ -46,7 +38,6 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             start_time: null,
             end_time: null,
         });
-
         setShowDateError(false)
         setShowPopup(true);
     };
@@ -59,10 +50,12 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             return;
         }
         try {
+            const payload = serializeDates(form);
+
             await fetch('/api/feature-flags', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(form),
+                body: JSON.stringify(payload),
             });
 
             setShowPopup(false)
@@ -159,10 +152,11 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             Feature flagget skal slåes til:
                             <input
                                 type="datetime-local"
-                                value={form.start_time ?? ''}
-                                onChange={(event) =>
-                                    setForm({...form, start_time: event.target.value})
-                                }
+                                value={toLocalDatetimeString(form.start_time)}
+                                onChange={(e) => setForm({
+                                    ...form,
+                                    start_time: fromLocalDatetimeString(e.target.value)
+                                })}
                                 className="p-2 rounded border"
                             />
                         </label>
@@ -171,10 +165,11 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={form.end_time ?? ''}
-                                onChange={(event) =>
-                                    setForm({...form, end_time: event.target.value})
-                                }
+                                value={toLocalDatetimeString(form.end_time)}
+                                onChange={(e) => setForm({
+                                    ...form,
+                                    end_time: fromLocalDatetimeString(e.target.value)
+                                })}
                                 className="p-2 rounded border"
                             />
                             {showDateError && (
