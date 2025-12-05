@@ -9,37 +9,56 @@ import DeleteFeatureFlagButtonComponent from "@/components/deleteFeatureFlag/Del
 import EditFeatureFlag from "@/components/editFeatureFlag/EditFeatureFlag.component";
 import FeatureFlagToggle from "@/components/updateFeatureFlag/FeatureFlagToggle.component";
 import FeatureFlagDescription from "@/components/featureFlagDescription/FeatureFlagDescription.component";
+import FilterFeatureFlags from "@/components/filterFeatureFlags/FilterFeatureFlags.component";
+import {useSearchParams} from "next/navigation";
 
-type Props = {
-    featureFlags: GetFeatureFlagsDto;
+type FeatureFlagListProps = {
     userId: number;
+    featureFlags: GetFeatureFlagsDto;
     userRole: string;
 };
 
-export default function FeatureFlagList({ featureFlags, userId, userRole }: Props) {
+export default function FeatureFlagList({ featureFlags, userId, userRole }: FeatureFlagListProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [showDropdown, setShowDropdown] = useState(false);
-    const [filteredBySearch, setFilteredBySearch] = useState(false);
-    const [highlightedIndex, setHighlightedIndex] = useState(-1); // Start med -1 (ingen selected)
+    const [highlightedIndex, setHighlightedIndex] = useState(-1);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Search results for dropdown
+    const searchParams = useSearchParams();
+
+    const rawFilter = searchParams.get("filter") ?? "";
+    const filters = rawFilter.split(",").filter(Boolean);
+
+    // Step 1: Apply filters first
+    const filteredByFilters = useMemo(() => {
+        // If no filters selected, show all
+        if (filters.length === 0) return featureFlags;
+
+        return featureFlags.filter(flag => {
+            return filters.some(f => {
+                if (f === "active") return flag.is_active === true;
+                if (f === "inactive") return flag.is_active === false;
+                if (f === "canary") return flag.strategy === "CANARY";
+                if (f === "no_strategy") return flag.strategy === "NO_STRATEGY";
+                return false;
+            });
+        });
+    }, [featureFlags, filters]);
+
+    // Step 2: Search within filtered results for dropdown
     const searchResults = useMemo(() => {
         if (!searchQuery.trim()) return [];
-        return binarySearchFeatureFlag(featureFlags, searchQuery);
-    }, [featureFlags, searchQuery]);
+        return binarySearchFeatureFlag(filteredByFilters, searchQuery);
+    }, [filteredByFilters, searchQuery]);
 
-    // Filtered flags for main list
+    // Step 3: Final displayed flags (apply search if user pressed Enter)
     const displayedFlags = useMemo(() => {
-        // Hvis search er aktiveret, vis search results
-        if (filteredBySearch && searchQuery.trim()) {
+        if (searchQuery.trim()) {
             return searchResults;
         }
-
-        // Ellers vis alle
-        return featureFlags;
-    }, [featureFlags, searchResults, filteredBySearch, searchQuery]);
+        return filteredByFilters;
+    }, [filteredByFilters, searchResults, searchQuery]);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -57,13 +76,12 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Prop
         if (e.key === 'Enter') {
             e.preventDefault();
 
-            // Hvis der er et highlighted result, vælg det
+            // If there's a highlighted result, select it
             if (highlightedIndex >= 0 && searchResults[highlightedIndex]) {
                 handleSelectFlag(searchResults[highlightedIndex].id);
             }
-            // Ellers vis alle search results i listen
+            // Otherwise just close dropdown and show search results
             else if (searchQuery.trim()) {
-                setFilteredBySearch(true);
                 setShowDropdown(false);
                 inputRef.current?.blur();
             }
@@ -91,87 +109,102 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Prop
     };
 
     const handleSelectFlag = (flagId: number) => {
-        // Find og vis kun denne flag
-        setFilteredBySearch(true);
-        setSearchQuery(featureFlags.find(f => f.id === flagId)?.name || "");
+        const selectedFlag = featureFlags.find(f => f.id === flagId);
+        if (selectedFlag) {
+            setSearchQuery(selectedFlag.name);
+        }
         setShowDropdown(false);
-    };
-
-    const clearSelection = () => {
-        setSearchQuery("");
-        setShowDropdown(false);
-        setFilteredBySearch(false);
         setHighlightedIndex(-1);
     };
 
+    const clearSearch = () => {
+        setSearchQuery("");
+        setShowDropdown(false);
+        setHighlightedIndex(-1);
+    };
+
+    // Add this right after the filters definition
+    useEffect(() => {
+        console.log("Sample flag:", featureFlags[0]);
+        console.log("Filters:", filters);
+    }, [featureFlags, filters]);
+
     return (
         <div>
-            {/* Search bar with dropdown */}
-            <div className="mb-4 relative" ref={dropdownRef}>
-                <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="Søg efter feature flag... klik enter for at søge"
-                    value={searchQuery}
-                    onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        setShowDropdown(true);
-                        setHighlightedIndex(-1); // Reset highlight
-                        setFilteredBySearch(false);
-                    }}
-                    onFocus={() => searchQuery && setShowDropdown(true)}
-                    onKeyDown={handleKeyDown}
-                    className="w-full px-4 py-2 pl-10 bg-gray-800 border-2 border-white rounded-md text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors"
-                />
-                <svg
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                {(searchQuery || filteredBySearch) && (
-                    <button
-                        onClick={clearSelection}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-2xl"
+            {/* Filter and Search bar section */}
+            <div className="mb-4 flex gap-3 items-start">
+                <FilterFeatureFlags />
+
+                <div className="flex-1 relative" ref={dropdownRef}>
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        placeholder="Søg efter feature flag... klik enter for at søge"
+                        value={searchQuery}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setShowDropdown(true);
+                            setHighlightedIndex(-1);
+                        }}
+                        onFocus={() => searchQuery && setShowDropdown(true)}
+                        onKeyDown={handleKeyDown}
+                        className="w-full px-4 py-2 pl-10 bg-gray-800 border-2 border-white rounded-md text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                    <svg
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                     >
-                        ×
-                    </button>
-                )}
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    {searchQuery && (
+                        <button
+                            onClick={clearSearch}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-2xl"
+                        >
+                            ×
+                        </button>
+                    )}
 
-                {/* Dropdown with results */}
-                {showDropdown && searchResults.length > 0 && (
-                    <div className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-white rounded-md shadow-lg max-h-96 overflow-y-auto">
-                        {searchResults.map((flag, index) => (
-                            <button
-                                key={flag.id}
-                                onClick={() => handleSelectFlag(flag.id)}
-                                className={`w-full text-left px-4 py-2 text-white hover:bg-gray-700 transition-colors border-b border-gray-700 last:border-b-0 ${
-                                    index === highlightedIndex ? 'bg-gray-700' : ''
-                                }`}
-                            >
-                                {flag.name}
-                            </button>
-                        ))}
-                    </div>
-                )}
+                    {/* Dropdown with results */}
+                    {showDropdown && searchResults.length > 0 && (
+                        <div className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-white rounded-md shadow-lg max-h-96 overflow-y-auto">
+                            {searchResults.map((flag, index) => (
+                                <button
+                                    key={flag.id}
+                                    onClick={() => handleSelectFlag(flag.id)}
+                                    className={`w-full text-left px-4 py-2 text-white hover:bg-gray-700 transition-colors border-b border-gray-700 last:border-b-0 ${
+                                        index === highlightedIndex ? 'bg-gray-700' : ''
+                                    }`}
+                                >
+                                    {flag.name}
+                                </button>
+                            ))}
+                        </div>
+                    )}
 
-                {/* No results message */}
-                {showDropdown && searchQuery && searchResults.length === 0 && (
-                    <div className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-white rounded-md shadow-lg p-4 text-center text-gray-400">
-                        Ingen resultater fundet for "{searchQuery}"
-                    </div>
-                )}
+                    {/* No results message */}
+                    {showDropdown && searchQuery && searchResults.length === 0 && (
+                        <div className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-white rounded-md shadow-lg p-4 text-center text-gray-400">
+                            Ingen resultater fundet for "{searchQuery}"
+                        </div>
+                    )}
+                </div>
             </div>
 
-            {/* Filter status */}
-            {filteredBySearch && searchQuery && (
-                <div className="mb-2 text-sm text-gray-400 flex items-center gap-2">
-                    <span>Der vises {displayedFlags.length} resultat{displayedFlags.length !== 1 ? 'er' : ''} for "{searchQuery}"</span>
-                    <button onClick={clearSelection} className="text-blue-500 hover:underline">Show all</button>
-                </div>
-            )}
+            {/* Filter and search status */}
+            <div className="mb-2 text-sm text-gray-400 flex items-center gap-2">
+                {searchQuery && (
+                    <>
+                        <span>Der vises {displayedFlags.length} resultat{displayedFlags.length !== 1 ? 'er' : ''} for "{searchQuery}"</span>
+                        <button onClick={clearSearch} className="text-blue-500 hover:underline">Ryd søgning</button>
+                    </>
+                )}
+                {!searchQuery && filters.length > 0 && (
+                    <span>Der vises {displayedFlags.length} feature flag{displayedFlags.length !== 1 ? 's' : ''} (filtreret)</span>
+                )}
+            </div>
 
             <div className="border-white border-2 rounded-md mt-4">
                 <div className="grid grid-cols-[minmax(200px,2fr)_200px_80px_100px] gap-4 p-3 font-bold border-b-2 border-gray-400 bg-gray-800">
@@ -201,7 +234,7 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Prop
                         ))
                     ) : (
                         <li className="p-4 text-center text-gray-400">
-                            No feature flags found
+                            {searchQuery ? `Ingen feature flags fundet for "${searchQuery}"` : 'No feature flags found'}
                         </li>
                     )}
                 </ul>
