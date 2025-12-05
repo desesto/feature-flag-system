@@ -76,7 +76,7 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
         }
 
         try {
-            await fetch('/api/featureFlags/[id]', {
+            await fetch('/api/feature-flags/[id]', {
                 method: 'PATCH',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({...form}),
