@@ -1,11 +1,12 @@
 import CreateFeatureFlag from "@/components/createFeatureFlag/CreateFeatureFlag.component";
 import GetFeatureFlags from "@/components/getFeatureFlags/GetFeatureFlags.component";
-import {hasAccessToCreateFeatureFlag, hasAccessToLogin} from "@/access-control/featureFlagAccess";
-import {redirect} from "next/navigation";
+import { hasAccessToCreateFeatureFlag, hasAccessToLogin } from "@/access-control/featureFlagAccess";
+import { redirect } from "next/navigation";
 import Tabs from "@/components/tabs/Tabs.component";
 import UserIdSaver from "@/components/tabs/UserIdSaver.component";
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: { filter?: string };
+}) {
     const { id } = await params;
 
     const response = await fetch(`http://localhost:3000/api/users/${id}`, {
@@ -24,7 +25,6 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                 Logget ind som <strong className="text-white">{user.name}</strong>
             </div>
 
-
             <div className="mx-auto w-full max-w-7xl">
                 <Tabs userId={user.id} />
             </div>
@@ -35,7 +35,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                         <CreateFeatureFlag userId={user.id} />
                     )}
                 </div>
-                <GetFeatureFlags userId={user.id}/>
+                <GetFeatureFlags userId={user.id} searchParams={searchParams}/>
             </div>
         </div>
     );
