@@ -7,6 +7,10 @@ export default function Page() {
             <span className="text-center gap-4 mt-20">
                 <h1 className="font-bold text-pink-400 text-4xl"> Jens-Clemens FF</h1>
                 <Login/>
+
+            <div className="text-sm mt-3">
+                Hvis du ikke har en bruger endnu, kan du oprette en her.
+            </div>
                 <CreateUserButton />
             </span>
         </div>

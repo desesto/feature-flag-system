@@ -21,3 +21,7 @@ export function hasAccessToToggleFeatureFlag(role: string): boolean {
 export function hasAccessToLogin(role: string) : boolean {
     return canLogin(role)
 }
+
+export function hasAccessToCreateUser(role: string) : boolean {
+    return hasPermission(role, PERMISSIONS.USER_CREATE);
+}

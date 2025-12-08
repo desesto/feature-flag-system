@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { GetWhiteListsDto, WhiteListDto } from "@/lib/dto/whiteList.dto";
 import Tabs from "@/components/tabs/Tabs.component";
-import {CreateWhiteListSchema} from "@/lib/schemas/whiteList.schema";
 import CreateWhiteList from "@/components/createWhiteList/CreateWhiteList.component";
 import DeleteWhiteList from "@/components/deleteWhiteList/DeleteWhiteList.component";
 
