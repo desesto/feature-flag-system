@@ -29,6 +29,7 @@ export default function Tabs({ userId }: TabsProps) {
 
     const isFeatureFlagsActive = storedUserId !== undefined && pathname === `/${storedUserId}`;
     const isWhitelistsActive = pathname.startsWith("/white-lists");
+    const isUsersActive = pathname.startsWith("/users");
 
     const handleFeatureFlagsClick = (e: React.MouseEvent) => {
         if (storedUserId !== undefined) {
@@ -70,6 +71,18 @@ export default function Tabs({ userId }: TabsProps) {
                     `}
                 >
                     Whitelists
+                </Link>
+                <Link
+                    href="/users"
+                    className={`
+                        px-8 py-4 font-semibold transition-colors border-b-[3px] -mb-[1px]
+                        ${isUsersActive
+                        ? "border-pink-400 text-white"
+                        : "border-transparent text-gray-400 hover:text-gray-200"
+                    }
+                    `}
+                >
+                    Users
                 </Link>
             </div>
         </nav>
