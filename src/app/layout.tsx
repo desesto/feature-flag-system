@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-// Den RIGTIGE GTA font
 const pricedown = localFont({
     src: "../fonts/Pricedown.otf",
     variable: "--font-pricedown",

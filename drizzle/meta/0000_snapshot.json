@@ -1,5 +1,5 @@
 {
-  "id": "76e60405-bead-4a1a-9238-e3e1031a4fec",
+  "id": "d808a3fa-e958-4b92-97d4-fca2a76e2f88",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -136,8 +136,8 @@
           "notNull": true,
           "default": "'NO_STRATEGY'"
         },
-        "whitelist_id": {
-          "name": "whitelist_id",
+        "white_list_id": {
+          "name": "white_list_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -173,6 +173,13 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+        },
+        "path": {
+          "name": "path",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'null'::jsonb"
         }
       },
       "indexes": {
@@ -268,8 +275,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.whitelist_users": {
-      "name": "whitelist_users",
+    "public.white_list_users": {
+      "name": "white_list_users",
       "schema": "",
       "columns": {
         "id": {
@@ -278,8 +285,8 @@
           "primaryKey": true,
           "notNull": true
         },
-        "whitelist_id": {
-          "name": "whitelist_id",
+        "white_list_id": {
+          "name": "white_list_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -296,7 +303,7 @@
           "name": "unique_whitelist_user_idx",
           "columns": [
             {
-              "expression": "whitelist_id",
+              "expression": "white_list_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -315,12 +322,12 @@
         }
       },
       "foreignKeys": {
-        "whitelist_users_whitelist_id_whitelists_id_fk": {
-          "name": "whitelist_users_whitelist_id_whitelists_id_fk",
-          "tableFrom": "whitelist_users",
-          "tableTo": "whitelists",
+        "white_list_users_white_list_id_white_lists_id_fk": {
+          "name": "white_list_users_white_list_id_white_lists_id_fk",
+          "tableFrom": "white_list_users",
+          "tableTo": "white_lists",
           "columnsFrom": [
-            "whitelist_id"
+            "white_list_id"
           ],
           "columnsTo": [
             "id"
@@ -328,9 +335,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "whitelist_users_user_id_users_id_fk": {
-          "name": "whitelist_users_user_id_users_id_fk",
-          "tableFrom": "whitelist_users",
+        "white_list_users_user_id_users_id_fk": {
+          "name": "white_list_users_user_id_users_id_fk",
+          "tableFrom": "white_list_users",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
@@ -348,8 +355,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.whitelists": {
-      "name": "whitelists",
+    "public.white_lists": {
+      "name": "white_lists",
       "schema": "",
       "columns": {
         "id": {

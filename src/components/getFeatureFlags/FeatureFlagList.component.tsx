@@ -2,9 +2,9 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
 "use client"
 
-import { useState, useMemo, useRef, useEffect } from 'react';
-import { binarySearchFeatureFlag } from "@/lib/helpers/featureFlagSearch";
-import type { GetFeatureFlagsDto } from "@/lib/dto/featureFlag.dto";
+import {useState, useMemo, useRef, useEffect} from 'react';
+import {binarySearchFeatureFlag} from "@/lib/helpers/featureFlagSearch";
+import type {GetFeatureFlagsDto} from "@/lib/dto/featureFlag.dto";
 import DeleteFeatureFlagButtonComponent from "@/components/deleteFeatureFlag/DeleteFeatureFlagButton.component";
 import EditFeatureFlag from "@/components/editFeatureFlag/EditFeatureFlag.component";
 import FeatureFlagToggle from "@/components/updateFeatureFlag/FeatureFlagToggle.component";
@@ -18,7 +18,7 @@ type FeatureFlagListProps = {
     userRole: string;
 };
 
-export default function FeatureFlagList({ featureFlags, userId, userRole }: FeatureFlagListProps) {
+export default function FeatureFlagList({featureFlags, userId, userRole}: FeatureFlagListProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [showDropdown, setShowDropdown] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -30,9 +30,7 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Feat
     const rawFilter = searchParams.get("filter") ?? "";
     const filters = rawFilter.split(",").filter(Boolean);
 
-    // Step 1: Apply filters first
     const filteredByFilters = useMemo(() => {
-        // If no filters selected, show all
         if (filters.length === 0) return featureFlags;
 
         return featureFlags.filter(flag => {
@@ -46,13 +44,11 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Feat
         });
     }, [featureFlags, filters]);
 
-    // Step 2: Search within filtered results for dropdown
     const searchResults = useMemo(() => {
         if (!searchQuery.trim()) return [];
         return binarySearchFeatureFlag(filteredByFilters, searchQuery);
     }, [filteredByFilters, searchQuery]);
 
-    // Step 3: Final displayed flags (apply search if user pressed Enter)
     const displayedFlags = useMemo(() => {
         if (searchQuery.trim()) {
             return searchResults;
@@ -60,7 +56,6 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Feat
         return filteredByFilters;
     }, [filteredByFilters, searchResults, searchQuery]);
 
-    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -71,17 +66,13 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Feat
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Handle keyboard navigation
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             e.preventDefault();
 
-            // If there's a highlighted result, select it
             if (highlightedIndex >= 0 && searchResults[highlightedIndex]) {
                 handleSelectFlag(searchResults[highlightedIndex].id);
-            }
-            // Otherwise just close dropdown and show search results
-            else if (searchQuery.trim()) {
+            } else if (searchQuery.trim()) {
                 setShowDropdown(false);
                 inputRef.current?.blur();
             }
@@ -123,7 +114,6 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Feat
         setHighlightedIndex(-1);
     };
 
-    // Add this right after the filters definition
     useEffect(() => {
         console.log("Sample flag:", featureFlags[0]);
         console.log("Filters:", filters);
@@ -131,9 +121,8 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Feat
 
     return (
         <div>
-            {/* Filter and Search bar section */}
             <div className="mb-4 flex gap-3 items-start">
-                <FilterFeatureFlags />
+                <FilterFeatureFlags/>
 
                 <div className="flex-1 relative" ref={dropdownRef}>
                     <input
@@ -156,7 +145,8 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Feat
                         stroke="currentColor"
                         viewBox="0 0 24 24"
                     >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
                     {searchQuery && (
                         <button
@@ -167,9 +157,9 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Feat
                         </button>
                     )}
 
-                    {/* Dropdown with results */}
                     {showDropdown && searchResults.length > 0 && (
-                        <div className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-white rounded-md shadow-lg max-h-96 overflow-y-auto">
+                        <div
+                            className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-white rounded-md shadow-lg max-h-96 overflow-y-auto">
                             {searchResults.map((flag, index) => (
                                 <button
                                     key={flag.id}
@@ -184,16 +174,15 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Feat
                         </div>
                     )}
 
-                    {/* No results message */}
                     {showDropdown && searchQuery && searchResults.length === 0 && (
-                        <div className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-white rounded-md shadow-lg p-4 text-center text-gray-400">
+                        <div
+                            className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-white rounded-md shadow-lg p-4 text-center text-gray-400">
                             Ingen resultater fundet for "{searchQuery}"
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Filter and search status */}
             <div className="mb-2 text-sm text-gray-400 flex items-center gap-2">
                 {searchQuery && (
                     <>
@@ -207,7 +196,8 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Feat
             </div>
 
             <div className="border-white border-2 rounded-md mt-4">
-                <div className="grid grid-cols-[minmax(200px,2fr)_200px_80px_100px] gap-4 p-3 font-bold border-b-2 border-gray-400 bg-gray-800">
+                <div
+                    className="grid grid-cols-[minmax(200px,2fr)_200px_80px_100px] gap-4 p-3 font-bold border-b-2 border-gray-400 bg-gray-800">
                     <span>Name</span>
                     <span className="text-left">Strategy</span>
                     <span>Active</span>
@@ -225,10 +215,10 @@ export default function FeatureFlagList({ featureFlags, userId, userRole }: Feat
                                     {flag.name}
                                 </FeatureFlagDescription>
                                 <span className="text-gray-300 text-left">{flag.strategy || '—'}</span>
-                                <FeatureFlagToggle featureFlagId={flag.id} isActive={flag.is_active} userId={userId} />
+                                <FeatureFlagToggle featureFlagId={flag.id} isActive={flag.is_active} userId={userId}/>
                                 <div className="flex gap-2 pr-1">
                                     <EditFeatureFlag featureFlagId={flag.id} userId={userId} userRole={userRole}/>
-                                    <DeleteFeatureFlagButtonComponent id={flag.id} userId={userId} userRole={userRole} />
+                                    <DeleteFeatureFlagButtonComponent id={flag.id} userId={userId} userRole={userRole}/>
                                 </div>
                             </li>
                         ))

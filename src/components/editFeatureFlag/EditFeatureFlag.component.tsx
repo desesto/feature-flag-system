@@ -28,7 +28,7 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
         is_active: false,
         description: '',
         strategy: 'NO_STRATEGY',
-        whitelist_id: null,
+        white_list_id: null,
         start_time: null,
         end_time: null,
     });
@@ -54,7 +54,7 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
             is_active: featureFlag.is_active,
             description: featureFlag.description,
             strategy: featureFlag.strategy ?? 'NO_STRATEGY',
-            whitelist_id: featureFlag.whitelist_id ?? null,
+            white_list_id: featureFlag.white_list_id ?? null,
             start_time: featureFlag.start_time ?? null,
             end_time: featureFlag.end_time ?? null,
         });
@@ -78,7 +78,7 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
         try {
             const payload = serializeDates(form);
 
-            await fetch(`/api/feature-flags/${featureFlagId}`, {
+            await fetch(`http://localhost:3000/api/feature-flags/${featureFlagId}`, {
                 method: 'PATCH',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload),
@@ -93,20 +93,22 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
 
     return (
         <>
-        <div>
-            <button
-                onClick={() => handleOpen()}
-                type="button"
-                disabled ={!canEdit}
-                className={`px-1 ${
+            <div>
+                <button
+                    onClick={() => handleOpen()}
+                    type="button"
+                    disabled={!canEdit}
+                    className={`px-1 ${
                         canEdit
-                        ? "text-blue-400 bg-black hover:underline outline"
-                        : "text-gray-400 cursor-not-allowed opacity-50"
-            }`}>Edit</button>
-        </div>
+                            ? "text-blue-400 bg-black hover:underline outline"
+                            : "text-gray-400 cursor-not-allowed opacity-50"
+                    }`}>Edit
+                </button>
+            </div>
             {showPopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/84 backdrop-blur-xxs">
-                    <div className="bg-gray-900 text-white p-6 rounded-2xl shadow-lg max-w-lg w-full relative [color-scheme:dark]">
+                    <div
+                        className="bg-gray-900 text-white p-6 rounded-2xl shadow-lg max-w-md w-full text-sm leading-tight relative [color-scheme:dark]">
                         <button
                             onClick={() => setShowPopup(false)}
                             type="button"
@@ -138,7 +140,8 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                                     }
                                     className="sr-only peer"
                                 />
-                                <div className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-green-600 transition-colors"></div>
+                                <div
+                                    className="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-green-600 transition-colors"></div>
                                 <div
                                     className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full peer-checked:translate-x-5 transition-transform"></div>
                             </div>
@@ -161,7 +164,10 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                             <select
                                 value={form.strategy ?? 'NO_STRATEGY'}
                                 onChange={(event) =>
-                                    setForm({...form, strategy: event.target.value as "NO_STRATEGY" | "CANARY" | "FUTURE_IMPLEMENTATIONS"})
+                                    setForm({
+                                        ...form,
+                                        strategy: event.target.value as "NO_STRATEGY" | "CANARY" | "FUTURE_IMPLEMENTATIONS"
+                                    })
                                 }
                                 className="p-2 rounded border"
                             >
@@ -172,8 +178,8 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                         </label>
                         {form.strategy === 'CANARY' && (
                             <WhitelistSelector
-                                currentWhitelistId={form.whitelist_id ?? null}
-                                onWhitelistChange={(whitelistId) => setForm({...form, whitelist_id: whitelistId})}
+                                currentWhitelistId={form.white_list_id ?? null}
+                                onWhitelistChange={(whitelistId) => setForm({...form, white_list_id: whitelistId})}
                             />
                         )}
 

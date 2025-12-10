@@ -21,7 +21,6 @@ export default function FilterFeatureFlags() {
     const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState<string[]>(existingFilters);
 
-    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -38,7 +37,6 @@ export default function FilterFeatureFlags() {
         };
     }, [open]);
 
-    // Sync selected state with URL params when they change
     useEffect(() => {
         const urlFilters = searchParams.get("filter")?.split(",").filter(Boolean) ?? [];
         setSelected(urlFilters);

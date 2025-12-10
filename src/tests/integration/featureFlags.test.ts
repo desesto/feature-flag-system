@@ -1,19 +1,19 @@
 /**
  * @vitest-environment node
  */
-import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from "vitest";
-import { featureFlagsTable } from "@/db/schema";
-import { NextRequest } from "next/server";
-import { Pool } from "pg";
-import { drizzle } from "drizzle-orm/node-postgres";
+import {describe, it, expect, beforeAll, afterAll, beforeEach, vi} from "vitest";
+import {featureFlagsTable} from "@/db/schema";
+import {NextRequest} from "next/server";
+import {Pool} from "pg";
+import {drizzle} from "drizzle-orm/node-postgres";
 import * as schema from "@/db/schema";
-import { eq } from "drizzle-orm";
+import {eq} from "drizzle-orm";
 import dotenv from "dotenv";
 
-dotenv.config({ path: ".env.test" });
+dotenv.config({path: ".env.test"});
 
-const testPool = new Pool({ connectionString: process.env.TEST_DATABASE_URL });
-const testDb = drizzle(testPool, { schema });
+const testPool = new Pool({connectionString: process.env.TEST_DATABASE_URL});
+const testDb = drizzle(testPool, {schema});
 
 vi.mock("@/db", () => ({
     db: testDb,
@@ -36,17 +36,14 @@ let PATCH_UpdateFlag: any;
 
 beforeAll(async () => {
     const flagByIdRoute = await import("@/app/api/feature-flags/[id]/route");
-    POST_GetFlagById = flagByIdRoute.POST;
+    const flagsRoute = await import("@/app/api/feature-flags/route");
+    const fetchFlag = await import("@/app/api/public/feature-flags/route");
+
+    POST_GetFlagById = fetchFlag.POST;
     DELETE_Flag = flagByIdRoute.DELETE;
 
-    try {
-        const flagsRoute = await import("@/app/api/feature-flags/route");
-        POST_CreateFlag = flagsRoute.POST;
-        PATCH_UpdateFlag = flagsRoute.PATCH;
-    } catch (e) {
-        console.error("Failed to import from featureFlags route:", e);
-        throw e;
-    }
+    POST_CreateFlag = flagsRoute.POST;
+    PATCH_UpdateFlag = flagByIdRoute.PATCH;
 
     try {
         await testDb.execute(`DROP TABLE IF EXISTS feature_flags CASCADE`);
@@ -54,24 +51,25 @@ beforeAll(async () => {
     }
 
     await testDb.execute(`
-        CREATE TABLE feature_flags (
-            id SERIAL PRIMARY KEY,
-            user_id INT NOT NULL,
-            name VARCHAR(255) NOT NULL UNIQUE,
-            is_active BOOLEAN NOT NULL,
+        CREATE TABLE feature_flags
+        (
+            id          SERIAL PRIMARY KEY,
+            user_id     INT          NOT NULL,
+            name        VARCHAR(255) NOT NULL UNIQUE,
+            is_active   BOOLEAN      NOT NULL,
             description TEXT,
-            strategy VARCHAR(255) NOT NULL,
-            start_time TIMESTAMP NOT NULL,
-            end_time TIMESTAMP,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            deleted_at TIMESTAMP
+            strategy    VARCHAR(255) NOT NULL,
+            start_time  TIMESTAMP    NOT NULL,
+            end_time    TIMESTAMP,
+            created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            deleted_at  TIMESTAMP
         )
     `);
 });
 
 beforeEach(async () => {
-    const { getUserRole } = await import("@/lib/helpers/user");
+    const {getUserRole} = await import("@/lib/helpers/user");
     vi.mocked(getUserRole).mockResolvedValue("Developer");
 
     await testDb.delete(featureFlagsTable).execute();
@@ -99,10 +97,10 @@ describe("POST /api/featureFlags/[id] - Check if flag is enabled", () => {
 
         const req = new NextRequest("http://localhost", {
             method: "POST",
-            headers: { "x-api-key": process.env.FEATURE_FLAG_API_KEY! },
+            headers: {"x-api-key": process.env.FEATURE_FLAG_API_KEY!},
         });
 
-        const res = await POST_GetFlagById(req, { params: { id: "TestFlag" } });
+        const res = await POST_GetFlagById(req, {params: {id: "TestFlag"}});
         const json = await res.json();
 
         expect(res.status).toBe(200);
@@ -112,10 +110,10 @@ describe("POST /api/featureFlags/[id] - Check if flag is enabled", () => {
     it("returns enabled: false for non-existing flag", async () => {
         const req = new NextRequest("http://localhost", {
             method: "POST",
-            headers: { "x-api-key": process.env.FEATURE_FLAG_API_KEY! },
+            headers: {"x-api-key": process.env.FEATURE_FLAG_API_KEY!},
         });
 
-        const res = await POST_GetFlagById(req, { params: { id: "DoesNotExist" } });
+        const res = await POST_GetFlagById(req, {params: {id: "DoesNotExist"}});
         const json = await res.json();
 
         expect(res.status).toBe(200);
@@ -125,10 +123,10 @@ describe("POST /api/featureFlags/[id] - Check if flag is enabled", () => {
     it("returns 401 if API key is invalid", async () => {
         const req = new NextRequest("http://localhost", {
             method: "POST",
-            headers: { "x-api-key": "wrong-key" },
+            headers: {"x-api-key": "wrong-key"},
         });
 
-        const res = await POST_GetFlagById(req, { params: { id: "TestFlag" } });
+        const res = await POST_GetFlagById(req, {params: {id: "TestFlag"}});
         const json = await res.json();
 
         expect(res.status).toBe(401);
@@ -169,7 +167,7 @@ describe("POST /api/featureFlags - Create feature flag", () => {
     });
 
     it("returns 401 if user is not a Developer", async () => {
-        const { getUserRole } = await import("@/lib/helpers/user");
+        const {getUserRole} = await import("@/lib/helpers/user");
         vi.mocked(getUserRole).mockResolvedValueOnce("Product-Manager");
 
         const req = new NextRequest("http://localhost", {
@@ -245,7 +243,7 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
     });
 
     it("returns 403 if non-Developer tries to update (not just toggle)", async () => {
-        const { getUserRole } = await import("@/lib/helpers/user");
+        const {getUserRole} = await import("@/lib/helpers/user");
         vi.mocked(getUserRole).mockResolvedValueOnce("Product-Manager");
 
         const created = await testDb
@@ -280,7 +278,7 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
     });
 
     it("allows Product-Manager to toggle is_active only", async () => {
-        const { getUserRole } = await import("@/lib/helpers/user");
+        const {getUserRole} = await import("@/lib/helpers/user");
         vi.mocked(getUserRole).mockClear()
         const user = await getUserRole(2);
         vi.mocked(getUserRole).mockResolvedValueOnce(user);
@@ -358,7 +356,7 @@ describe("DELETE /api/featureFlags/[id] - Delete feature flag", () => {
     });
 
     it("returns 401 if non-Developer tries to delete", async () => {
-        const { getUserRole } = await import("@/lib/helpers/user");
+        const {getUserRole} = await import("@/lib/helpers/user");
         vi.mocked(getUserRole).mockResolvedValueOnce("Product-Manager");
 
         const created = await testDb

@@ -4,8 +4,6 @@ import * as schema from "@/db/schema";
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 
-//todo hent slettede flag api
-
 export async function GET() {
     const flags = await db.query.featureFlagsTable.findMany({
         where: (featureFlags, { isNotNull }) => isNotNull(featureFlags.deleted_at),

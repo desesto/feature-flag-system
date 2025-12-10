@@ -19,12 +19,13 @@ CREATE TABLE "feature_flags" (
 	"is_active" boolean NOT NULL,
 	"description" text,
 	"strategy" "strategy" DEFAULT 'NO_STRATEGY' NOT NULL,
-	"whitelist_id" integer,
+	"white_list_id" integer,
 	"start_time" timestamp,
 	"end_time" timestamp,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now(),
-	"deleted_at" timestamp
+	"deleted_at" timestamp,
+	"path" jsonb DEFAULT 'null'::jsonb
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
@@ -34,13 +35,13 @@ CREATE TABLE "users" (
 	"role" "role" DEFAULT 'Developer' NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "whitelist_users" (
+CREATE TABLE "white_list_users" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"whitelist_id" integer NOT NULL,
+	"white_list_id" integer NOT NULL,
 	"user_id" integer NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "whitelists" (
+CREATE TABLE "white_lists" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL
 );
@@ -48,9 +49,9 @@ CREATE TABLE "whitelists" (
 ALTER TABLE "feature_flag_history" ADD CONSTRAINT "feature_flag_history_feature_flag_id_feature_flags_id_fk" FOREIGN KEY ("feature_flag_id") REFERENCES "public"."feature_flags"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "feature_flag_history" ADD CONSTRAINT "feature_flag_history_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "feature_flags" ADD CONSTRAINT "feature_flags_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "whitelist_users" ADD CONSTRAINT "whitelist_users_whitelist_id_whitelists_id_fk" FOREIGN KEY ("whitelist_id") REFERENCES "public"."whitelists"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "whitelist_users" ADD CONSTRAINT "whitelist_users_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "white_list_users" ADD CONSTRAINT "white_list_users_white_list_id_white_lists_id_fk" FOREIGN KEY ("white_list_id") REFERENCES "public"."white_lists"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "white_list_users" ADD CONSTRAINT "white_list_users_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE UNIQUE INDEX "feature_flag_name_unique" ON "feature_flags" USING btree ("name");--> statement-breakpoint
 CREATE UNIQUE INDEX "email_unique_idx" ON "users" USING btree ("email");--> statement-breakpoint
-CREATE UNIQUE INDEX "unique_whitelist_user_idx" ON "whitelist_users" USING btree ("whitelist_id","user_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "whitelist_name_unique" ON "whitelists" USING btree ("name");
+CREATE UNIQUE INDEX "unique_whitelist_user_idx" ON "white_list_users" USING btree ("white_list_id","user_id");--> statement-breakpoint
+CREATE UNIQUE INDEX "whitelist_name_unique" ON "white_lists" USING btree ("name");

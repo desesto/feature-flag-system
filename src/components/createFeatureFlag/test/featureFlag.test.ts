@@ -11,7 +11,7 @@ describe("validateFeatureFlagInput", () => {
             is_active: true,
             description: "En god beskrivelse",
             strategy: "NO_STRATEGY",
-            whitelist_id: null,
+            white_list_id: null,
             start_time: new Date("2025-11-01"),
             end_time: new Date("2025-11-10"),
         };
@@ -27,7 +27,7 @@ describe("validateFeatureFlagInput", () => {
                 is_active: true,
                 description: "En",
                 strategy: "NO_STRATEGY",
-                whitelist_id: null,
+                white_list_id: null,
                 start_time: new Date("2025-11-01"),
                 end_time: new Date("2025-11-10"),
             };
@@ -43,7 +43,7 @@ describe("validateFeatureFlagInput", () => {
                 is_active: true,
                 description: "A very good description",
                 strategy: "NO_STRATEGY",
-                whitelist_id: null,
+                white_list_id: null,
                 start_time: new Date("2025-12-01"),
                 end_time: new Date("2025-11-10"),
             };

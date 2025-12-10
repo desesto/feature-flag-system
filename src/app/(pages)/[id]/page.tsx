@@ -7,7 +7,7 @@ import UserIdSaver from "@/components/tabs/UserIdSaver.component";
 
 export default async function Page({ params }: { params: { id: string };
 }) {
-    const { id } = params;
+    const { id } = await params;
 
     const response = await fetch(`http://localhost:3000/api/users/${id}`, {
         cache: "no-store",
