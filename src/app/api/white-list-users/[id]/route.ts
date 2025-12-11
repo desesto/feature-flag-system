@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { whiteListUsersTable } from "@/db/schema";
 import {and, eq} from "drizzle-orm";
-import {NextRequest, NextResponse} from "next/server";
+import { NextRequest, NextResponse} from "next/server";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -9,11 +9,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({ error: "Invalid whitelist ID" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid white_list ID" }, { status: 400 });
         }
 
         const whitelistUsers = await db.query.whiteListUsersTable.findMany({
-            where: eq(whiteListUsersTable.whitelist_id, whitelistId),
+            where: eq(whiteListUsersTable.white_list_id, whitelistId),
             with: { user: true },
         });
 
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({ error: "Invalid whitelist ID" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid white_list ID" }, { status: 400 });
         }
 
         const body = await req.json();
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         }
 
         await db.insert(whiteListUsersTable).values({
-            whitelist_id: whitelistId,
+            white_list_id: whitelistId,
             user_id: Number(userId),
         });
 
@@ -65,7 +65,7 @@ export async function DELETE(req: NextRequest, {params}: { params: Promise<{ id:
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({error: "Invalid whitelist ID"}, {status: 400});
+            return NextResponse.json({error: "Invalid white_list ID"}, {status: 400});
         }
 
         const body = await req.json();
@@ -75,18 +75,18 @@ export async function DELETE(req: NextRequest, {params}: { params: Promise<{ id:
             return NextResponse.json({error: "Invalid user ID"}, {status: 400});
         }
 
-        const result = await db
+        await db
             .delete(whiteListUsersTable)
             .where(
                 and(
-                    eq(whiteListUsersTable.whitelist_id, whitelistId),
+                    eq(whiteListUsersTable.white_list_id, whitelistId),
                     eq(whiteListUsersTable.user_id, Number(userId))
                 )
             );
 
-        return NextResponse.json({message: "User removed from whitelist successfully"});
+        return NextResponse.json({message: "User removed from white_list successfully"});
     } catch (error) {
-        console.error("Error deleting user from whitelist:", error);
+        console.error("Error deleting user from white_list:", error);
         return NextResponse.json({error: "Internal server error"}, {status: 500});
     }
 }

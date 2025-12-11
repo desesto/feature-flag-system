@@ -8,7 +8,7 @@ import {
     timestamp,
     integer,
     foreignKey,
-    pgEnum,
+    pgEnum, jsonb,
 } from "drizzle-orm/pg-core";
 import {relations} from "drizzle-orm";
 
@@ -38,12 +38,13 @@ export const featureFlagsTable = pgTable(
         is_active: boolean("is_active").notNull(),
         description: text("description"),
         strategy: strategyEnum("strategy").notNull().default("NO_STRATEGY"),
-        whitelist_id: integer("whitelist_id"),
+        white_list_id: integer("white_list_id"),
         start_time: timestamp("start_time", { mode: "date" }),
         end_time: timestamp("end_time", { mode: "date" }),
         created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
         updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
         deleted_at: timestamp("deleted_at", { mode: "date" }),
+        path: jsonb("path").$type<string[] | null>().default(null),
     },
     (table) => ({
         name_unique: uniqueIndex("feature_flag_name_unique").on(table.name),
@@ -55,7 +56,7 @@ export const featureFlagsTable = pgTable(
 );
 
 export const whiteListsTable = pgTable(
-    "whitelists",
+    "white_lists",
     {
         id: serial("id").primaryKey(),
         name: varchar("name", { length: 255 }).notNull(),
@@ -66,24 +67,23 @@ export const whiteListsTable = pgTable(
 );
 
 export const whiteListUsersTable = pgTable(
-    "whitelist_users",
+    "white_list_users",
     {
         id: serial("id").primaryKey(),
-        whitelist_id: integer("whitelist_id").notNull(),
+        white_list_id: integer("white_list_id").notNull(),
         user_id: integer("user_id").notNull(),
     },
     (table) => ({
         whitelist_fk: foreignKey({
-            columns: [table.whitelist_id],
+            columns: [table.white_list_id],
             foreignColumns: [whiteListsTable.id],
         }).onDelete("cascade"),
         user_fk: foreignKey({
             columns: [table.user_id],
             foreignColumns: [usersTable.id],
         }).onDelete("cascade"),
-        // Unique så samme user ikke kan tilføjes flere gange til samme whitelist
         unique_whitelist_user: uniqueIndex("unique_whitelist_user_idx").on(
-            table.whitelist_id,
+            table.white_list_id,
             table.user_id
         ),
     })
@@ -124,19 +124,19 @@ export const featureFlagsRelations = relations(featureFlagsTable, ({ one, many }
         references: [usersTable.id],
     }),
     featureFlagHistories: many(featureFlagHistoryTable),
-    whitelist: one(whiteListsTable, {
-        fields: [featureFlagsTable.whitelist_id],
+    whiteList: one(whiteListsTable, {
+        fields: [featureFlagsTable.white_list_id],
         references: [whiteListsTable.id],
     }),
 }));
 export const whiteListsRelations = relations(whiteListsTable, ({ many }) => ({
-    featureFlags: many(featureFlagsTable), //
-    whitelistUsers: many(whiteListUsersTable),
+    featureFlags: many(featureFlagsTable),
+    whiteListUsers: many(whiteListUsersTable),
 }));
 
 export const whiteListUsersRelations = relations(whiteListUsersTable, ({ one }) => ({
-    whitelist: one(whiteListsTable, {
-        fields: [whiteListUsersTable.whitelist_id],
+    whiteList: one(whiteListsTable, {
+        fields: [whiteListUsersTable.white_list_id],
         references: [whiteListsTable.id],
     }),
     user: one(usersTable, {

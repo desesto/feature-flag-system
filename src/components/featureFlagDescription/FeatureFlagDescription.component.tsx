@@ -1,7 +1,7 @@
 "use client";
 
 import {useState} from "react";
-import type {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
+import type {FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 import {useRouter} from "next/navigation";
 import {parseApiDates, toLocalDatetimeString} from "@/lib/utils/dateConversion";
 
@@ -13,21 +13,21 @@ type FeatureFlagDescriptionProps = {
 export default function FeatureFlagDescription({featureFlagId, children}: FeatureFlagDescriptionProps) {
     const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
-    const [form, setForm] = useState<EditFeatureFlagDto>({
+    const [form, setForm] = useState<FeatureFlagDto>({
         id: featureFlagId,
         user_id: 0,
         name: '',
         is_active: false,
         description: '',
         strategy: 'NO_STRATEGY',
-        whitelist_id: null,
-        whitelist: null,
+        white_list_id: null,
+        white_list: null,
         start_time: null,
         end_time: null,
-    });
-    const [timestamps, setTimestamps] = useState<{ created_at: Date | null; updated_at: Date | null }>({
+        path: null,
         created_at: null,
         updated_at: null,
+        deleted_at: null,
     });
 
     const handleOpen = async () => {
@@ -43,14 +43,14 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
             is_active: featureFlag.is_active,
             description: featureFlag.description,
             strategy: featureFlag.strategy ?? 'NO_STRATEGY',
-            whitelist_id: featureFlag.whitelist_id ?? null,
-            whitelist: featureFlag.whitelist ?? null,
+            white_list_id: featureFlag.white_list_id ?? null,
+            white_list: featureFlag.white_list ?? null,
             start_time: featureFlag.start_time ?? null,
             end_time: featureFlag.end_time ?? null,
-        });
-        setTimestamps({
+            path: featureFlag.path ?? null,
             created_at: featureFlag.created_at,
-            updated_at: featureFlag.updated_at,
+            updated_at: featureFlag.updated_at ?? null,
+            deleted_at: featureFlag.deleted_at ?? null,
         });
         console.log("FEATURE FLAG:", {...form})
 
@@ -70,7 +70,8 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
 
             {showPopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/84 backdrop-blur-xxs">
-                    <div className="bg-gray-900 text-white p-6 rounded-2xl shadow-lg max-w-lg w-full relative">
+                    <div
+                        className="bg-gray-900 text-white p-6 rounded-2xl shadow-lg max-w-md w-full text-sm leading-tight relative">
                         <button
                             onClick={() => setShowPopup(false)}
                             type="button"
@@ -95,11 +96,11 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             <div className="flex flex-col gap-1">
                                 <span className="text-gray-300">Aktiv status:</span>
                                 <span
-                                    className={ form.is_active
-                                            ? "text-green-400 font-semibold"
-                                            : "text-red-400 font-semibold"
-                                         }
-                                    >
+                                    className={form.is_active
+                                        ? "text-green-400 font-semibold"
+                                        : "text-red-400 font-semibold"
+                                    }
+                                >
                                     {form.is_active ? "Aktiv" : "Inaktiv"}
                                 </span>
                             </div>
@@ -135,7 +136,7 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             <label className="flex flex-col gap-1 mb-3">
                                 Whitelist:
                                 <input
-                                    value={form.whitelist?.name ?? 'Ingen whitelist valgt'}
+                                    value={form.white_list?.name ?? 'Ingen white list valgt'}
                                     readOnly
                                     className="p-2 rounded border bg-transparent cursor-default"
                                 />
@@ -166,7 +167,7 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             Oprettet den:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(timestamps.created_at)}
+                                value={toLocalDatetimeString(form.created_at)}
                                 readOnly
                                 className="p-2 rounded border bg-transparent cursor-default"
                             />
@@ -176,7 +177,17 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             Opdateret den:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(timestamps.updated_at)}
+                                value={toLocalDatetimeString(form.updated_at)}
+                                readOnly
+                                className="p-2 rounded border bg-transparent cursor-default"
+                            />
+                        </label>
+
+                        <label className="flex flex-col gap-1 mb-3">
+                            Path:
+                            <input
+                                type="text"
+                                value={form.path?.join(" → ") ?? ""}
                                 readOnly
                                 className="p-2 rounded border bg-transparent cursor-default"
                             />

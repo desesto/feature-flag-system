@@ -1,11 +1,9 @@
-// src/app/api/featureFlags/[id]/route.test.ts
 /**
  * @vitest-environment node
  */
 import { describe, expect, it, vi, beforeEach } from "vitest"
 import { NextRequest } from "next/server"
 
-// Use vi.hoisted to ensure mockDb is available during hoisting
 const { mockDb } = vi.hoisted(() => {
     const mockDb = {
         update: vi.fn().mockReturnThis(),
@@ -29,7 +27,6 @@ vi.mock("@/lib/helpers/featureFlagHistory", () => ({
     logFeatureFlagDeleted: vi.fn(),
 }))
 
-// Import AFTER mocks
 import { DELETE } from "@/app/api/feature-flags/[id]/route"
 import { getUserRole } from "@/lib/helpers/user"
 import { logFeatureFlagDeleted } from "@/lib/helpers/featureFlagHistory"

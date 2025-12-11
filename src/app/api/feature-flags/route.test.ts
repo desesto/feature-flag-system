@@ -1,4 +1,3 @@
-// src/app/api/featureFlags/route.test.ts
 /**
  * @vitest-environment node
  */
@@ -140,8 +139,8 @@ describe("PATCH /api/feature-flags", () => {
             description: "Old description",
             strategy: "NO_STRATEGY",
             user_id: 1,
-            whitelist_id: null,
-            whitelist: null,
+            white_list_id: null,
+            white_list: null,
             start_time: null,
             end_time: null,
             created_at: new Date("2025-01-01"),
@@ -156,8 +155,8 @@ describe("PATCH /api/feature-flags", () => {
             description: "Old description",
             strategy: "NO_STRATEGY",
             user_id: 1,
-            whitelist_id: null,
-            whitelist: null,
+            white_list_id: null,
+            white_list: null,
             start_time: null,
             end_time: null,
             created_at: new Date("2025-01-01"),

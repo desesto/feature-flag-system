@@ -1,7 +1,7 @@
 import {db} from "@/db";
 import {NextRequest, NextResponse} from "next/server";
 import {whiteListsTable, whiteListUsersTable} from "@/db/schema";
-import {and, eq} from "drizzle-orm";
+import {eq} from "drizzle-orm";
 import {GetWhiteListWithUsersSchema, UpdateWhiteListSchema} from "@/lib/schemas/whiteList.schema";
 import {parse} from "valibot";
 
@@ -11,13 +11,13 @@ export async function GET(req: NextRequest, {params}: { params: Promise<{ id: st
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({error: "Invalid whitelist ID"}, {status: 400});
+            return NextResponse.json({error: "Invalid white_list ID"}, {status: 400});
         }
 
         const whitelist = await db.query.whiteListsTable.findFirst({
             where: eq(whiteListsTable.id, whitelistId),
             with: {
-                whitelistUsers: {
+                whiteListUsers: {
                     with: {
                         user: true,
                     },
@@ -32,14 +32,14 @@ export async function GET(req: NextRequest, {params}: { params: Promise<{ id: st
         const response = {
             id: whitelist.id,
             name: whitelist.name,
-            users: whitelist.whitelistUsers.map((whiteListUsers) => whiteListUsers.user),
+            users: whitelist.whiteListUsers.map((whiteListUsers) => whiteListUsers.user),
         };
 
         const validated = parse(GetWhiteListWithUsersSchema, response);
 
         return NextResponse.json(validated);
     } catch (error) {
-        console.error("Error fetching whitelist:", error);
+        console.error("Error fetching white_list:", error);
         return NextResponse.json({error: "Internal server error"}, {status: 500});
     }
 }
@@ -50,7 +50,7 @@ export async function PATCH(req: NextRequest, {params}: { params: Promise<{ id: 
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({error: "Invalid whitelist ID"}, {status: 400});
+            return NextResponse.json({error: "Invalid white_list ID"}, {status: 400});
         }
 
         const body = await req.json();
@@ -58,13 +58,13 @@ export async function PATCH(req: NextRequest, {params}: { params: Promise<{ id: 
 
         await db
             .delete(whiteListUsersTable)
-            .where(eq(whiteListUsersTable.whitelist_id, whitelistId));
+            .where(eq(whiteListUsersTable.white_list_id, whitelistId));
 
 
         if (validatedData.user_ids.length > 0) {
             await db.insert(whiteListUsersTable).values(
                 validatedData.user_ids.map((userId) => ({
-                    whitelist_id: whitelistId,
+                    white_list_id: whitelistId,
                     user_id: userId,
                 }))
             );
@@ -72,7 +72,7 @@ export async function PATCH(req: NextRequest, {params}: { params: Promise<{ id: 
 
         return NextResponse.json({message: "Whitelist updated successfully"});
     } catch (error) {
-        console.error("Error updating whitelist:", error);
+        console.error("Error updating white_list:", error);
         return NextResponse.json({error: "Internal server error"}, {status: 500});
     }
 }
@@ -83,7 +83,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({ error: "Invalid whitelist ID" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid white_list ID" }, { status: 400 });
         }
 
         const whitelist = await db.query.whiteListsTable.findFirst({
@@ -100,7 +100,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
         return NextResponse.json({ message: "Whitelist deleted successfully" });
     } catch (error) {
-        console.error("Error deleting whitelist:", error);
+        console.error("Error deleting white_list:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

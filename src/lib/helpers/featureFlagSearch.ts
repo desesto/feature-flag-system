@@ -5,7 +5,7 @@ export function binarySearchFeatureFlag(flags: FeatureFlagDto[], searchQuery: st
         a.name.toLowerCase().localeCompare(b.name.toLowerCase())
     );
     const results: FeatureFlagDto[] = [];
-    const searchLower = searchQuery.toLowerCase(); // Search også til lowercase
+    const searchLower = searchQuery.toLowerCase();
 
     let left = 0;
     let right = sorted.length - 1;

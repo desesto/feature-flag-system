@@ -3,7 +3,7 @@
 import {useRouter} from "next/navigation";
 import {useState} from 'react';
 import {validateFeatureFlagInput} from "@/components/createFeatureFlag/validateFeatureFlagInput.component";
-import {CreateFeatureFlagDto} from "@/lib/dto/featureFlag.dto";
+import type {CreateFeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 import WhitelistSelector from "@/components/whitelist/WhitelistSelector.component";
 import {fromLocalDatetimeString, serializeDates, toLocalDatetimeString} from "@/lib/utils/dateConversion";
 
@@ -15,6 +15,8 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
     const router = useRouter();
     const [showPopup, setShowPopup] = useState(false);
     const [showDateError, setShowDateError] = useState(false);
+    const [finishedPath, setFinishedPath] = useState<string[]>([]);
+    const [currentPathInput, setCurrentPathInput] = useState<string>("");
 
     const [form, setForm] = useState<CreateFeatureFlagDto>({
         user_id: userId,
@@ -22,9 +24,10 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
         is_active: false,
         description: '',
         strategy: 'NO_STRATEGY',
-        whitelist_id: null,
+        white_list_id: null,
         start_time: null,
         end_time: null,
+        path: null,
     });
 
     const handleOpen = () => {
@@ -34,36 +37,54 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             is_active: false,
             description: '',
             strategy: 'NO_STRATEGY',
-            whitelist_id: null,
+            white_list_id: null,
             start_time: null,
             end_time: null,
+            path: null,
         });
         setShowDateError(false)
         setShowPopup(true);
     };
 
-
     const handleSubmit = async () => {
-        const validationError = validateFeatureFlagInput(form);
+        const pathForForm = [...finishedPath, currentPathInput].filter(Boolean);
+        const formWithPath = {
+            ...form,
+            path: pathForForm.length ? pathForForm : null,
+        };
+
+        const validationError = validateFeatureFlagInput(formWithPath);
         if (validationError) {
-            setShowDateError(true)
+            if (validationError.field === "dates") {
+                setShowDateError(true);
+            } else {
+                alert(validationError.message);
+            }
             return;
         }
-        try {
-            const payload = serializeDates(form);
 
-            await fetch('/api/feature-flags', {
+        console.log("Payload being sent:", formWithPath);
+
+        try {
+            const payload = serializeDates(formWithPath);
+            console.log("Serialized payload:", payload);
+
+            const res = await fetch('/api/feature-flags', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(payload),
             });
 
-            setShowPopup(false)
-            router.refresh()
+            const data = await res.json();
+            console.log("Response:", data);
+
+            setShowPopup(false);
+            router.refresh();
         } catch (err) {
             console.error('Error:', err);
         }
     };
+
 
     return (
         <>
@@ -143,8 +164,8 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                         </label>
                         {form.strategy === 'CANARY' && (
                             <WhitelistSelector
-                                currentWhitelistId={form.whitelist_id ?? null}
-                                onWhitelistChange={(whitelistId) => setForm({...form, whitelist_id: whitelistId})}
+                                currentWhitelistId={form.white_list_id ?? null}
+                                onWhitelistChange={(whitelistId) => setForm({...form, white_list_id: whitelistId})}
                             />
                         )}
 
@@ -178,6 +199,30 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                                 </p>
                             )}
                         </label>
+
+                        <label className="flex flex-col gap-1 mb-3">
+                            Path (adskil segmenter med mellemrum eller komma):
+                        <input
+                            type="text"
+                            value={currentPathInput}
+                            onChange={(e) => setCurrentPathInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === " " || e.key === ",") {
+                                    e.preventDefault();
+                                    const segment = currentPathInput.trim();
+                                    if (segment) {
+                                        setFinishedPath(prev => [...prev, segment]);
+                                    }
+                                    setCurrentPathInput("");
+                                }
+                            }}
+                            className="p-2 rounded border"
+                        />
+                        </label>
+
+                        <div className="mt-1 text-gray-300">
+                            {finishedPath.join(" → ")}
+                        </div>
 
                         <div className="flex justify-end gap-3 mt-6">
                             <button

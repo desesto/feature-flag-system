@@ -1,4 +1,4 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import {EditFeatureFlagSchema, FeatureFlagSchema} from "@/lib/schemas/featureFlag.schema";
 import {parse} from "valibot";
 import {featureFlagsTable} from "@/db/schema"
@@ -8,7 +8,7 @@ import { db } from "@/db";
 import {getUserRole} from "@/lib/helpers/user";
 import {hasAccessToDeleteFeatureFlag, hasAccessToEditFeatureFlag} from "@/access-control/featureFlagAccess";
 import type {FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
-
+import {parseApiDates} from "@/lib/utils/dateConversion";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const featureFlag = await db.query.featureFlagsTable.findFirst({
         where: eq(featureFlagsTable.id, featureFlagId),
         with: {
-            whitelist: true,
+            whiteList: true,
         },
     });
 
@@ -34,8 +34,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     return NextResponse.json(validated);
   }
-
-
 
 export async function DELETE(req: NextRequest) {
     const { id, userId } = await req.json();
@@ -64,7 +62,8 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-    const body = await req.json();
+    const raw = await req.json();
+    const body = parseApiDates(raw);
     const validated = parse(EditFeatureFlagSchema, body)
     const { id, user_id, ...updates } = validated;
 
@@ -85,14 +84,12 @@ export async function PATCH(req: NextRequest) {
         );
     }
 
-    //til historik - hent gamle flag inden opdatering
     const oldFlag = await db.query.featureFlagsTable.findFirst({
         where: eq(featureFlagsTable.id, body.id),
         with: {
-            whitelist: true,
+            whiteList: true,
         },
     });
-
 
     const updateData = Object.fromEntries(
         Object.entries({
@@ -100,7 +97,7 @@ export async function PATCH(req: NextRequest) {
             is_active: updates.is_active,
             description: updates.description,
             strategy: updates.strategy,
-            whitelist_id: updates.whitelist_id,
+            white_list_id: updates.white_list_id,
             start_time: updates.start_time,
             end_time: updates.end_time,
             updated_at: new Date(),
@@ -108,7 +105,7 @@ export async function PATCH(req: NextRequest) {
     );
 
     if (updates.strategy && updates.strategy !== 'CANARY') {
-        updateData.whitelist_id = null;
+        updateData.white_list_id = null;
     }
 
     await db
@@ -116,11 +113,10 @@ export async function PATCH(req: NextRequest) {
         .set(updateData)
         .where(eq(featureFlagsTable.id, id));
 
-    //kun til at hente opdateret whitelist
     const newFlag = await db.query.featureFlagsTable.findFirst({
         where: eq(featureFlagsTable.id, body.id),
         with: {
-            whitelist: true,
+            whiteList: true,
         },
     })
 
@@ -131,9 +127,5 @@ export async function PATCH(req: NextRequest) {
         newFlag as FeatureFlagDto
     );
 
-
     return NextResponse.json(newFlag);
 }
-
-
-

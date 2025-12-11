@@ -9,8 +9,8 @@ export const FeatureFlagSchema = object({
     is_active: boolean(),
     description: string(),
     strategy: nullable(picklist(strategyValues)),
-    whitelist_id: nullable(number()),
-    whitelist: optional(nullable(object({
+    white_list_id: nullable(number()),
+    white_list: optional(nullable(object({
         id: number(),
         name: string(),
     }))),
@@ -19,6 +19,7 @@ export const FeatureFlagSchema = object({
     created_at: nullable(date()),
     updated_at: nullable(date()),
     deleted_at: nullable(date()),
+    path: optional(nullable(array(string()))),
 });
 
 export const CreateFeatureFlagSchema = object({
@@ -27,9 +28,10 @@ export const CreateFeatureFlagSchema = object({
     is_active: boolean(),
     description: string(),
     strategy: fallback(picklist(strategyValues), "NO_STRATEGY"),
-    whitelist_id: optional(nullable(number())),
+    white_list_id: optional(nullable(number())),
     start_time: optional(nullable(date())),
     end_time: optional(nullable(date())),
+    path: optional(nullable(array(string()))),
 });
 
 export const EditFeatureFlagSchema = object({
@@ -39,8 +41,8 @@ export const EditFeatureFlagSchema = object({
     is_active: optional(boolean()),
     description: optional(string()),
     strategy: optional(picklist(strategyValues)),
-    whitelist_id: optional(nullable(number())),
-    whitelist: optional(nullable(object({
+    white_list_id: optional(nullable(number())),
+    white_list: optional(nullable(object({
         id: number(),
         name: string(),
     }))),

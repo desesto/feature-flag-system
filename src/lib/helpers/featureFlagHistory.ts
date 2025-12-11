@@ -1,8 +1,7 @@
-// src/lib/helpers/featureFlagHistory.ts
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { featureFlagHistoryTable } from "@/db/schema";
-import {EditFeatureFlagDto, FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
+import type {FeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 import {toISOStringIfDate} from "@/lib/utils/dateConversion";
 
 const pool = new Pool({
@@ -39,7 +38,7 @@ export async function logFeatureFlagDeleted(
     });
 }
 
-const ignore_keys = ['id', 'user_id', 'whitelist', 'created_at', 'updated_at', 'deleted_at'];
+const ignore_keys = ['id', 'user_id', 'white_list', 'created_at', 'updated_at', 'deleted_at'];
 
 export async function logFeatureFlagUpdated(
     featureFlagId: number,
@@ -56,11 +55,11 @@ export async function logFeatureFlagUpdated(
             continue;
         }
 
-        if (key === 'whitelist_id') {
-            if (oldFlag.whitelist_id !== newFlag.whitelist_id) {
-                changedFields.push('whitelist');
-                oldValues.whitelist = oldFlag.whitelist?.name ?? null;
-                newValues.whitelist = newFlag.whitelist?.name ?? null;
+        if (key === 'white_list_id') {
+            if (oldFlag.white_list_id !== newFlag.white_list_id) {
+                changedFields.push('white_list');
+                oldValues.whitelist = oldFlag.white_list?.name ?? null;
+                newValues.whitelist = newFlag.white_list?.name ?? null;
             }
             continue;
         }

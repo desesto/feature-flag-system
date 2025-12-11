@@ -13,9 +13,9 @@ export async function checkFeatureFlagAccess(
             isNull(featureFlagsTable.deleted_at)
         ),
         with: {
-            whitelist: {
+            whiteList: {
                 with: {
-                    whitelistUsers: {
+                    whiteListUsers: {
                         with: {
                             user: true
                         }
@@ -38,11 +38,11 @@ export async function checkFeatureFlagAccess(
             return false;
         }
 
-        if (!featureFlag.whitelist) {
+        if (!featureFlag.whiteList) {
             return false;
         }
 
-        const whitelistedEmails = featureFlag.whitelist.whitelistUsers
+        const whitelistedEmails = featureFlag.whiteList.whiteListUsers
             .map((wu) => wu.user.email?.toLowerCase())
             .filter((email): email is string => email !== null);
 
