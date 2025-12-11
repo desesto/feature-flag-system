@@ -17,7 +17,10 @@ describe("validateFeatureFlagInput", () => {
         };
         const actualOutput = validateFeatureFlagInput(input)
 
-    expect(actualOutput).toBe("Feature flaggets navn skal være mindst 2 tegn")
+        expect(actualOutput).toEqual({
+            field: "name",
+            message: "Feature flaggets navn skal være mindst 2 tegn"
+        });
     });
 
     it("returns error if description is less than 5 characters", () => {
@@ -33,7 +36,10 @@ describe("validateFeatureFlagInput", () => {
             };
         const actualOutput = validateFeatureFlagInput(input)
 
-        expect(actualOutput).toBe("Feature flaggets beskrivelse skal være mindst 5 tegn")
+        expect(actualOutput).toEqual({
+            field: "description",
+            message: "Feature flaggets beskrivelse skal være mindst 5 tegn"
+        });
     });
 
         it("returns error if start time is after end time", () => {
@@ -50,6 +56,26 @@ describe("validateFeatureFlagInput", () => {
 
         const actualOutput = validateFeatureFlagInput(input)
 
-        expect(actualOutput).toBe("Sluttidspunkt skal være efter starttidspunkt og begge skal angives")
+            expect(actualOutput).toEqual({
+                field: "dates",
+                message: "Sluttidspunkt skal være efter starttidspunkt og begge skal angives"
+            });
         });
+
+        it("returns null when input is valid", () => {
+                const input: CreateFeatureFlagDto = {
+                    user_id: 1,
+                    name: "Valid name",
+                    is_active: true,
+                    description: "Valid description",
+                    strategy: "NO_STRATEGY",
+                    white_list_id: null,
+                    start_time: new Date("2025-11-01"),
+                    end_time: new Date("2025-11-10"),
+                };
+                const actualOutput = validateFeatureFlagInput(input);
+
+                expect(actualOutput).toBeNull();
+            });
+
 });

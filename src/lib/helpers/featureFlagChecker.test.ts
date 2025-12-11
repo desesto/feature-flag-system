@@ -16,10 +16,10 @@ vi.mock('@/db', () => ({
 }));
 
 type FeatureFlagDtoWithWhitelistUsers = FeatureFlagDto & {
-    whitelist?: {
+    whiteList?: {
         id: number;
         name: string;
-        whitelistUsers?: Array<{
+        whiteListUsers?: Array<{
             id: number;
             whitelist_id: number;
             user_id: number;
@@ -54,7 +54,7 @@ describe('checkFeatureFlagAccess', () => {
             is_active: false,
             description: 'Inactive feature',
             strategy: 'NO_STRATEGY',
-            whitelist_id: null,
+            white_list_id: null,
             start_time: null,
             end_time: null,
             created_at: null,
@@ -76,7 +76,7 @@ describe('checkFeatureFlagAccess', () => {
             is_active: true,
             description: 'Open feature',
             strategy: 'NO_STRATEGY',
-            whitelist_id: null,
+            white_list_id: null,
             start_time: null,
             end_time: null,
             created_at: null,
@@ -99,7 +99,7 @@ describe('checkFeatureFlagAccess', () => {
             is_active: true,
             description: 'Future feature',
             strategy: 'FUTURE_IMPLEMENTATIONS',
-            whitelist_id: null,
+            white_list_id: null,
             start_time: null,
             end_time: null,
             created_at: null,
@@ -121,16 +121,16 @@ describe('checkFeatureFlagAccess', () => {
             is_active: true,
             description: 'Canary feature',
             strategy: 'CANARY',
-            whitelist_id: 1,
+            white_list_id: 1,
             start_time: null,
             end_time: null,
             created_at: null,
             updated_at: null,
             deleted_at: null,
-            whitelist: {
+            whiteList: {
                 id: 1,
                 name: 'Beta Testers',
-                whitelistUsers: [
+                whiteListUsers: [
                     {
                         id: 1,
                         whitelist_id: 1,
@@ -160,7 +160,7 @@ describe('checkFeatureFlagAccess', () => {
             is_active: true,
             description: 'Canary feature',
             strategy: 'CANARY',
-            whitelist_id: null,
+            white_list_id: null,
             start_time: null,
             end_time: null,
             created_at: null,
@@ -182,16 +182,16 @@ describe('checkFeatureFlagAccess', () => {
             is_active: true,
             description: 'Canary feature',
             strategy: 'CANARY',
-            whitelist_id: 1,
+            white_list_id: 1,
             start_time: null,
             end_time: null,
             created_at: null,
             updated_at: null,
             deleted_at: null,
-            whitelist: {
+            whiteList: {
                 id: 1,
                 name: 'Empty Whitelist',
-                whitelistUsers: []
+                whiteListUsers: []
             }
         };
         vi.mocked(db.query.featureFlagsTable.findFirst).mockResolvedValue(mockFlag as never);
@@ -209,16 +209,16 @@ describe('checkFeatureFlagAccess', () => {
             is_active: true,
             description: 'Canary feature',
             strategy: 'CANARY',
-            whitelist_id: 1,
+            white_list_id: 1,
             start_time: null,
             end_time: null,
             created_at: null,
             updated_at: null,
             deleted_at: null,
-            whitelist: {
+            whiteList: {
                 id: 1,
                 name: 'Beta Testers',
-                whitelistUsers: [
+                whiteListUsers: [
                     {
                         id: 1,
                         whitelist_id: 1,
@@ -248,16 +248,16 @@ describe('checkFeatureFlagAccess', () => {
             is_active: true,
             description: 'Canary feature',
             strategy: 'CANARY',
-            whitelist_id: 1,
+            white_list_id: 1,
             start_time: null,
             end_time: null,
             created_at: null,
             updated_at: null,
             deleted_at: null,
-            whitelist: {
+            whiteList: {
                 id: 1,
                 name: 'Beta Testers',
-                whitelistUsers: [
+                whiteListUsers: [
                     {
                         id: 1,
                         whitelist_id: 1,
@@ -287,16 +287,16 @@ describe('checkFeatureFlagAccess', () => {
             is_active: true,
             description: 'Canary feature',
             strategy: 'CANARY',
-            whitelist_id: 1,
+            white_list_id: 1,
             start_time: null,
             end_time: null,
             created_at: null,
             updated_at: null,
             deleted_at: null,
-            whitelist: {
+            whiteList: {
                 id: 1,
                 name: 'Beta Testers',
-                whitelistUsers: [
+                whiteListUsers: [
                     {
                         id: 1,
                         whitelist_id: 1,
@@ -348,16 +348,16 @@ describe('checkFeatureFlagAccess', () => {
             is_active: true,
             description: 'Canary feature',
             strategy: 'CANARY',
-            whitelist_id: 1,
+            white_list_id: 1,
             start_time: null,
             end_time: null,
             created_at: null,
             updated_at: null,
             deleted_at: null,
-            whitelist: {
+            whiteList: {
                 id: 1,
                 name: 'Beta Testers',
-                whitelistUsers: [
+                whiteListUsers: [
                     {
                         id: 1,
                         whitelist_id: 1,
