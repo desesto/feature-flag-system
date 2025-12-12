@@ -1,6 +1,10 @@
 import {type NextRequest, NextResponse} from "next/server";
 
 import {checkFeatureFlagAccess} from "@/lib/helpers/featureFlagChecker";
+import {featureFlagsTable} from "@/db/schema";
+import {db} from "@/db";
+import {and} from "drizzle-orm";
+import {eq, isNull} from "drizzle-orm/sql/expressions/conditions";
 
 export async function POST(req: NextRequest) {
     const apiKey = req.headers.get("x-api-key");
@@ -17,7 +21,14 @@ export async function POST(req: NextRequest) {
             error: "Missing featureFlagName"
         }, { status: 400 });
     }
+    const featureFlag = await db
+        .select()
+        .from(featureFlagsTable)
+        .where(and(eq(featureFlagsTable.name, featureFlagName), isNull(featureFlagsTable.deleted_at)));
 
+    if (featureFlag.length === 0) {
+        return NextResponse.json({ enabled: false });
+    }
     const isEnabled = await checkFeatureFlagAccess(featureFlagName, userEmail);
 
     return NextResponse.json({ enabled: isEnabled });
