@@ -9,6 +9,7 @@ import {drizzle} from "drizzle-orm/node-postgres";
 import * as schema from "@/db/schema";
 import {eq} from "drizzle-orm";
 import dotenv from "dotenv";
+import {jsonb} from "drizzle-orm/pg-core";
 
 dotenv.config({path: ".env.test"});
 
@@ -59,11 +60,13 @@ beforeAll(async () => {
             is_active   BOOLEAN      NOT NULL,
             description TEXT,
             strategy    VARCHAR(255) NOT NULL,
+            white_list_id INT,
             start_time  TIMESTAMP    NOT NULL,
             end_time    TIMESTAMP,
             created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            deleted_at  TIMESTAMP
+            deleted_at  TIMESTAMP,
+            path JSONB DEFAULT NULL
         )
     `);
 });
@@ -80,7 +83,7 @@ afterAll(async () => {
     await testPool.end();
 });
 
-describe("POST /api/featureFlags/[id] - Check if flag is enabled", () => {
+describe("POST /api/public/feature-flags/ - Check if flag is enabled", () => {
     it("returns enabled: true for existing active flag", async () => {
         await testDb
             .insert(featureFlagsTable)
@@ -90,17 +93,27 @@ describe("POST /api/featureFlags/[id] - Check if flag is enabled", () => {
                 is_active: true,
                 description: "Test flag",
                 strategy: "NO_STRATEGY",
+                white_list_id: null,
                 start_time: new Date(),
                 end_time: null,
+                path: null,
             })
             .execute();
 
         const req = new NextRequest("http://localhost", {
             method: "POST",
-            headers: {"x-api-key": process.env.FEATURE_FLAG_API_KEY!},
+            headers: {
+                "x-api-key": process.env.FEATURE_FLAG_API_KEY!,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                featureFlagName: "TestFlag",
+                userEmail: null,
+            }),
         });
 
-        const res = await POST_GetFlagById(req, {params: {id: "TestFlag"}});
+
+        const res = await POST_GetFlagById(req);
         const json = await res.json();
 
         expect(res.status).toBe(200);
@@ -110,10 +123,16 @@ describe("POST /api/featureFlags/[id] - Check if flag is enabled", () => {
     it("returns enabled: false for non-existing flag", async () => {
         const req = new NextRequest("http://localhost", {
             method: "POST",
-            headers: {"x-api-key": process.env.FEATURE_FLAG_API_KEY!},
+            headers: {"x-api-key": process.env.FEATURE_FLAG_API_KEY!,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                featureFlagName: "DoesNotExist",
+                userEmail: null,
+            }),
         });
 
-        const res = await POST_GetFlagById(req, {params: {id: "DoesNotExist"}});
+        const res = await POST_GetFlagById(req);
         const json = await res.json();
 
         expect(res.status).toBe(200);
@@ -144,8 +163,10 @@ describe("POST /api/featureFlags - Create feature flag", () => {
                 is_active: true,
                 description: "New test flag",
                 strategy: "NO_STRATEGY",
+                white_list_id: null,
                 start_time: new Date().toISOString(),
                 end_time: null,
+                path: null,
             }),
         });
 
@@ -177,9 +198,11 @@ describe("POST /api/featureFlags - Create feature flag", () => {
                 name: "UnauthorizedFlag",
                 is_active: true,
                 description: "Should fail",
+                white_list_id: null,
                 strategy: "NO_STRATEGY",
                 start_time: new Date().toISOString(),
                 end_time: null,
+                path: null,
             }),
         });
 
@@ -208,8 +231,10 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
                 is_active: true,
                 description: "Original description",
                 strategy: "NO_STRATEGY",
+                white_list_id: null,
                 start_time: new Date(),
                 end_time: null,
+                path: null
             })
             .returning();
 
@@ -274,7 +299,7 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
         const json = await res.json();
 
         expect(res.status).toBe(403);
-        expect(json.error).toContain("Unauthorized");
+        expect(json.error).toContain("Du har ikke adgang til at redigere feature flags");
     });
 
     it("allows Product-Manager to toggle is_active only", async () => {
