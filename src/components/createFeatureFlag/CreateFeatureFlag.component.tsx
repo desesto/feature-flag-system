@@ -43,6 +43,8 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
             path: null,
         });
         setShowDateError(false)
+        setFinishedPath([]);
+        setCurrentPathInput("");
         setShowPopup(true);
     };
 

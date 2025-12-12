@@ -48,6 +48,7 @@ export const EditFeatureFlagSchema = object({
     }))),
     start_time: optional(nullable(date())),
     end_time: optional(nullable(date())),
+    path: optional(nullable(array(string()))),
 });
 
 export const GetFeatureFlagsSchema = array(FeatureFlagSchema);

@@ -30,7 +30,7 @@ export default function FeatureFlagList({featureFlags, userId, userRole}: Featur
     const rawFilter = searchParams.get("filter") ?? "";
     const filters = rawFilter.split(",").filter(Boolean);
 
-    const filteredByFilters = useMemo(() => {
+    const filteredFlags = useMemo(() => {
         if (filters.length === 0) return featureFlags;
 
         return featureFlags.filter(flag => {
@@ -46,15 +46,15 @@ export default function FeatureFlagList({featureFlags, userId, userRole}: Featur
 
     const searchResults = useMemo(() => {
         if (!searchQuery.trim()) return [];
-        return binarySearchFeatureFlag(filteredByFilters, searchQuery);
-    }, [filteredByFilters, searchQuery]);
+        return binarySearchFeatureFlag(filteredFlags, searchQuery);
+    }, [filteredFlags, searchQuery]);
 
     const displayedFlags = useMemo(() => {
         if (searchQuery.trim()) {
             return searchResults;
         }
-        return filteredByFilters;
-    }, [filteredByFilters, searchResults, searchQuery]);
+        return filteredFlags;
+    }, [filteredFlags, searchResults, searchQuery]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

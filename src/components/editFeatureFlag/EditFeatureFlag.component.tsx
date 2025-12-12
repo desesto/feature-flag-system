@@ -31,6 +31,7 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
         white_list_id: null,
         start_time: null,
         end_time: null,
+        path: null
     });
     const [timestamps, setTimestamps] = useState<{ created_at: Date | null; updated_at: Date | null }>({
         created_at: null,
@@ -57,12 +58,12 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
             white_list_id: featureFlag.white_list_id ?? null,
             start_time: featureFlag.start_time ?? null,
             end_time: featureFlag.end_time ?? null,
+            path: featureFlag.path ?? null,
         });
         setTimestamps({
             created_at: featureFlag.created_at,
             updated_at: featureFlag.updated_at,
         });
-        console.log("FEATURE FLAG:", {...form})
 
         setShowDateError(false)
         setShowPopup(true);
@@ -232,6 +233,16 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                                 value={toLocalDatetimeString(timestamps.updated_at)}
                                 readOnly
                                 className="p-2 rounded border bg-gray-800 cursor-default"
+                            />
+                        </label>
+
+                        <label className="flex flex-col gap-1 mb-3">
+                            Path:
+                            <input
+                                type="text"
+                                value={form.path?.join(" → ") ?? ""}
+                                readOnly
+                                className="p-2 rounded border bg-transparent cursor-default"
                             />
                         </label>
 
