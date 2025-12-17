@@ -55,9 +55,9 @@ describe("POST /api/feature-flags", () => {
         const req = new NextRequest("http://localhost:3000/api/feature-flags", {
             method: "POST",
             body: JSON.stringify({
-                user_id: 2,
+                userId: 2,
                 name: "new-flag",
-                is_active: true,
+                isActive: true,
                 description: "Test",
                 strategy: "standard",
             }),
@@ -72,15 +72,15 @@ describe("POST /api/feature-flags", () => {
         const mockNewFlag = {
             id: 1,
             name: "new-flag",
-            is_active: true,
+            isActive: true,
             description: "Test",
             strategy: "standard",
-            user_id: 1,
-            start_time: null,
-            end_time: null,
-            created_at: new Date("2025-01-01"),
-            updated_at: new Date("2025-01-01"),
-            deleted_at: null,
+            userId: 1,
+            startTime: null,
+            endTime: null,
+            createdAt: new Date("2025-01-01"),
+            updatedAt: new Date("2025-01-01"),
+            deletedAt: null,
         }
 
         vi.mocked(getUserRole).mockResolvedValueOnce("Developer")
@@ -89,13 +89,13 @@ describe("POST /api/feature-flags", () => {
         const req = new NextRequest("http://localhost:3000/api/feature-flags", {
             method: "POST",
             body: JSON.stringify({
-                user_id: 1,
+                userId: 1,
                 name: "new-flag",
-                is_active: true,
+                isActive: true,
                 description: "Test",
                 strategy: "standard",
-                start_time: null,
-                end_time: null,
+                startTime: null,
+                endTime: null,
             }),
         })
 
@@ -120,9 +120,9 @@ describe("PATCH /api/feature-flags", () => {
             method: "PATCH",
             body: JSON.stringify({
                 id: 1,
-                user_id: 2,
+                userId: 2,
                 name: "updated-name",
-                is_active: true,
+                isActive: true,
             }),
         })
 
@@ -135,33 +135,33 @@ describe("PATCH /api/feature-flags", () => {
         const mockOldFlag = {
             id: 1,
             name: "old-name",
-            is_active: false,
+            isActive: false,
             description: "Old description",
             strategy: "NO_STRATEGY",
-            user_id: 1,
-            white_list_id: null,
-            white_list: null,
-            start_time: null,
-            end_time: null,
-            created_at: new Date("2025-01-01"),
-            updated_at: new Date("2025-01-01"),
-            deleted_at: null,
+            userId: 1,
+            whiteListId: null,
+            whiteList: null,
+            startTime: null,
+            endTime: null,
+            createdAt: new Date("2025-01-01"),
+            updatedAt: new Date("2025-01-01"),
+            deletedAt: null,
         }
 
         const mockUpdatedFlag = {
             id: 1,
             name: "new-name",
-            is_active: false,
+            isActive: false,
             description: "Old description",
             strategy: "NO_STRATEGY",
-            user_id: 1,
-            white_list_id: null,
-            white_list: null,
-            start_time: null,
-            end_time: null,
-            created_at: new Date("2025-01-01"),
-            updated_at: new Date("2025-01-01"),
-            deleted_at: null,
+            userId: 1,
+            whiteListId: null,
+            whiteList: null,
+            startTime: null,
+            endTime: null,
+            createdAt: new Date("2025-01-01"),
+            updatedAt: new Date("2025-01-01"),
+            deletedAt: null,
         }
 
         vi.mocked(getUserRole).mockResolvedValueOnce("Developer")
@@ -173,7 +173,7 @@ describe("PATCH /api/feature-flags", () => {
             method: "PATCH",
             body: JSON.stringify({
                 id: 1,
-                user_id: 1,
+                userId: 1,
                 name: "new-name",
             }),
         })

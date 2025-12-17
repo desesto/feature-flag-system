@@ -15,12 +15,12 @@ export async function logFeatureFlagCreated(
     userId: number
 ): Promise<void> {
     await db.insert(featureFlagHistoryTable).values({
-        feature_flag_id: featureFlagId,
-        user_id: userId,
-        action_type: 'CREATED',
-        changed_fields: null,
-        old_values: null,
-        new_values: null,
+        featureFlagId: featureFlagId,
+        userId: userId,
+        actionType: 'CREATED',
+        changedFields: null,
+        oldValues: null,
+        newValues: null,
     });
 }
 
@@ -29,16 +29,16 @@ export async function logFeatureFlagDeleted(
     userId: number
 ): Promise<void> {
     await db.insert(featureFlagHistoryTable).values({
-        feature_flag_id: featureFlagId,
-        user_id: userId,
-        action_type: 'DELETED',
-        changed_fields: null,
-        old_values: null,
-        new_values: null,
+        featureFlagId: featureFlagId,
+        userId: userId,
+        actionType: 'DELETED',
+        changedFields: null,
+        oldValues: null,
+        newValues: null,
     });
 }
 
-const ignore_keys = ['id', 'user_id', 'white_list', 'created_at', 'updated_at', 'deleted_at'];
+const ignore_keys = ['id', 'userId', 'whiteList', 'createdAt', 'updatedAt', 'deletedAt'];
 
 export async function logFeatureFlagUpdated(
     featureFlagId: number,
@@ -55,11 +55,11 @@ export async function logFeatureFlagUpdated(
             continue;
         }
 
-        if (key === 'white_list_id') {
-            if (oldFlag.white_list_id !== newFlag.white_list_id) {
-                changedFields.push('white_list');
-                oldValues.whitelist = oldFlag.white_list?.name ?? null;
-                newValues.whitelist = newFlag.white_list?.name ?? null;
+        if (key === 'whiteListId') {
+            if (oldFlag.whiteListId !== newFlag.whiteListId) {
+                changedFields.push('whiteList');
+                oldValues.whitelist = oldFlag.whiteList?.name ?? null;
+                newValues.whitelist = newFlag.whiteList?.name ?? null;
             }
             continue;
         }
@@ -81,15 +81,15 @@ export async function logFeatureFlagUpdated(
         return;
     }
 
-    const actionType = determineUpdateActionType(changedFields, newFlag.is_active);
+    const actionType = determineUpdateActionType(changedFields, newFlag.isActive);
 
     await db.insert(featureFlagHistoryTable).values({
-        feature_flag_id: featureFlagId,
-        user_id: userId,
-        action_type: actionType,
-        changed_fields: JSON.stringify(changedFields),
-        old_values: JSON.stringify(oldValues),
-        new_values: JSON.stringify(newValues),
+        featureFlagId: featureFlagId,
+        userId: userId,
+        actionType: actionType,
+        changedFields: JSON.stringify(changedFields),
+        oldValues: JSON.stringify(oldValues),
+        newValues: JSON.stringify(newValues),
     });
 }
 
@@ -97,7 +97,7 @@ export function determineUpdateActionType(
     changedFields: string[],
     newIsActive?: boolean
 ): 'UPDATED' | 'ACTIVATED' | 'DEACTIVATED' {
-    if (changedFields.length === 1 && changedFields[0] === 'is_active') {
+    if (changedFields.length === 1 && changedFields[0] === 'isActive') {
         return newIsActive ? 'ACTIVATED' : 'DEACTIVATED';
     }
     return 'UPDATED';

@@ -9,11 +9,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({ error: "Invalid white_list ID" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid whiteList ID" }, { status: 400 });
         }
 
         const whitelistUsers = await db.query.whiteListUsersTable.findMany({
-            where: eq(whiteListUsersTable.white_list_id, whitelistId),
+            where: eq(whiteListUsersTable.whiteListId, whitelistId),
             with: { user: true },
         });
 
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({ error: "Invalid white_list ID" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid whiteList ID" }, { status: 400 });
         }
 
         const body = await req.json();
@@ -48,8 +48,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         }
 
         await db.insert(whiteListUsersTable).values({
-            white_list_id: whitelistId,
-            user_id: Number(userId),
+            whiteListId: whitelistId,
+            userId: Number(userId),
         });
 
         return NextResponse.json({ message: "User added successfully" });
@@ -65,7 +65,7 @@ export async function DELETE(req: NextRequest, {params}: { params: Promise<{ id:
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({error: "Invalid white_list ID"}, {status: 400});
+            return NextResponse.json({error: "Invalid whiteList ID"}, {status: 400});
         }
 
         const body = await req.json();
@@ -79,14 +79,14 @@ export async function DELETE(req: NextRequest, {params}: { params: Promise<{ id:
             .delete(whiteListUsersTable)
             .where(
                 and(
-                    eq(whiteListUsersTable.white_list_id, whitelistId),
-                    eq(whiteListUsersTable.user_id, Number(userId))
+                    eq(whiteListUsersTable.whiteListId, whitelistId),
+                    eq(whiteListUsersTable.userId, Number(userId))
                 )
             );
 
-        return NextResponse.json({message: "User removed from white_list successfully"});
+        return NextResponse.json({message: "User removed from whiteList successfully"});
     } catch (error) {
-        console.error("Error deleting user from white_list:", error);
+        console.error("Error deleting user from whiteList:", error);
         return NextResponse.json({error: "Internal server error"}, {status: 500});
     }
 }

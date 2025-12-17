@@ -35,12 +35,12 @@ describe("logFeatureFlagCreated", () => {
 
         expect(mockDb.insert).toHaveBeenCalled()
         expect(mockDb.values).toHaveBeenCalledWith({
-            feature_flag_id: 1,
-            user_id: 2,
-            action_type: 'CREATED',
-            changed_fields: null,
-            old_values: null,
-            new_values: null,
+            featureFlagId: 1,
+            userId: 2,
+            actionType: 'CREATED',
+            changedFields: null,
+            oldValues: null,
+            newValues: null,
         })
     })
 })
@@ -55,12 +55,12 @@ describe("logFeatureFlagDeleted", () => {
 
         expect(mockDb.insert).toHaveBeenCalled()
         expect(mockDb.values).toHaveBeenCalledWith({
-            feature_flag_id: 5,
-            user_id: 3,
-            action_type: 'DELETED',
-            changed_fields: null,
-            old_values: null,
-            new_values: null,
+            featureFlagId: 5,
+            userId: 3,
+            actionType: 'DELETED',
+            changedFields: null,
+            oldValues: null,
+            newValues: null,
         })
     })
 })
@@ -70,69 +70,69 @@ describe("logFeatureFlagUpdated", () => {
         vi.clearAllMocks()
     })
 
-    it("logs ACTIVATED when only is_active changes to true", async () => {
+    it("logs ACTIVATED when only isActive changes to true", async () => {
         const oldFlag: FeatureFlagDto = {
             id: 1,
             name: "test-flag",
-            is_active: false,
+            isActive: false,
             description: "Test",
             strategy: "NO_STRATEGY",
-            user_id: 1,
-            white_list_id: null,
-            start_time: null,
-            end_time: null,
-            created_at: new Date("2025-01-01"),
-            updated_at: new Date("2025-01-01"),
-            deleted_at: null,
+            userId: 1,
+            whiteListId: null,
+            startTime: null,
+            endTime: null,
+            createdAt: new Date("2025-01-01"),
+            updatedAt: new Date("2025-01-01"),
+            deletedAt: null,
         }
 
         const newFlag: FeatureFlagDto = {
             ...oldFlag,
-            is_active: true,
+            isActive: true,
         }
 
         await logFeatureFlagUpdated(1, 2, oldFlag, newFlag)
 
         expect(mockDb.values).toHaveBeenCalledWith({
-            feature_flag_id: 1,
-            user_id: 2,
-            action_type: 'ACTIVATED',
-            changed_fields: JSON.stringify(['is_active']),
-            old_values: JSON.stringify({ is_active: false }),
-            new_values: JSON.stringify({ is_active: true }),
+            featureFlagId: 1,
+            userId: 2,
+            actionType: 'ACTIVATED',
+            changedFields: JSON.stringify(['isActive']),
+            oldValues: JSON.stringify({ isActive: false }),
+            newValues: JSON.stringify({ isActive: true }),
         })
     })
 
-    it("logs DEACTIVATED when only is_active changes to false", async () => {
+    it("logs DEACTIVATED when only isActive changes to false", async () => {
         const oldFlag: FeatureFlagDto = {
             id: 1,
             name: "test-flag",
-            is_active: true,
+            isActive: true,
             description: "Test",
             strategy: "NO_STRATEGY",
-            user_id: 1,
-            white_list_id: null,
-            start_time: null,
-            end_time: null,
-            created_at: new Date("2025-01-01"),
-            updated_at: new Date("2025-01-01"),
-            deleted_at: null,
+            userId: 1,
+            whiteListId: null,
+            startTime: null,
+            endTime: null,
+            createdAt: new Date("2025-01-01"),
+            updatedAt: new Date("2025-01-01"),
+            deletedAt: null,
         }
 
         const newFlag: FeatureFlagDto = {
             ...oldFlag,
-            is_active: false,
+            isActive: false,
         }
 
         await logFeatureFlagUpdated(1, 2, oldFlag, newFlag)
 
         expect(mockDb.values).toHaveBeenCalledWith({
-            feature_flag_id: 1,
-            user_id: 2,
-            action_type: 'DEACTIVATED',
-            changed_fields: JSON.stringify(['is_active']),
-            old_values: JSON.stringify({ is_active: true }),
-            new_values: JSON.stringify({ is_active: false }),
+            featureFlagId: 1,
+            userId: 2,
+            actionType: 'DEACTIVATED',
+            changedFields: JSON.stringify(['isActive']),
+            oldValues: JSON.stringify({ isActive: true }),
+            newValues: JSON.stringify({ isActive: false }),
         })
     })
 
@@ -140,16 +140,16 @@ describe("logFeatureFlagUpdated", () => {
         const oldFlag: FeatureFlagDto = {
             id: 1,
             name: "old-name",
-            is_active: false,
+            isActive: false,
             description: "Old description",
             strategy: "NO_STRATEGY",
-            user_id: 1,
-            white_list_id: null,
-            start_time: null,
-            end_time: null,
-            created_at: new Date("2025-01-01"),
-            updated_at: new Date("2025-01-01"),
-            deleted_at: null,
+            userId: 1,
+            whiteListId: null,
+            startTime: null,
+            endTime: null,
+            createdAt: new Date("2025-01-01"),
+            updatedAt: new Date("2025-01-01"),
+            deletedAt: null,
         }
 
         const newFlag: FeatureFlagDto = {
@@ -161,15 +161,15 @@ describe("logFeatureFlagUpdated", () => {
         await logFeatureFlagUpdated(1, 2, oldFlag, newFlag)
 
         expect(mockDb.values).toHaveBeenCalledWith({
-            feature_flag_id: 1,
-            user_id: 2,
-            action_type: 'UPDATED',
-            changed_fields: JSON.stringify(['name', 'description']),
-            old_values: JSON.stringify({
+            featureFlagId: 1,
+            userId: 2,
+            actionType: 'UPDATED',
+            changedFields: JSON.stringify(['name', 'description']),
+            oldValues: JSON.stringify({
                 name: 'old-name',
                 description: 'Old description'
             }),
-            new_values: JSON.stringify({
+            newValues: JSON.stringify({
                 name: 'new-name',
                 description: 'New description'
             }),
@@ -180,16 +180,16 @@ describe("logFeatureFlagUpdated", () => {
         const oldFlag: FeatureFlagDto = {
             id: 1,
             name: "test-flag",
-            is_active: true,
+            isActive: true,
             description: "Test",
             strategy: "NO_STRATEGY",
-            user_id: 1,
-            white_list_id: null,
-            start_time: null,
-            end_time: null,
-            created_at: new Date("2025-01-01"),
-            updated_at: new Date("2025-01-01"),
-            deleted_at: null,
+            userId: 1,
+            whiteListId: null,
+            startTime: null,
+            endTime: null,
+            createdAt: new Date("2025-01-01"),
+            updatedAt: new Date("2025-01-01"),
+            deletedAt: null,
         }
 
         const newFlag: FeatureFlagDto = {
@@ -205,13 +205,13 @@ describe("logFeatureFlagUpdated", () => {
 })
 
 describe("determineUpdateActionType", () => {
-    it("returns ACTIVATED when only is_active changes to true", () => {
-        const result = determineUpdateActionType(['is_active'], true)
+    it("returns ACTIVATED when only isActive changes to true", () => {
+        const result = determineUpdateActionType(['isActive'], true)
         expect(result).toBe('ACTIVATED')
     })
 
-    it("returns DEACTIVATED when only is_active changes to false", () => {
-        const result = determineUpdateActionType(['is_active'], false)
+    it("returns DEACTIVATED when only isActive changes to false", () => {
+        const result = determineUpdateActionType(['isActive'], false)
         expect(result).toBe('DEACTIVATED')
     })
 
@@ -220,8 +220,8 @@ describe("determineUpdateActionType", () => {
         expect(result).toBe('UPDATED')
     })
 
-    it("returns UPDATED when is_active and other fields change", () => {
-        const result = determineUpdateActionType(['is_active', 'name'], true)
+    it("returns UPDATED when isActive and other fields change", () => {
+        const result = determineUpdateActionType(['isActive', 'name'], true)
         expect(result).toBe('UPDATED')
     })
 })

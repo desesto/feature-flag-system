@@ -4,50 +4,50 @@ export const strategyValues = ['NO_STRATEGY', 'CANARY', 'FUTURE_IMPLEMENTATIONS'
 
 export const FeatureFlagSchema = object({
     id: number(),
-    user_id: number(),
+    userId: number(),
     name: string(),
-    is_active: boolean(),
+    isActive: boolean(),
     description: string(),
     strategy: nullable(picklist(strategyValues)),
-    white_list_id: nullable(number()),
-    white_list: optional(nullable(object({
+    whiteListId: nullable(number()),
+    whiteList: optional(nullable(object({
         id: number(),
         name: string(),
     }))),
-    start_time: nullable(date()),
-    end_time: nullable(date()),
-    created_at: nullable(date()),
-    updated_at: nullable(date()),
-    deleted_at: nullable(date()),
+    startTime: nullable(date()),
+    endTime: nullable(date()),
+    createdAt: nullable(date()),
+    updatedAt: nullable(date()),
+    deletedAt: nullable(date()),
     path: optional(nullable(array(string()))),
 });
 
 export const CreateFeatureFlagSchema = object({
-    user_id: number(),
+    userId: number(),
     name: string(),
-    is_active: boolean(),
+    isActive: boolean(),
     description: string(),
     strategy: fallback(picklist(strategyValues), "NO_STRATEGY"),
-    white_list_id: optional(nullable(number())),
-    start_time: optional(nullable(date())),
-    end_time: optional(nullable(date())),
+    whiteListId: optional(nullable(number())),
+    startTime: optional(nullable(date())),
+    endTime: optional(nullable(date())),
     path: optional(nullable(array(string()))),
 });
 
 export const EditFeatureFlagSchema = object({
     id: number(),
-    user_id: number(),
+    userId: number(),
     name: optional(string()),
-    is_active: optional(boolean()),
+    isActive: optional(boolean()),
     description: optional(string()),
     strategy: optional(picklist(strategyValues)),
-    white_list_id: optional(nullable(number())),
-    white_list: optional(nullable(object({
+    whiteListId: optional(nullable(number())),
+    whiteList: optional(nullable(object({
         id: number(),
         name: string(),
     }))),
-    start_time: optional(nullable(date())),
-    end_time: optional(nullable(date())),
+    startTime: optional(nullable(date())),
+    endTime: optional(nullable(date())),
     path: optional(nullable(array(string()))),
 });
 

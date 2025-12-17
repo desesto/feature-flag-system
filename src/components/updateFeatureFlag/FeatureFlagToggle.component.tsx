@@ -25,8 +25,8 @@ export default function FeatureFlagToggle({featureFlagId, isActive, userId}: Fea
                 body:
                     JSON.stringify({
                         id: featureFlagId,
-                        user_id: userId,
-                        is_active: newValue}),
+                        userId: userId,
+                        isActive: newValue}),
             });
 
             if (!response.ok) {

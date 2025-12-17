@@ -14,9 +14,9 @@ export function validateFeatureFlagInput(input: CreateFeatureFlagDto | EditFeatu
         return { field: "description", message: "Feature flaggets beskrivelse skal være mindst 5 tegn" };
     }
 
-    if (input.start_time && input.end_time) {
-        const startTime = input.start_time instanceof Date ? input.start_time.getTime() : new Date(input.start_time).getTime();
-        const endTime = input.end_time instanceof Date ? input.end_time.getTime() : new Date(input.end_time).getTime();
+    if (input.startTime && input.endTime) {
+        const startTime = input.startTime instanceof Date ? input.startTime.getTime() : new Date(input.startTime).getTime();
+        const endTime = input.endTime instanceof Date ? input.endTime.getTime() : new Date(input.endTime).getTime();
 
         if (isNaN(startTime) || isNaN(endTime)) {
             return { field: "dates", message: "Ugyldigt datoformat" };

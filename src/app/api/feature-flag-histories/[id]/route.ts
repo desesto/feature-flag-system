@@ -23,7 +23,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{id: n
             return NextResponse.json({ error: "Invalid feature flag ID" }, { status: 400 });
         }
         const histories = await db.query.featureFlagHistoryTable.findMany({
-            where: eq(schema.featureFlagHistoryTable.feature_flag_id, id),
+            where: eq(schema.featureFlagHistoryTable.featureFlagId, id),
             with: {
                 user: true
             },

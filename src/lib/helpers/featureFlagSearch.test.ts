@@ -5,11 +5,11 @@ import type { FeatureFlagDto } from "@/lib/dto/featureFlag.dto";
 describe("binarySearchFeatureFlag", () => {
     it("should return matching feature flags", () => {
         const flags: FeatureFlagDto[] = [
-            { id: 1, user_id: 100, name: "AlphaFeature", is_active: true, description: "Alpha feature", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 2, user_id: 100, name: "BetaFeature", is_active: true, description: "Beta feature", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 3, user_id: 100, name: "BetaPlusFeature", is_active: true, description: "Beta plus feature", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 4, user_id: 100, name: "GammaFeature", is_active: true, description: "Gamma feature", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 5, user_id: 100, name: "DeltaFeature", is_active: true, description: "Delta feature", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
+            { id: 1, userId: 100, name: "AlphaFeature", isActive: true, description: "Alpha feature", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 2, userId: 100, name: "BetaFeature", isActive: true, description: "Beta feature", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 3, userId: 100, name: "BetaPlusFeature", isActive: true, description: "Beta plus feature", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 4, userId: 100, name: "GammaFeature", isActive: true, description: "Gamma feature", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 5, userId: 100, name: "DeltaFeature", isActive: true, description: "Delta feature", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
         ];
 
         const results = binarySearchFeatureFlag(flags, "Beta");
@@ -21,7 +21,7 @@ describe("binarySearchFeatureFlag", () => {
 
     it("should return empty array when no match found", () => {
         const flags: FeatureFlagDto[] = [
-            { id: 1, user_id: 100, name: "AlphaFeature", is_active: true, description: "Alpha feature", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
+            { id: 1, userId: 100, name: "AlphaFeature", isActive: true, description: "Alpha feature", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
         ];
 
         const results = binarySearchFeatureFlag(flags, "Zeta");
@@ -37,16 +37,16 @@ describe("binarySearchFeatureFlag", () => {
 
     it("should return max 7 results", () => {
         const flags: FeatureFlagDto[] = [
-            { id: 0, user_id: 100, name: "TestFeature0", is_active: true, description: "Test", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 1, user_id: 100, name: "TestFeature1", is_active: true, description: "Test", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 2, user_id: 100, name: "TestFeature2", is_active: true, description: "Test", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 3, user_id: 100, name: "TestFeature3", is_active: true, description: "Test", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 4, user_id: 100, name: "TestFeature4", is_active: true, description: "Test", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 5, user_id: 100, name: "TestFeature5", is_active: true, description: "Test", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 6, user_id: 100, name: "TestFeature6", is_active: true, description: "Test", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 7, user_id: 100, name: "TestFeature7", is_active: true, description: "Test", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 8, user_id: 100, name: "TestFeature8", is_active: true, description: "Test", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
-            { id: 9, user_id: 100, name: "TestFeature9", is_active: true, description: "Test", strategy: null, white_list_id: null, white_list: undefined, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
+            { id: 0, userId: 100, name: "TestFeature0", isActive: true, description: "Test", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 1, userId: 100, name: "TestFeature1", isActive: true, description: "Test", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 2, userId: 100, name: "TestFeature2", isActive: true, description: "Test", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 3, userId: 100, name: "TestFeature3", isActive: true, description: "Test", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 4, userId: 100, name: "TestFeature4", isActive: true, description: "Test", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 5, userId: 100, name: "TestFeature5", isActive: true, description: "Test", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 6, userId: 100, name: "TestFeature6", isActive: true, description: "Test", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 7, userId: 100, name: "TestFeature7", isActive: true, description: "Test", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 8, userId: 100, name: "TestFeature8", isActive: true, description: "Test", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
+            { id: 9, userId: 100, name: "TestFeature9", isActive: true, description: "Test", strategy: null, whiteListId: null, whiteList: undefined, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
         ];
 
         const results = binarySearchFeatureFlag(flags, "TestFeature");
@@ -55,14 +55,14 @@ describe("binarySearchFeatureFlag", () => {
         expect(results.length).toBe(7);
     });
 
-    it("should work with feature flags that have white_list", () => {
+    it("should work with feature flags that have whiteList", () => {
         const flags: FeatureFlagDto[] = [
-            { id: 1, user_id: 100, name: "CanaryFeature", is_active: true, description: "Canary feature", strategy: "CANARY", white_list_id: 5, white_list: { id: 5, name: "Beta Testers" }, start_time: null, end_time: null, created_at: null, updated_at: null, deleted_at: null },
+            { id: 1, userId: 100, name: "CanaryFeature", isActive: true, description: "Canary feature", strategy: "CANARY", whiteListId: 5, whiteList: { id: 5, name: "Beta Testers" }, startTime: null, endTime: null, createdAt: null, updatedAt: null, deletedAt: null },
         ];
 
         const results = binarySearchFeatureFlag(flags, "Canary");
 
         expect(results).toHaveLength(1);
-        expect(results[0].white_list?.name).toBe("Beta Testers");
+        expect(results[0].whiteList?.name).toBe("Beta Testers");
     });
 });

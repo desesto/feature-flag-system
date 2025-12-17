@@ -19,27 +19,27 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
     const [currentPathInput, setCurrentPathInput] = useState<string>("");
 
     const [form, setForm] = useState<CreateFeatureFlagDto>({
-        user_id: userId,
+        userId: userId,
         name: '',
-        is_active: false,
+        isActive: false,
         description: '',
         strategy: 'NO_STRATEGY',
-        white_list_id: null,
-        start_time: null,
-        end_time: null,
+        whiteListId: null,
+        startTime: null,
+        endTime: null,
         path: null,
     });
 
     const handleOpen = () => {
         setForm({
-            user_id: userId,
+            userId: userId,
             name: '',
-            is_active: false,
+            isActive: false,
             description: '',
             strategy: 'NO_STRATEGY',
-            white_list_id: null,
-            start_time: null,
-            end_time: null,
+            whiteListId: null,
+            startTime: null,
+            endTime: null,
             path: null,
         });
         setShowDateError(false)
@@ -126,9 +126,9 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             <div className="relative inline-flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    checked={form.is_active}
+                                    checked={form.isActive}
                                     onChange={(event) =>
-                                        setForm({...form, is_active: event.target.checked})
+                                        setForm({...form, isActive: event.target.checked})
                                     }
                                     className="sr-only peer"
                                 />
@@ -166,8 +166,8 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                         </label>
                         {form.strategy === 'CANARY' && (
                             <WhitelistSelector
-                                currentWhitelistId={form.white_list_id ?? null}
-                                onWhitelistChange={(whitelistId) => setForm({...form, white_list_id: whitelistId})}
+                                currentWhitelistId={form.whiteListId ?? null}
+                                onWhitelistChange={(whitelistId) => setForm({...form, whiteListId: whitelistId})}
                             />
                         )}
 
@@ -175,10 +175,10 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             Feature flagget skal slåes til:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(form.start_time)}
+                                value={toLocalDatetimeString(form.startTime)}
                                 onChange={(e) => setForm({
                                     ...form,
-                                    start_time: fromLocalDatetimeString(e.target.value)
+                                    startTime: fromLocalDatetimeString(e.target.value)
                                 })}
                                 className="p-2 rounded border"
                             />
@@ -188,10 +188,10 @@ export default function CreateFeatureFlag({userId}: CreateFeatureFlagProps) {
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(form.end_time)}
+                                value={toLocalDatetimeString(form.endTime)}
                                 onChange={(e) => setForm({
                                     ...form,
-                                    end_time: fromLocalDatetimeString(e.target.value)
+                                    endTime: fromLocalDatetimeString(e.target.value)
                                 })}
                                 className="p-2 rounded border"
                             />

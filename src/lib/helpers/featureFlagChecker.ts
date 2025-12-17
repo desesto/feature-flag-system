@@ -10,7 +10,7 @@ export async function checkFeatureFlagAccess(
     const featureFlag = await db.query.featureFlagsTable.findFirst({
         where: and(
             eq(featureFlagsTable.name, featureFlagName),
-            isNull(featureFlagsTable.deleted_at)
+            isNull(featureFlagsTable.deletedAt)
         ),
         with: {
             whiteList: {
@@ -25,7 +25,7 @@ export async function checkFeatureFlagAccess(
         }
     });
 
-    if (!featureFlag || !featureFlag.is_active) {
+    if (!featureFlag || !featureFlag.isActive) {
         return false;
     }
 

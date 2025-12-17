@@ -32,11 +32,11 @@ export async function POST(req: NextRequest){
             .values(validatedData)
             .returning();
 
-        if(validatedData.user_ids && validatedData.user_ids.length > 0){
+        if(validatedData.userIds && validatedData.userIds.length > 0){
             await db.insert(whiteListUsersTable).values(
-                validatedData.user_ids.map((userId) => ({
-                    white_list_id: newWhiteList.id,
-                    user_id: userId,
+                validatedData.userIds.map((userId) => ({
+                    whiteListId: newWhiteList.id,
+                    userId: userId,
                 }))
             )
         }
