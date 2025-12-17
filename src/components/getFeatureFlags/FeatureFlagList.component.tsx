@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
-/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
 "use client"
 
 import {useState, useMemo, useRef, useEffect} from 'react';
@@ -35,8 +33,8 @@ export default function FeatureFlagList({featureFlags, userId, userRole}: Featur
 
         return featureFlags.filter(flag => {
             return filters.some(f => {
-                if (f === "active") return flag.is_active === true;
-                if (f === "inactive") return flag.is_active === false;
+                if (f === "active") return flag.isActive === true;
+                if (f === "inactive") return flag.isActive === false;
                 if (f === "canary") return flag.strategy === "CANARY";
                 if (f === "no_strategy") return flag.strategy === "NO_STRATEGY";
                 return false;
@@ -140,6 +138,8 @@ export default function FeatureFlagList({featureFlags, userId, userRole}: Featur
                         className="w-full px-4 py-2 pl-10 bg-gray-800 border-2 border-white rounded-md text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors"
                     />
                     <svg
+                        aria-hidden="true"
+                        focusable="false"
                         className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
                         fill="none"
                         stroke="currentColor"
@@ -150,6 +150,7 @@ export default function FeatureFlagList({featureFlags, userId, userRole}: Featur
                     </svg>
                     {searchQuery && (
                         <button
+                            type="button"
                             onClick={clearSearch}
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-2xl"
                         >
@@ -162,6 +163,7 @@ export default function FeatureFlagList({featureFlags, userId, userRole}: Featur
                             className="absolute z-50 w-full mt-1 bg-gray-800 border-2 border-white rounded-md shadow-lg max-h-96 overflow-y-auto">
                             {searchResults.map((flag, index) => (
                                 <button
+                                    type="button"
                                     key={flag.id}
                                     onClick={() => handleSelectFlag(flag.id)}
                                     className={`w-full text-left px-4 py-2 text-white hover:bg-gray-700 transition-colors border-b border-gray-700 last:border-b-0 ${
@@ -187,7 +189,7 @@ export default function FeatureFlagList({featureFlags, userId, userRole}: Featur
                 {searchQuery && (
                     <>
                         <span>Der vises {displayedFlags.length} resultat{displayedFlags.length !== 1 ? 'er' : ''} for "{searchQuery}"</span>
-                        <button onClick={clearSearch} className="text-blue-500 hover:underline">Ryd søgning</button>
+                        <button type="button" onClick={clearSearch} className="text-blue-500 hover:underline">Ryd søgning</button>
                     </>
                 )}
                 {!searchQuery && filters.length > 0 && (
@@ -215,7 +217,7 @@ export default function FeatureFlagList({featureFlags, userId, userRole}: Featur
                                     {flag.name}
                                 </FeatureFlagDescription>
                                 <span className="text-gray-300 text-left">{flag.strategy || '—'}</span>
-                                <FeatureFlagToggle featureFlagId={flag.id} isActive={flag.is_active} userId={userId}/>
+                                <FeatureFlagToggle featureFlagId={flag.id} isActive={flag.isActive} userId={userId}/>
                                 <div className="flex gap-2 pr-1">
                                     <EditFeatureFlag featureFlagId={flag.id} userId={userId} userRole={userRole}/>
                                     <DeleteFeatureFlagButtonComponent id={flag.id} userId={userId} userRole={userRole}/>

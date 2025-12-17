@@ -1,6 +1,5 @@
-import {InferInput, InferOutput} from "valibot";
-import {CreateUserSchema, GetUsersSchema, UserSchema} from "@/lib/schemas/user.schema";
-
+import type {InferInput, InferOutput} from "valibot";
+import type {CreateUserSchema, GetUsersSchema, UserSchema} from "@/lib/schemas/user.schema";
 
 export type UserDto = InferOutput<typeof UserSchema>;
 

@@ -14,7 +14,7 @@ import {parseApiDates} from "@/lib/utils/dateConversion";
 
 export async function GET() {
     const flags = await db.query.featureFlagsTable.findMany({
-        where: (flag) => isNull(flag.deleted_at),
+        where: (flag) => isNull(flag.deletedAt),
         with: {user: true},
         orderBy: [asc(featureFlagsTable.name)],
     });
@@ -26,7 +26,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     const raw = await req.json();
-    const role = await getUserRole(raw.user_id);
+    const role = await getUserRole(raw.userId);
     const body = parseApiDates(raw);
 
     if (!role) {
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
             .values(validated)
             .returning();
 
-        await logFeatureFlagCreated(newFlag[0].id, newFlag[0].user_id);
+        await logFeatureFlagCreated(newFlag[0].id, newFlag[0].userId);
 
         return NextResponse.json(newFlag[0]);
     } catch (dbError: any) {

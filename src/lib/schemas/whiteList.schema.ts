@@ -8,11 +8,11 @@ export const WhiteListSchema = object({
 
 export const CreateWhiteListSchema = object({
     name: string(),
-    user_ids: optional(array(number())),
+    userIds: optional(array(number())),
 });
 
 export const UpdateWhiteListSchema = object({
-    user_ids: array(number()),
+    userIds: array(number()),
 });
 
 export const GetWhiteListWithUsersSchema = object({

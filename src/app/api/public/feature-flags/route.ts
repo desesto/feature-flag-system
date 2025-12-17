@@ -1,5 +1,4 @@
 import {type NextRequest, NextResponse} from "next/server";
-
 import {checkFeatureFlagAccess} from "@/lib/helpers/featureFlagChecker";
 import {featureFlagsTable} from "@/db/schema";
 import {db} from "@/db";
@@ -24,7 +23,7 @@ export async function POST(req: NextRequest) {
     const featureFlag = await db
         .select()
         .from(featureFlagsTable)
-        .where(and(eq(featureFlagsTable.name, featureFlagName), isNull(featureFlagsTable.deleted_at)));
+        .where(and(eq(featureFlagsTable.name, featureFlagName), isNull(featureFlagsTable.deletedAt)));
 
     if (featureFlag.length === 0) {
         return NextResponse.json({ enabled: false });

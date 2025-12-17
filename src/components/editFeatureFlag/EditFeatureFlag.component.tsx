@@ -23,19 +23,19 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
     const [showDateError, setShowDateError] = useState(false);
     const [form, setForm] = useState<EditFeatureFlagDto>({
         id: featureFlagId,
-        user_id: userId,
+        userId: userId,
         name: '',
-        is_active: false,
+        isActive: false,
         description: '',
         strategy: 'NO_STRATEGY',
-        white_list_id: null,
-        start_time: null,
-        end_time: null,
+        whiteListId: null,
+        startTime: null,
+        endTime: null,
         path: null
     });
-    const [timestamps, setTimestamps] = useState<{ created_at: Date | null; updated_at: Date | null }>({
-        created_at: null,
-        updated_at: null,
+    const [timestamps, setTimestamps] = useState<{ createdAt: Date | null; updatedAt: Date | null }>({
+        createdAt: null,
+        updatedAt: null,
     });
 
     const canEdit = hasAccessToEditFeatureFlag(userRole)
@@ -50,19 +50,19 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
 
         setForm({
             id: featureFlag.id,
-            user_id: userId,
+            userId: userId,
             name: featureFlag.name,
-            is_active: featureFlag.is_active,
+            isActive: featureFlag.isActive,
             description: featureFlag.description,
             strategy: featureFlag.strategy ?? 'NO_STRATEGY',
-            white_list_id: featureFlag.white_list_id ?? null,
-            start_time: featureFlag.start_time ?? null,
-            end_time: featureFlag.end_time ?? null,
+            whiteListId: featureFlag.whiteListId ?? null,
+            startTime: featureFlag.startTime ?? null,
+            endTime: featureFlag.endTime ?? null,
             path: featureFlag.path ?? null,
         });
         setTimestamps({
-            created_at: featureFlag.created_at,
-            updated_at: featureFlag.updated_at,
+            createdAt: featureFlag.createdAt,
+            updatedAt: featureFlag.updatedAt,
         });
 
         setShowDateError(false)
@@ -135,9 +135,9 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                             <div className="relative inline-flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    checked={form.is_active}
+                                    checked={form.isActive}
                                     onChange={(event) =>
-                                        setForm({...form, is_active: event.target.checked})
+                                        setForm({...form, isActive: event.target.checked})
                                     }
                                     className="sr-only peer"
                                 />
@@ -179,8 +179,8 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                         </label>
                         {form.strategy === 'CANARY' && (
                             <WhitelistSelector
-                                currentWhitelistId={form.white_list_id ?? null}
-                                onWhitelistChange={(whitelistId) => setForm({...form, white_list_id: whitelistId})}
+                                currentWhitelistId={form.whiteListId ?? null}
+                                onWhitelistChange={(whitelistId) => setForm({...form, whiteListId: whitelistId})}
                             />
                         )}
 
@@ -189,10 +189,10 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                             Feature flagget skal slåes til:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(form.start_time)}
+                                value={toLocalDatetimeString(form.startTime)}
                                 onChange={(e) => setForm({
                                     ...form,
-                                    start_time: fromLocalDatetimeString(e.target.value)
+                                    startTime: fromLocalDatetimeString(e.target.value)
                                 })}
                                 className="p-2 rounded border"
                             />
@@ -202,10 +202,10 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(form.end_time)}
+                                value={toLocalDatetimeString(form.endTime)}
                                 onChange={(e) => setForm({
                                     ...form,
-                                    end_time: fromLocalDatetimeString(e.target.value)
+                                    endTime: fromLocalDatetimeString(e.target.value)
                                 })}
                                 className="p-2 rounded border"
                             />
@@ -220,7 +220,7 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                             Oprettet den:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(timestamps.created_at)}
+                                value={toLocalDatetimeString(timestamps.createdAt)}
                                 readOnly
                                 className="p-2 rounded border bg-gray-800 cursor-default"
                             />
@@ -230,7 +230,7 @@ export default function EditFeatureFlag({featureFlagId, userId, userRole}: EditF
                             Opdateret den:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(timestamps.updated_at)}
+                                value={toLocalDatetimeString(timestamps.updatedAt)}
                                 readOnly
                                 className="p-2 rounded border bg-gray-800 cursor-default"
                             />

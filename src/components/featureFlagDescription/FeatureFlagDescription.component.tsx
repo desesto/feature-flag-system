@@ -15,19 +15,19 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
     const [showPopup, setShowPopup] = useState(false);
     const [form, setForm] = useState<FeatureFlagDto>({
         id: featureFlagId,
-        user_id: 0,
+        userId: 0,
         name: '',
-        is_active: false,
+        isActive: false,
         description: '',
         strategy: 'NO_STRATEGY',
-        white_list_id: null,
-        white_list: null,
-        start_time: null,
-        end_time: null,
+        whiteListId: null,
+        whiteList: null,
+        startTime: null,
+        endTime: null,
         path: null,
-        created_at: null,
-        updated_at: null,
-        deleted_at: null,
+        createdAt: null,
+        updatedAt: null,
+        deletedAt: null,
     });
 
     const handleOpen = async () => {
@@ -38,19 +38,19 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
 
         setForm({
             id: featureFlag.id,
-            user_id: featureFlag.user_id,
+            userId: featureFlag.userId,
             name: featureFlag.name,
-            is_active: featureFlag.is_active,
+            isActive: featureFlag.isActive,
             description: featureFlag.description,
             strategy: featureFlag.strategy ?? 'NO_STRATEGY',
-            white_list_id: featureFlag.white_list_id ?? null,
-            white_list: featureFlag.white_list ?? null,
-            start_time: featureFlag.start_time ?? null,
-            end_time: featureFlag.end_time ?? null,
+            whiteListId: featureFlag.whiteListId ?? null,
+            whiteList: featureFlag.whiteList ?? null,
+            startTime: featureFlag.startTime ?? null,
+            endTime: featureFlag.endTime ?? null,
             path: featureFlag.path ?? null,
-            created_at: featureFlag.created_at,
-            updated_at: featureFlag.updated_at ?? null,
-            deleted_at: featureFlag.deleted_at ?? null,
+            createdAt: featureFlag.createdAt,
+            updatedAt: featureFlag.updatedAt ?? null,
+            deletedAt: featureFlag.deletedAt ?? null,
         });
         console.log("FEATURE FLAG:", {...form})
 
@@ -96,12 +96,12 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             <div className="flex flex-col gap-1">
                                 <span className="text-gray-300">Aktiv status:</span>
                                 <span
-                                    className={form.is_active
+                                    className={form.isActive
                                         ? "text-green-400 font-semibold"
                                         : "text-red-400 font-semibold"
                                     }
                                 >
-                                    {form.is_active ? "Aktiv" : "Inaktiv"}
+                                    {form.isActive ? "Aktiv" : "Inaktiv"}
                                 </span>
                             </div>
                             <button
@@ -136,7 +136,7 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             <label className="flex flex-col gap-1 mb-3">
                                 Whitelist:
                                 <input
-                                    value={form.white_list?.name ?? 'Ingen white list valgt'}
+                                    value={form.whiteList?.name ?? 'Ingen white list valgt'}
                                     readOnly
                                     className="p-2 rounded border bg-transparent cursor-default"
                                 />
@@ -147,7 +147,7 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             Feature flagget skal slåes til:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(form.start_time)}
+                                value={toLocalDatetimeString(form.startTime)}
                                 readOnly
                                 className="p-2 rounded border bg-transparent cursor-default"
                             />
@@ -157,7 +157,7 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             Feature flagget skal slåes fra:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(form.end_time)}
+                                value={toLocalDatetimeString(form.endTime)}
                                 readOnly
                                 className="p-2 rounded border bg-transparent cursor-default"
                             />
@@ -167,7 +167,7 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             Oprettet den:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(form.created_at)}
+                                value={toLocalDatetimeString(form.createdAt)}
                                 readOnly
                                 className="p-2 rounded border bg-transparent cursor-default"
                             />
@@ -177,7 +177,7 @@ export default function FeatureFlagDescription({featureFlagId, children}: Featur
                             Opdateret den:
                             <input
                                 type="datetime-local"
-                                value={toLocalDatetimeString(form.updated_at)}
+                                value={toLocalDatetimeString(form.updatedAt)}
                                 readOnly
                                 className="p-2 rounded border bg-transparent cursor-default"
                             />

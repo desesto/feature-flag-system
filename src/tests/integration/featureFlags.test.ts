@@ -9,7 +9,6 @@ import {drizzle} from "drizzle-orm/node-postgres";
 import * as schema from "@/db/schema";
 import {eq} from "drizzle-orm";
 import dotenv from "dotenv";
-import {jsonb} from "drizzle-orm/pg-core";
 
 dotenv.config({path: ".env.test"});
 
@@ -88,14 +87,14 @@ describe("POST /api/public/feature-flags/ - Check if flag is enabled", () => {
         await testDb
             .insert(featureFlagsTable)
             .values({
-                user_id: 1,
+                userId: 1,
                 name: "TestFlag",
-                is_active: true,
+                isActive: true,
                 description: "Test flag",
                 strategy: "NO_STRATEGY",
-                white_list_id: null,
-                start_time: new Date(),
-                end_time: null,
+                whiteListId: null,
+                startTime: new Date(),
+                endTime: null,
                 path: null,
             })
             .execute();
@@ -158,14 +157,14 @@ describe("POST /api/featureFlags - Create feature flag", () => {
         const req = new NextRequest("http://localhost", {
             method: "POST",
             body: JSON.stringify({
-                user_id: 1,
+                userId: 1,
                 name: "NewFlag",
-                is_active: true,
+                isActive: true,
                 description: "New test flag",
                 strategy: "NO_STRATEGY",
-                white_list_id: null,
-                start_time: new Date().toISOString(),
-                end_time: null,
+                whiteListId: null,
+                startTime: new Date().toISOString(),
+                endTime: null,
                 path: null,
             }),
         });
@@ -175,7 +174,7 @@ describe("POST /api/featureFlags - Create feature flag", () => {
 
         expect(res.status).toBe(200);
         expect(json.name).toBe("NewFlag");
-        expect(json.is_active).toBe(true);
+        expect(json.isActive).toBe(true);
 
         const flagInDb = await testDb
             .select()
@@ -184,7 +183,7 @@ describe("POST /api/featureFlags - Create feature flag", () => {
 
         expect(flagInDb).toHaveLength(1);
         expect(flagInDb[0].name).toBe("NewFlag");
-        expect(flagInDb[0].is_active).toBe(true);
+        expect(flagInDb[0].isActive).toBe(true);
     });
 
     it("returns 401 if user is not a Developer", async () => {
@@ -194,14 +193,14 @@ describe("POST /api/featureFlags - Create feature flag", () => {
         const req = new NextRequest("http://localhost", {
             method: "POST",
             body: JSON.stringify({
-                user_id: 2,
+                userId: 2,
                 name: "UnauthorizedFlag",
-                is_active: true,
+                isActive: true,
                 description: "Should fail",
-                white_list_id: null,
+                whiteListId: null,
                 strategy: "NO_STRATEGY",
-                start_time: new Date().toISOString(),
-                end_time: null,
+                startTime: new Date().toISOString(),
+                endTime: null,
                 path: null,
             }),
         });
@@ -226,14 +225,14 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
         const created = await testDb
             .insert(featureFlagsTable)
             .values({
-                user_id: 1,
+                userId: 1,
                 name: "UpdateTestFlag",
-                is_active: true,
+                isActive: true,
                 description: "Original description",
                 strategy: "NO_STRATEGY",
-                white_list_id: null,
-                start_time: new Date(),
-                end_time: null,
+                whiteListId: null,
+                startTime: new Date(),
+                endTime: null,
                 path: null
             })
             .returning();
@@ -244,9 +243,9 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
             method: "PATCH",
             body: JSON.stringify({
                 id: flagId,
-                user_id: 1,
+                userId: 1,
                 description: "Updated description",
-                is_active: false,
+                isActive: false,
             }),
         });
 
@@ -255,7 +254,7 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
 
         expect(res.status).toBe(200);
         expect(json.description).toBe("Updated description");
-        expect(json.is_active).toBe(false);
+        expect(json.isActive).toBe(false);
 
         const flagInDb = await testDb
             .select()
@@ -264,7 +263,7 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
 
         expect(flagInDb).toHaveLength(1);
         expect(flagInDb[0].description).toBe("Updated description");
-        expect(flagInDb[0].is_active).toBe(false);
+        expect(flagInDb[0].isActive).toBe(false);
     });
 
     it("returns 403 if non-Developer tries to update (not just toggle)", async () => {
@@ -274,13 +273,13 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
         const created = await testDb
             .insert(featureFlagsTable)
             .values({
-                user_id: 1,
+                userId: 1,
                 name: "ProtectedFlag",
-                is_active: true,
+                isActive: true,
                 description: "Original",
                 strategy: "NO_STRATEGY",
-                start_time: new Date(),
-                end_time: null,
+                startTime: new Date(),
+                endTime: null,
             })
             .returning();
 
@@ -290,7 +289,7 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
             method: "PATCH",
             body: JSON.stringify({
                 id: flagId,
-                user_id: 2,
+                userId: 2,
                 description: "Trying to update",
             }),
         });
@@ -302,7 +301,7 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
         expect(json.error).toContain("Du har ikke adgang til at redigere feature flags");
     });
 
-    it("allows Product-Manager to toggle is_active only", async () => {
+    it("allows Product-Manager to toggle isActive only", async () => {
         const {getUserRole} = await import("@/lib/helpers/user");
         vi.mocked(getUserRole).mockClear()
         const user = await getUserRole(2);
@@ -311,13 +310,13 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
         const created = await testDb
             .insert(featureFlagsTable)
             .values({
-                user_id: 1,
+                userId: 1,
                 name: "ToggleFlag",
-                is_active: true,
+                isActive: true,
                 description: "Can be toggled",
                 strategy: "NO_STRATEGY",
-                start_time: new Date(),
-                end_time: null,
+                startTime: new Date(),
+                endTime: null,
             })
             .returning();
 
@@ -327,8 +326,8 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
             method: "PATCH",
             body: JSON.stringify({
                 id: flagId,
-                user_id: 2,
-                is_active: false,
+                userId: 2,
+                isActive: false,
             }),
         });
 
@@ -336,22 +335,22 @@ describe("PATCH /api/featureFlags - Update feature flag", () => {
         const json = await res.json();
 
         expect(res.status).toBe(200);
-        expect(json.is_active).toBe(false);
+        expect(json.isActive).toBe(false);
     });
 });
 
 describe("DELETE /api/featureFlags/[id] - Delete feature flag", () => {
-    it("soft deletes a flag and verifies deleted_at is set", async () => {
+    it("soft deletes a flag and verifies deletedAt is set", async () => {
         const created = await testDb
             .insert(featureFlagsTable)
             .values({
-                user_id: 1,
+                userId: 1,
                 name: "DeleteTestFlag",
-                is_active: true,
+                isActive: true,
                 description: "To be deleted",
                 strategy: "NO_STRATEGY",
-                start_time: new Date(),
-                end_time: null,
+                startTime: new Date(),
+                endTime: null,
             })
             .returning();
 
@@ -369,7 +368,7 @@ describe("DELETE /api/featureFlags/[id] - Delete feature flag", () => {
         const json = await res.json();
 
         expect(res.status).toBe(200);
-        expect(json.deleted_at).not.toBeNull();
+        expect(json.deletedAt).not.toBeNull();
 
         const flagInDb = await testDb
             .select()
@@ -377,7 +376,7 @@ describe("DELETE /api/featureFlags/[id] - Delete feature flag", () => {
             .where(eq(featureFlagsTable.id, flagId));
 
         expect(flagInDb).toHaveLength(1);
-        expect(flagInDb[0].deleted_at).not.toBeNull();
+        expect(flagInDb[0].deletedAt).not.toBeNull();
     });
 
     it("returns 401 if non-Developer tries to delete", async () => {
@@ -387,13 +386,13 @@ describe("DELETE /api/featureFlags/[id] - Delete feature flag", () => {
         const created = await testDb
             .insert(featureFlagsTable)
             .values({
-                user_id: 1,
+                userId: 1,
                 name: "ProtectedDeleteFlag",
-                is_active: true,
+                isActive: true,
                 description: "Cannot delete",
                 strategy: "NO_STRATEGY",
-                start_time: new Date(),
-                end_time: null,
+                startTime: new Date(),
+                endTime: null,
             })
             .returning();
 
@@ -418,6 +417,6 @@ describe("DELETE /api/featureFlags/[id] - Delete feature flag", () => {
             .from(featureFlagsTable)
             .where(eq(featureFlagsTable.id, flagId));
 
-        expect(flagInDb[0].deleted_at).toBeNull();
+        expect(flagInDb[0].deletedAt).toBeNull();
     });
 });

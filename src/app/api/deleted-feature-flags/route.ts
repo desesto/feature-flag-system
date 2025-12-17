@@ -6,7 +6,7 @@ const db = drizzle(process.env.DATABASE_URL!, { schema });
 
 export async function GET() {
     const flags = await db.query.featureFlagsTable.findMany({
-        where: (featureFlags, { isNotNull }) => isNotNull(featureFlags.deleted_at),
+        where: (featureFlags, { isNotNull }) => isNotNull(featureFlags.deletedAt),
         with: {
             user: true,
         },

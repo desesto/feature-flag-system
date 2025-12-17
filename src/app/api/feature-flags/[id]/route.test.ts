@@ -55,15 +55,15 @@ describe("DELETE /api/feature-flags/[id]", () => {
         const mockDeletedFlag = {
             id: 1,
             name: "test-flag",
-            is_active: false,
+            isActive: false,
             description: "Test",
             strategy: "standard",
-            user_id: 1,
-            start_time: null,
-            end_time: null,
-            created_at: new Date("2025-01-01"),
-            updated_at: new Date("2025-01-01"),
-            deleted_at: new Date("2025-11-17"),
+            userId: 1,
+            startTime: null,
+            endTime: null,
+            createdAt: new Date("2025-01-01"),
+            updatedAt: new Date("2025-01-01"),
+            deletedAt: new Date("2025-11-17"),
         }
 
         vi.mocked(getUserRole).mockResolvedValueOnce("Developer")
@@ -80,7 +80,7 @@ describe("DELETE /api/feature-flags/[id]", () => {
 
         expect(response.status).toBe(200)
         expect(data.id).toBe(1)
-        expect(data.deleted_at).toBeTruthy()
+        expect(data.deletedAt).toBeTruthy()
         expect(logFeatureFlagDeleted).toHaveBeenCalledWith(1, 1)
     })
 })

@@ -33,23 +33,23 @@ export const featureFlagsTable = pgTable(
     "feature_flags",
     {
         id: serial("id").primaryKey(),
-        user_id: integer("user_id").notNull(),
+        userId: integer("user_id").notNull(),
         name: varchar("name", { length: 255 }),
-        is_active: boolean("is_active").notNull(),
+        isActive: boolean("is_active").notNull(),
         description: text("description"),
         strategy: strategyEnum("strategy").notNull().default("NO_STRATEGY"),
-        white_list_id: integer("white_list_id"),
-        start_time: timestamp("start_time", { mode: "date" }),
-        end_time: timestamp("end_time", { mode: "date" }),
-        created_at: timestamp("created_at", { mode: "date" }).defaultNow(),
-        updated_at: timestamp("updated_at", { mode: "date" }).defaultNow(),
-        deleted_at: timestamp("deleted_at", { mode: "date" }),
+        whiteListId: integer("white_list_id"),
+        startTime: timestamp("start_time", { mode: "date" }),
+        endTime: timestamp("end_time", { mode: "date" }),
+        createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
+        updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow(),
+        deletedAt: timestamp("deleted_at", { mode: "date" }),
         path: jsonb("path").$type<string[] | null>().default(null),
     },
     (table) => ({
         name_unique: uniqueIndex("feature_flag_name_unique").on(table.name),
         user_fk: foreignKey({
-            columns: [table.user_id],
+            columns: [table.userId],
             foreignColumns: [usersTable.id],
         }),
     })
@@ -70,21 +70,21 @@ export const whiteListUsersTable = pgTable(
     "white_list_users",
     {
         id: serial("id").primaryKey(),
-        white_list_id: integer("white_list_id").notNull(),
-        user_id: integer("user_id").notNull(),
+        whiteListId: integer("white_list_id").notNull(),
+        userId: integer("user_id").notNull(),
     },
     (table) => ({
         whitelist_fk: foreignKey({
-            columns: [table.white_list_id],
+            columns: [table.whiteListId],
             foreignColumns: [whiteListsTable.id],
         }).onDelete("cascade"),
         user_fk: foreignKey({
-            columns: [table.user_id],
+            columns: [table.userId],
             foreignColumns: [usersTable.id],
         }).onDelete("cascade"),
         unique_whitelist_user: uniqueIndex("unique_whitelist_user_idx").on(
-            table.white_list_id,
-            table.user_id
+            table.whiteListId,
+            table.userId
         ),
     })
 );
@@ -93,21 +93,21 @@ export const featureFlagHistoryTable = pgTable(
     "feature_flag_history",
     {
         id: serial("id").primaryKey(),
-        feature_flag_id: integer("feature_flag_id").notNull(),
-        user_id: integer("user_id").notNull(),
+        featureFlagId: integer("feature_flag_id").notNull(),
+        userId: integer("user_id").notNull(),
         timestamp: timestamp("timestamp", { mode: "date" }).notNull().defaultNow(),
-        action_type: ActionTypeEnum("action_type",).notNull(),
-        changed_fields: text("changed_fields"),
-        old_values: text("old_values"),
-        new_values: text("new_values"),
+        actionType: ActionTypeEnum("action_type",).notNull(),
+        changedFields: text("changed_fields"),
+        oldValues: text("old_values"),
+        newValues: text("new_values"),
     },
     (table) => ({
     feature_flag_fk: foreignKey({
-        columns: [table.feature_flag_id],
+        columns: [table.featureFlagId],
         foreignColumns: [featureFlagsTable.id],
     }),
     user_fk: foreignKey({
-        columns: [table.user_id],
+        columns: [table.userId],
         foreignColumns: [usersTable.id],
     })
     }))
@@ -120,12 +120,12 @@ export const usersRelations = relations(usersTable, ({ many }) => ({
 
 export const featureFlagsRelations = relations(featureFlagsTable, ({ one, many }) => ({
     user: one(usersTable, {
-        fields: [featureFlagsTable.user_id],
+        fields: [featureFlagsTable.userId],
         references: [usersTable.id],
     }),
     featureFlagHistories: many(featureFlagHistoryTable),
     whiteList: one(whiteListsTable, {
-        fields: [featureFlagsTable.white_list_id],
+        fields: [featureFlagsTable.whiteListId],
         references: [whiteListsTable.id],
     }),
 }));
@@ -136,22 +136,22 @@ export const whiteListsRelations = relations(whiteListsTable, ({ many }) => ({
 
 export const whiteListUsersRelations = relations(whiteListUsersTable, ({ one }) => ({
     whiteList: one(whiteListsTable, {
-        fields: [whiteListUsersTable.white_list_id],
+        fields: [whiteListUsersTable.whiteListId],
         references: [whiteListsTable.id],
     }),
     user: one(usersTable, {
-        fields: [whiteListUsersTable.user_id],
+        fields: [whiteListUsersTable.userId],
         references: [usersTable.id],
     }),
 }));
 
 export const featureFlagHistoryRelations = relations(featureFlagHistoryTable, ({ one }) => ({
     featureFlag: one(featureFlagsTable, {
-        fields: [featureFlagHistoryTable.feature_flag_id],
+        fields: [featureFlagHistoryTable.featureFlagId],
         references: [featureFlagsTable.id],
     }),
     user: one(usersTable, {
-        fields: [featureFlagHistoryTable.user_id],
+        fields: [featureFlagHistoryTable.userId],
         references: [usersTable.id],
     }),
 }))

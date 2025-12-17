@@ -51,7 +51,7 @@ export async function DELETE(req: NextRequest) {
     const deletedFlag = await db
         .update(featureFlagsTable)
         .set({
-            deleted_at: new Date()
+            deletedAt: new Date()
         })
         .where(eq(featureFlagsTable.id, id))
         .returning();
@@ -65,13 +65,13 @@ export async function PATCH(req: NextRequest) {
     const raw = await req.json();
     const body = parseApiDates(raw);
     const validated = parse(EditFeatureFlagSchema, body)
-    const { id, user_id, ...updates } = validated;
+    const { id, userId, ...updates } = validated;
 
     if (!id) {
         return NextResponse.json({ error: "Missing ID" }, { status: 400 });
     }
 
-    const role = await getUserRole(user_id);
+    const role = await getUserRole(userId);
 
     if (!role) {
         return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -94,18 +94,18 @@ export async function PATCH(req: NextRequest) {
     const updateData = Object.fromEntries(
         Object.entries({
             name: updates.name,
-            is_active: updates.is_active,
+            isActive: updates.isActive,
             description: updates.description,
             strategy: updates.strategy,
-            white_list_id: updates.white_list_id,
-            start_time: updates.start_time,
-            end_time: updates.end_time,
-            updated_at: new Date(),
+            whiteListId: updates.whiteListId,
+            startTime: updates.startTime,
+            endtime: updates.endTime,
+            updatedAt: new Date(),
         }).filter(([_, value]) => value !== undefined)
     );
 
     if (updates.strategy && updates.strategy !== 'CANARY') {
-        updateData.white_list_id = null;
+        updateData.whiteListId = null;
     }
 
     await db
@@ -122,7 +122,7 @@ export async function PATCH(req: NextRequest) {
 
     await logFeatureFlagUpdated(
         id,
-        user_id,
+        userId,
         oldFlag as FeatureFlagDto,
         newFlag as FeatureFlagDto
     );

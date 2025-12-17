@@ -1,9 +1,8 @@
-/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 'use client';
 
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-import {GetUsersDto} from "@/lib/dto/user.dto";
+import type {GetUsersDto} from "@/lib/dto/user.dto";
 import {hasAccessToLogin} from "@/access-control/featureFlagAccess";
 
 

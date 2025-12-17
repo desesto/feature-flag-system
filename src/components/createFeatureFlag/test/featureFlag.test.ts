@@ -6,14 +6,14 @@ import type {CreateFeatureFlagDto} from "@/lib/dto/featureFlag.dto";
 describe("validateFeatureFlagInput", () => {
     it("returns error if name is less than 2 characters", () => {
         const input: CreateFeatureFlagDto = {
-            user_id: 1,
+            userId: 1,
             name: "A",
-            is_active: true,
+            isActive: true,
             description: "En god beskrivelse",
             strategy: "NO_STRATEGY",
-            white_list_id: null,
-            start_time: new Date("2025-11-01"),
-            end_time: new Date("2025-11-10"),
+            whiteListId: null,
+            startTime: new Date("2025-11-01"),
+            endTime: new Date("2025-11-10"),
         };
         const actualOutput = validateFeatureFlagInput(input)
 
@@ -25,14 +25,14 @@ describe("validateFeatureFlagInput", () => {
 
     it("returns error if description is less than 5 characters", () => {
             const input: CreateFeatureFlagDto = {
-                user_id: 1,
+                userId: 1,
                 name: "A very good name",
-                is_active: true,
+                isActive: true,
                 description: "En",
                 strategy: "NO_STRATEGY",
-                white_list_id: null,
-                start_time: new Date("2025-11-01"),
-                end_time: new Date("2025-11-10"),
+                whiteListId: null,
+                startTime: new Date("2025-11-01"),
+                endTime: new Date("2025-11-10"),
             };
         const actualOutput = validateFeatureFlagInput(input)
 
@@ -44,14 +44,14 @@ describe("validateFeatureFlagInput", () => {
 
         it("returns error if start time is after end time", () => {
             const input: CreateFeatureFlagDto = {
-                user_id: 1,
+                userId: 1,
                 name: "A very good name",
-                is_active: true,
+                isActive: true,
                 description: "A very good description",
                 strategy: "NO_STRATEGY",
-                white_list_id: null,
-                start_time: new Date("2025-12-01"),
-                end_time: new Date("2025-11-10"),
+                whiteListId: null,
+                startTime: new Date("2025-12-01"),
+                endTime: new Date("2025-11-10"),
             };
 
         const actualOutput = validateFeatureFlagInput(input)
@@ -64,14 +64,14 @@ describe("validateFeatureFlagInput", () => {
 
         it("returns null when input is valid", () => {
                 const input: CreateFeatureFlagDto = {
-                    user_id: 1,
+                    userId: 1,
                     name: "Valid name",
-                    is_active: true,
+                    isActive: true,
                     description: "Valid description",
                     strategy: "NO_STRATEGY",
-                    white_list_id: null,
-                    start_time: new Date("2025-11-01"),
-                    end_time: new Date("2025-11-10"),
+                    whiteListId: null,
+                    startTime: new Date("2025-11-01"),
+                    endTime: new Date("2025-11-10"),
                 };
                 const actualOutput = validateFeatureFlagInput(input);
 

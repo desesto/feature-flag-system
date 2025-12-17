@@ -1,8 +1,6 @@
 import Tabs from "@/components/tabs/Tabs.component";
 import {UserDto} from "@/lib/dto/user.dto";
 import CreateUserButton from "@/components/createUser/CreateUserButton.component";
-import {getUserRole} from "@/lib/helpers/user";
-import {hasAccessToCreateUser} from "@/access-control/featureFlagAccess";
 
 export default async function UsersPage() {
     const response = await fetch("http://localhost:3000/api/users", {

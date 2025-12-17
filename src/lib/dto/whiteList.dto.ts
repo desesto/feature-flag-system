@@ -1,5 +1,5 @@
-import {InferInput, InferOutput} from "valibot";
-import {
+import type {InferInput, InferOutput} from "valibot";
+import type {
     CreateWhiteListSchema,
     GetWhiteListsSchema, GetWhiteListWithUsersSchema,
     UpdateWhiteListSchema,

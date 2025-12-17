@@ -37,26 +37,26 @@ export default async function GetFeatureFlagHistory({featureFlagId}:GetFeatureFl
                 >
                     <span className="text-gray-400">Date: {toLocalDatetimeString(history.timestamp)}</span>
                     <span className={`font-semibold ${
-                        history.action_type === 'CREATED' ? 'text-green-400' : 
-                            history.action_type === 'ACTIVATED' ? 'text-blue-400' :
-                                history.action_type === 'DEACTIVATED' ? 'text-orange-400' :
-                                    history.action_type === 'DELETED' ? 'text-red-400' :
+                        history.actionType === 'CREATED' ? 'text-green-400' : 
+                            history.actionType === 'ACTIVATED' ? 'text-blue-400' :
+                                history.actionType === 'DEACTIVATED' ? 'text-orange-400' :
+                                    history.actionType === 'DELETED' ? 'text-red-400' :
                                         'text-purple-400'
                     }`}>
-                            {history.action_type}
+                            {history.actionType}
                         </span>
                     <span className="text-gray-400">{history.user.name}</span>
-                    {history.action_type !== 'CREATED' && history.action_type !==  'DELETED'  && (
+                    {history.actionType !== 'CREATED' && history.actionType !==  'DELETED'  && (
                         <details className="px-4 pb-4 w full">
                             <summary className="cursor-pointer text-blue-400 hover:text-blue-300 text-sm">
                                 Se detaljer
                             </summary>
                             <div className="mt-3 space-y-3">
-                                {history.changed_fields && (
+                                {history.changedFields && (
                                     <div>
                                         <div className="text-sm text-gray-400 mb-1">Ændrede felter:</div>
                                         <div className="flex flex-wrap gap-2">
-                                            {JSON.parse(history.changed_fields).map((field: string) => (
+                                            {JSON.parse(history.changedFields).map((field: string) => (
                                                 <span key={field} className="px-2 py-1 bg-gray-700 rounded text-xs">
                                                             {field}
                                                         </span>
@@ -66,19 +66,19 @@ export default async function GetFeatureFlagHistory({featureFlagId}:GetFeatureFl
                                 )}
 
                                 <div className="grid grid-cols-2 gap-80">
-                                    {history.old_values && (
+                                    {history.oldValues && (
                                         <div>
                                             <div className="text-sm text-gray-400 mb-1">Old:</div>
                                             <pre className="text-xs bg-gray-900 p-3 rounded overflow-auto min-w-[300] max-h-40">
-                                                        {JSON.stringify(JSON.parse(history.old_values), null, 2)}
+                                                        {JSON.stringify(JSON.parse(history.oldValues), null, 2)}
                                                     </pre>
                                         </div>
                                     )}
-                                    {history.new_values && (
+                                    {history.newValues && (
                                         <div>
                                             <div className="text-sm text-gray-400 mb-1">New:</div>
                                             <pre className="text-xs bg-gray-900 p-3 rounded overflow-auto min-w-[300] max-h-40">
-                                                        {JSON.stringify(JSON.parse(history.new_values), null, 2)}
+                                                        {JSON.stringify(JSON.parse(history.newValues), null, 2)}
                                                     </pre>
                                         </div>
                                     )}

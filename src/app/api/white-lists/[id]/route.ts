@@ -11,7 +11,7 @@ export async function GET(req: NextRequest, {params}: { params: Promise<{ id: st
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({error: "Invalid white_list ID"}, {status: 400});
+            return NextResponse.json({error: "Invalid whiteList ID"}, {status: 400});
         }
 
         const whitelist = await db.query.whiteListsTable.findFirst({
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest, {params}: { params: Promise<{ id: st
         });
 
         if (!whitelist) {
-            return NextResponse.json({error: "Whitelist not found"}, {status: 404});
+            return NextResponse.json({error: "WhiteList not found"}, {status: 404});
         }
 
         const response = {
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest, {params}: { params: Promise<{ id: st
 
         return NextResponse.json(validated);
     } catch (error) {
-        console.error("Error fetching white_list:", error);
+        console.error("Error fetching whiteList:", error);
         return NextResponse.json({error: "Internal server error"}, {status: 500});
     }
 }
@@ -50,7 +50,7 @@ export async function PATCH(req: NextRequest, {params}: { params: Promise<{ id: 
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({error: "Invalid white_list ID"}, {status: 400});
+            return NextResponse.json({error: "Invalid whiteList ID"}, {status: 400});
         }
 
         const body = await req.json();
@@ -58,21 +58,20 @@ export async function PATCH(req: NextRequest, {params}: { params: Promise<{ id: 
 
         await db
             .delete(whiteListUsersTable)
-            .where(eq(whiteListUsersTable.white_list_id, whitelistId));
+            .where(eq(whiteListUsersTable.whiteListId, whitelistId));
 
-
-        if (validatedData.user_ids.length > 0) {
+        if (validatedData.userIds.length > 0) {
             await db.insert(whiteListUsersTable).values(
-                validatedData.user_ids.map((userId) => ({
-                    white_list_id: whitelistId,
-                    user_id: userId,
+                validatedData.userIds.map((userId) => ({
+                    whiteListId: whitelistId,
+                    userId: userId,
                 }))
             );
         }
 
         return NextResponse.json({message: "Whitelist updated successfully"});
     } catch (error) {
-        console.error("Error updating white_list:", error);
+        console.error("Error updating whiteList:", error);
         return NextResponse.json({error: "Internal server error"}, {status: 500});
     }
 }
@@ -83,7 +82,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
         const whitelistId = Number(id);
 
         if (isNaN(whitelistId)) {
-            return NextResponse.json({ error: "Invalid white_list ID" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid whiteList ID" }, { status: 400 });
         }
 
         const whitelist = await db.query.whiteListsTable.findFirst({
@@ -91,16 +90,16 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
         });
 
         if (!whitelist) {
-            return NextResponse.json({ error: "Whitelist not found" }, { status: 404 });
+            return NextResponse.json({ error: "WhiteList not found" }, { status: 404 });
         }
 
         await db
             .delete(whiteListsTable)
             .where(eq(whiteListsTable.id, whitelistId));
 
-        return NextResponse.json({ message: "Whitelist deleted successfully" });
+        return NextResponse.json({ message: "WhiteList deleted successfully" });
     } catch (error) {
-        console.error("Error deleting white_list:", error);
+        console.error("Error deleting whiteList:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
