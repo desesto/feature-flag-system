@@ -38,7 +38,7 @@ export async function logFeatureFlagDeleted(
     });
 }
 
-const ignore_keys = ['id', 'userId', 'whiteList', 'createdAt', 'updatedAt', 'deletedAt'];
+const ignoreKeys = ['id', 'userId', 'whiteList', 'createdAt', 'updatedAt', 'deletedAt'];
 
 export async function logFeatureFlagUpdated(
     featureFlagId: number,
@@ -51,7 +51,7 @@ export async function logFeatureFlagUpdated(
     const newValues: Record<string, unknown> = {};
 
     for (const key of Object.keys(newFlag)) {
-        if (ignore_keys.includes(key)) {
+        if (ignoreKeys.includes(key)) {
             continue;
         }
 
